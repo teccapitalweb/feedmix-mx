@@ -11,6 +11,10 @@
 
   <link rel="stylesheet" href="assets/shared.css">
 
+  <!-- jsPDF para generación de PDFs profesionales (cargado localmente) -->
+  <script src="assets/vendor/jspdf.umd.min.js"></script>
+  <script src="assets/vendor/jspdf.plugin.autotable.min.js"></script>
+
   <style>
     .formulador-layout {
       display: grid;
@@ -1211,8 +1215,392 @@
     });
 
     document.getElementById("btnPdf").addEventListener("click", () => {
-      window.fmToast("Generación de PDF disponible en próxima versión", "info");
+      generarPDF();
     });
+
+    // ============================================
+    // GENERADOR DE PDF PROFESIONAL
+    // ============================================
+    function generarPDF() {
+      if (!state.formula) {
+        window.fmToast("Primero optimiza una fórmula", "warning");
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "letter" });
+
+      // Colores corporativos
+      const PRIMARY = [27, 77, 124];      // #1B4D7C
+      const PRIMARY_DARK = [15, 52, 87];  // #0F3457
+      const ACCENT = [245, 158, 11];      // #F59E0B
+      const TEXT = [30, 41, 59];          // #1E293B
+      const MUTED = [100, 116, 139];      // #64748B
+      const LIGHT = [248, 250, 252];      // #F8FAFC
+      const SUCCESS = [16, 185, 129];     // #10B981
+      const DANGER = [239, 68, 68];       // #EF4444
+
+      const W = doc.internal.pageSize.getWidth();
+      const H = doc.internal.pageSize.getHeight();
+      const M = 18; // margen
+
+      // ============================================
+      // Datos del reporte
+      // ============================================
+      const cliente = document.getElementById("cliente").value || "Sin cliente";
+      const raza = A.getRaza(state.razaId);
+      const etapa = A.getEtapa(state.razaId, state.etapaId);
+      const tipo = A.TIPOS[raza.tipo];
+      const volumen = parseFloat(document.getElementById("volumen").value) || 1;
+      const unidad = document.getElementById("unidad").value;
+      const tons = unidad === "ton" ? volumen : volumen / 1000;
+      const profile = window.fmProfile || {};
+      const fecha = new Intl.DateTimeFormat("es-MX", {
+        weekday: "long", day: "numeric", month: "long", year: "numeric"
+      }).format(new Date());
+      const folio = "FM-" + Date.now().toString(36).toUpperCase().slice(-6);
+
+      // Recalcular perfil para asegurar precisión
+      let perfil = { em: 0, pc: 0, ca: 0, p: 0, lys: 0, met: 0 };
+      let costoTon = 0;
+      state.formula.forEach(f => {
+        const ing = f.ing;
+        const factor = f.pct / 100;
+        perfil.em += factor * (ing.em || 0);
+        perfil.pc += factor * (ing.pc || 0);
+        perfil.ca += factor * (ing.ca || 0);
+        perfil.p += factor * (ing.p || 0);
+        perfil.lys += factor * (ing.lys || 0);
+        perfil.met += factor * (ing.met || 0);
+        costoTon += factor * 1000 * ing.precio;
+      });
+      const costoLote = costoTon * tons;
+      const req = A.getRequerimientos(state.razaId, state.etapaId);
+
+      // ============================================
+      // HEADER (banda azul superior)
+      // ============================================
+      doc.setFillColor(...PRIMARY);
+      doc.rect(0, 0, W, 32, "F");
+
+      // Logo (gota/huevo SVG simulado con círculos)
+      doc.setFillColor(255, 255, 255);
+      doc.roundedRect(M, 8, 16, 16, 3, 3, "F");
+      doc.setFillColor(...PRIMARY);
+      doc.circle(M + 8, 14, 1.8, "F");
+      doc.setDrawColor(...PRIMARY);
+      doc.setLineWidth(1.2);
+      doc.line(M + 5, 18, M + 5, 14);
+      doc.line(M + 11, 18, M + 11, 14);
+
+      // Texto del header
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.text("FeedMix MX", M + 22, 16);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(245, 158, 11);
+      doc.text("AVICULTURA · Producto de TEC CAPITAL Group", M + 22, 21);
+
+      // Folio y fecha (derecha)
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(8);
+      doc.text(`Folio: ${folio}`, W - M, 13, { align: "right" });
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.text(fecha, W - M, 18, { align: "right" });
+      doc.setFontSize(7);
+      doc.setTextColor(200, 220, 240);
+      doc.text("Reporte de formulación profesional", W - M, 23, { align: "right" });
+
+      // ============================================
+      // TÍTULO PRINCIPAL
+      // ============================================
+      let y = 44;
+      doc.setTextColor(...TEXT);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(20);
+      doc.text("Fórmula optimizada", M, y);
+
+      y += 6;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.setTextColor(...MUTED);
+      doc.text(`${tipo.nombre} · ${raza.nombre} · ${etapa.nombre} (${etapa.rango})`, M, y);
+
+      // ============================================
+      // BLOQUE DE DATOS DEL CLIENTE (caja gris claro)
+      // ============================================
+      y += 8;
+      doc.setFillColor(...LIGHT);
+      doc.roundedRect(M, y, W - M * 2, 26, 2, 2, "F");
+
+      const colW = (W - M * 2) / 4;
+      const dataRow = [
+        ["CLIENTE", cliente],
+        ["RAZA", raza.nombre],
+        ["ETAPA", etapa.nombre],
+        ["VOLUMEN", `${volumen} ${unidad}`]
+      ];
+
+      dataRow.forEach((d, i) => {
+        const x = M + 4 + i * colW;
+        doc.setFontSize(7);
+        doc.setTextColor(...MUTED);
+        doc.setFont("helvetica", "bold");
+        doc.text(d[0], x, y + 8);
+        doc.setFontSize(10);
+        doc.setTextColor(...TEXT);
+        doc.setFont("helvetica", "normal");
+        const val = d[1].length > 22 ? d[1].slice(0, 20) + "…" : d[1];
+        doc.text(val, x, y + 15);
+      });
+      // Profesión (debajo)
+      doc.setFontSize(7);
+      doc.setTextColor(...MUTED);
+      doc.setFont("helvetica", "italic");
+      const nutricionista = profile.firstName ?
+        `Elaborado por: ${profile.firstName} ${profile.lastName || ""} ${profile.profession ? `· ${profile.profession}` : ""}` :
+        `Elaborado por: Nutricionista FeedMix`;
+      doc.text(nutricionista, M + 4, y + 22);
+
+      // ============================================
+      // CAJA DE COSTO DESTACADO
+      // ============================================
+      y += 32;
+      doc.setFillColor(...PRIMARY);
+      doc.roundedRect(M, y, W - M * 2, 26, 2, 2, "F");
+
+      // Costo / ton (izquierda)
+      doc.setTextColor(245, 158, 11);
+      doc.setFontSize(7);
+      doc.setFont("helvetica", "bold");
+      doc.text("COSTO POR TONELADA", M + 6, y + 8);
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(20);
+      doc.setFont("helvetica", "bold");
+      const costoStr = "$" + costoTon.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      doc.text(costoStr, M + 6, y + 18);
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      doc.text("MXN", M + 6, y + 23);
+
+      // Costo total (derecha)
+      doc.setTextColor(245, 158, 11);
+      doc.setFontSize(7);
+      doc.setFont("helvetica", "bold");
+      doc.text(`COSTO DEL LOTE (${tons} ton)`, W - M - 6, y + 8, { align: "right" });
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(20);
+      doc.setFont("helvetica", "bold");
+      const costoLoteStr = "$" + costoLote.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      doc.text(costoLoteStr, W - M - 6, y + 18, { align: "right" });
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      doc.text("MXN total", W - M - 6, y + 23, { align: "right" });
+
+      // ============================================
+      // TABLA DE FÓRMULA
+      // ============================================
+      y += 32;
+      doc.setTextColor(...TEXT);
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "bold");
+      doc.text("Composición de la fórmula", M, y);
+
+      const filasFormula = state.formula.map(f => {
+        const kg_ton = (f.pct / 100) * 1000;
+        const kg_lote = kg_ton * tons;
+        const costo_kg = f.ing.precio;
+        const costo_total = kg_lote * costo_kg;
+        return [
+          f.name,
+          f.pct.toFixed(2) + "%",
+          kg_ton.toFixed(2),
+          kg_lote.toFixed(2),
+          "$" + costo_kg.toFixed(2),
+          "$" + costo_total.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        ];
+      });
+
+      const totalKgTon = state.formula.reduce((s, f) => s + (f.pct / 100) * 1000, 0);
+      const totalKgLote = totalKgTon * tons;
+      filasFormula.push([
+        { content: "TOTAL", styles: { fontStyle: "bold", textColor: PRIMARY } },
+        { content: "100.00%", styles: { fontStyle: "bold", textColor: PRIMARY } },
+        { content: totalKgTon.toFixed(2), styles: { fontStyle: "bold", textColor: PRIMARY } },
+        { content: totalKgLote.toFixed(2), styles: { fontStyle: "bold", textColor: PRIMARY } },
+        { content: "—", styles: { fontStyle: "bold", textColor: PRIMARY } },
+        { content: "$" + costoLote.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 }), styles: { fontStyle: "bold", textColor: PRIMARY } }
+      ]);
+
+      doc.autoTable({
+        startY: y + 3,
+        head: [["Ingrediente", "%", "kg/ton", `kg total`, "$/kg", "Costo"]],
+        body: filasFormula,
+        theme: "grid",
+        styles: {
+          font: "helvetica",
+          fontSize: 9,
+          cellPadding: 2.5,
+          textColor: TEXT,
+          lineColor: [226, 232, 240],
+          lineWidth: 0.2
+        },
+        headStyles: {
+          fillColor: PRIMARY,
+          textColor: [255, 255, 255],
+          fontStyle: "bold",
+          fontSize: 8,
+          cellPadding: 3
+        },
+        columnStyles: {
+          0: { cellWidth: 55 },
+          1: { halign: "right", cellWidth: 18 },
+          2: { halign: "right", cellWidth: 22 },
+          3: { halign: "right", cellWidth: 25 },
+          4: { halign: "right", cellWidth: 20 },
+          5: { halign: "right", cellWidth: 38 }
+        },
+        alternateRowStyles: { fillColor: [248, 250, 252] },
+        margin: { left: M, right: M }
+      });
+
+      y = doc.lastAutoTable.finalY + 8;
+
+      // ============================================
+      // PERFIL NUTRICIONAL VS REQUERIMIENTOS
+      // ============================================
+      // Verificar si hay espacio, sino nueva página
+      if (y > H - 100) {
+        doc.addPage();
+        y = M;
+      }
+
+      doc.setTextColor(...TEXT);
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "bold");
+      doc.text("Perfil nutricional vs. requerimientos NRC", M, y);
+
+      const checks = [
+        { label: "Energía Metabolizable", actual: Math.round(perfil.em), req: req.em, unit: " kcal/kg" },
+        { label: "Proteína Cruda", actual: perfil.pc.toFixed(1), req: req.pc, unit: " %" },
+        { label: "Lisina total", actual: perfil.lys.toFixed(2), req: req.lys, unit: " %" },
+        { label: "Metionina total", actual: perfil.met.toFixed(2), req: req.met, unit: " %" },
+        { label: "Calcio", actual: perfil.ca.toFixed(2), req: req.ca, unit: " %" },
+        { label: "Fósforo disponible", actual: perfil.p.toFixed(2), req: req.p, unit: " %" }
+      ];
+
+      const filasPerfil = checks.map(c => {
+        const a = parseFloat(c.actual);
+        const r = parseFloat(c.req) || 0;
+        let status = "✓ Cumple";
+        let color = SUCCESS;
+        if (a < r * 0.95) { status = "✗ Bajo"; color = DANGER; }
+        else if (a < r) { status = "≈ Justo"; color = ACCENT; }
+        return [
+          c.label,
+          c.actual + c.unit,
+          c.req + c.unit,
+          { content: status, styles: { textColor: color, fontStyle: "bold", halign: "center" } }
+        ];
+      });
+
+      doc.autoTable({
+        startY: y + 3,
+        head: [["Nutriente", "Resultado", "Requerido", "Estado"]],
+        body: filasPerfil,
+        theme: "grid",
+        styles: {
+          font: "helvetica",
+          fontSize: 9,
+          cellPadding: 2.5,
+          textColor: TEXT,
+          lineColor: [226, 232, 240],
+          lineWidth: 0.2
+        },
+        headStyles: {
+          fillColor: PRIMARY,
+          textColor: [255, 255, 255],
+          fontStyle: "bold",
+          fontSize: 8,
+          cellPadding: 3
+        },
+        columnStyles: {
+          0: { cellWidth: 70 },
+          1: { halign: "right", cellWidth: 35 },
+          2: { halign: "right", cellWidth: 35 },
+          3: { halign: "center", cellWidth: 38 }
+        },
+        alternateRowStyles: { fillColor: [248, 250, 252] },
+        margin: { left: M, right: M }
+      });
+
+      y = doc.lastAutoTable.finalY + 8;
+
+      // ============================================
+      // NOTAS DEL EXPERTO
+      // ============================================
+      const tips = A.getTips(state.razaId, state.etapaId).slice(0, 4);
+      if (tips.length > 0) {
+        // Verificar espacio
+        if (y > H - 60) { doc.addPage(); y = M; }
+
+        doc.setTextColor(...TEXT);
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "bold");
+        doc.text("Notas técnicas del nutricionista", M, y);
+
+        y += 6;
+        doc.setFillColor(254, 243, 199); // ámbar claro
+        doc.setDrawColor(245, 158, 11);
+        doc.setLineWidth(0.3);
+        const notasH = tips.length * 6 + 6;
+        doc.roundedRect(M, y, W - M * 2, notasH, 2, 2, "FD");
+
+        doc.setFontSize(9);
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(120, 53, 15);
+        tips.forEach((tip, i) => {
+          const yTip = y + 5 + i * 6;
+          doc.setFont("helvetica", "bold");
+          doc.text("•", M + 4, yTip);
+          doc.setFont("helvetica", "normal");
+          const tipWrapped = doc.splitTextToSize(tip, W - M * 2 - 12);
+          doc.text(tipWrapped, M + 8, yTip);
+        });
+
+        y += notasH + 8;
+      }
+
+      // ============================================
+      // FOOTER en cada página
+      // ============================================
+      const totalPages = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        // Línea separadora
+        doc.setDrawColor(...LIGHT);
+        doc.setLineWidth(0.3);
+        doc.line(M, H - 14, W - M, H - 14);
+
+        doc.setFontSize(7);
+        doc.setTextColor(...MUTED);
+        doc.setFont("helvetica", "normal");
+        doc.text("Generado con FeedMix MX · feedmix.mx · contacto@feedmix.mx", M, H - 9);
+        doc.text(`Página ${i} de ${totalPages}`, W - M, H - 9, { align: "right" });
+        doc.setFontSize(6);
+        doc.text("Este documento es informativo. La aplicación final depende de las condiciones de cada granja.", M, H - 5);
+      }
+
+      // ============================================
+      // Descargar
+      // ============================================
+      const filename = `FeedMix_${cliente.replace(/[^a-z0-9]/gi, "_").slice(0, 20)}_${etapa.id}_${folio}.pdf`;
+      doc.save(filename);
+      window.fmToast("PDF generado y descargado", "success");
+    }
 
     document.getElementById("btnSave").addEventListener("click", () => {
       window.fmToast("Guardado de fórmulas disponible en próxima versión", "info");
