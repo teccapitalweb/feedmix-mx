@@ -14,110 +14,268 @@
   <style>
     .formulador-layout {
       display: grid;
-      grid-template-columns: 320px 1fr 380px;
+      grid-template-columns: 340px 1fr 380px;
       gap: var(--space-5);
       align-items: start;
     }
 
-    @media (max-width: 1280px) {
+    @media (max-width: 1366px) {
+      .formulador-layout { grid-template-columns: 320px 1fr; }
+      .col-resultado { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 968px) {
       .formulador-layout { grid-template-columns: 1fr; }
     }
 
-    .formulador-card {
+    .fm-card {
       background: white;
       border: 1px solid var(--neutral-200);
       border-radius: var(--radius-lg);
       overflow: hidden;
     }
 
-    .formulador-card-header {
-      padding: var(--space-5);
+    .fm-card-header {
+      padding: var(--space-4) var(--space-5);
       border-bottom: 1px solid var(--neutral-200);
-      background: var(--neutral-50);
+      background: linear-gradient(180deg, var(--neutral-50) 0%, white 100%);
     }
 
-    .formulador-card-header h3 {
+    .fm-card-header h3 {
       font-size: 0.9375rem;
       font-weight: 700;
       color: var(--neutral-900);
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
 
-    .formulador-card-header p {
+    .fm-card-header p {
       font-size: 0.8125rem;
       color: var(--neutral-500);
       margin: 0;
     }
 
-    .formulador-card-body { padding: var(--space-5); }
+    .fm-card-body { padding: var(--space-5); }
 
-    /* SETUP card */
+    /* ============================================
+       SETUP STEPS
+       ============================================ */
     .setup-step {
       margin-bottom: var(--space-5);
       padding-bottom: var(--space-5);
       border-bottom: 1px dashed var(--neutral-200);
     }
-
     .setup-step:last-child { border-bottom: none; padding-bottom: 0; }
 
-    .setup-step-num {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+    .step-label {
+      display: flex; align-items: center; gap: var(--space-2);
+      font-size: 0.8125rem; font-weight: 700;
+      color: var(--neutral-700);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      margin-bottom: var(--space-3);
+    }
+
+    .step-num {
+      display: inline-grid;
+      place-items: center;
       width: 22px; height: 22px;
       background: var(--primary);
       color: white;
       border-radius: 50%;
       font-size: 0.75rem;
       font-weight: 700;
-      margin-right: var(--space-2);
     }
 
-    /* Ingredientes table */
-    .ingredients-table {
+    /* Tipo de producción - cards visuales */
+    .tipo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2);
+    }
+
+    .tipo-card {
+      padding: var(--space-3);
+      border: 1.5px solid var(--neutral-200);
+      border-radius: var(--radius);
+      background: white;
+      cursor: pointer;
+      transition: all var(--transition);
+      text-align: center;
+    }
+
+    .tipo-card:hover { border-color: var(--primary-light); transform: translateY(-1px); }
+
+    .tipo-card.active {
+      border-color: var(--primary);
+      background: var(--primary-50);
+    }
+
+    .tipo-card-icon {
+      font-size: 1.5rem;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .tipo-card strong {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--neutral-800);
+      line-height: 1.2;
+    }
+
+    .tipo-card.active strong { color: var(--primary-dark); }
+
+    /* Raza select customizada */
+    .raza-info {
+      background: var(--primary-50);
+      border-left: 3px solid var(--primary);
+      padding: var(--space-3);
+      border-radius: 6px;
+      margin-top: var(--space-3);
+      font-size: 0.8125rem;
+      line-height: 1.5;
+    }
+
+    .raza-info strong { display: block; color: var(--primary-dark); margin-bottom: 2px; }
+    .raza-info-meta {
+      display: flex; gap: var(--space-3);
+      margin-top: var(--space-2);
+      font-size: 0.75rem;
+      color: var(--neutral-600);
+    }
+    .raza-info-meta span {
+      display: flex; align-items: center; gap: 4px;
+    }
+
+    /* Etapa selector horizontal */
+    .etapa-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2);
+      margin-top: var(--space-3);
+    }
+
+    .etapa-card {
+      padding: var(--space-3);
+      border: 1.5px solid var(--neutral-200);
+      border-radius: var(--radius);
+      background: white;
+      cursor: pointer;
+      text-align: center;
+      transition: all var(--transition);
+    }
+
+    .etapa-card:hover { border-color: var(--primary-light); }
+    .etapa-card.active {
+      border-color: var(--primary);
+      background: var(--primary-50);
+    }
+
+    .etapa-card strong {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--neutral-900);
+      margin-bottom: 2px;
+    }
+
+    .etapa-card small {
+      font-size: 0.6875rem;
+      color: var(--neutral-500);
+    }
+
+    .etapa-card.active strong { color: var(--primary); }
+
+    /* ============================================
+       REQUERIMIENTOS DISPLAY
+       ============================================ */
+    .req-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2);
+      padding: var(--space-3);
+      background: var(--neutral-50);
+      border-radius: var(--radius);
+      border: 1px dashed var(--neutral-200);
+    }
+
+    .req-item {
+      display: flex; justify-content: space-between;
+      font-size: 0.75rem;
+      padding: 4px 0;
+    }
+
+    .req-item span {
+      color: var(--neutral-600);
+      font-weight: 500;
+    }
+
+    .req-item strong {
+      font-family: var(--font-mono);
+      color: var(--neutral-900);
+      font-weight: 700;
+    }
+
+    /* ============================================
+       INGREDIENTES TABLE
+       ============================================ */
+    .ing-table {
       width: 100%;
       border-collapse: collapse;
     }
 
-    .ingredients-table th {
+    .ing-table th {
       background: var(--neutral-50);
       padding: 0.625rem 0.875rem;
       text-align: left;
-      font-size: 0.75rem;
+      font-size: 0.6875rem;
       font-weight: 700;
       color: var(--neutral-600);
       letter-spacing: 0.04em;
       text-transform: uppercase;
       border-bottom: 1px solid var(--neutral-200);
-      position: sticky;
-      top: 0;
-      z-index: 1;
+      position: sticky; top: 0; z-index: 1;
+      background: var(--neutral-50);
     }
 
-    .ingredients-table th.num,
-    .ingredients-table td.num {
+    .ing-table th.num,
+    .ing-table td.num {
       text-align: right;
       font-family: var(--font-mono);
       font-size: 0.8125rem;
     }
 
-    .ingredients-table td {
+    .ing-table td {
       padding: 0.5rem 0.875rem;
       border-bottom: 1px solid var(--neutral-100);
       font-size: 0.875rem;
       color: var(--neutral-800);
     }
 
-    .ingredients-table tr:last-child td { border-bottom: none; }
+    .ing-table tr:last-child td { border-bottom: none; }
+    .ing-table tr.disabled td { opacity: 0.45; }
+    .ing-table tr:hover:not(.disabled) td { background: var(--neutral-50); }
 
-    .ingredients-table tr.disabled td {
-      opacity: 0.4;
+    .ing-table .ing-cat-pill {
+      display: inline-block;
+      font-size: 0.625rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-left: 4px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      vertical-align: middle;
     }
 
-    .ingredients-table .ing-name {
-      display: flex; align-items: center; gap: var(--space-2);
-      font-weight: 600;
-    }
+    .pill-cereal { background: #FEF3C7; color: #92400E; }
+    .pill-proteina { background: #D1FAE5; color: #065F46; }
+    .pill-mineral { background: #E0E7FF; color: #3730A3; }
+    .pill-aa { background: #FCE7F3; color: #9F1239; }
+    .pill-energetico { background: #FED7AA; color: #9A3412; }
+    .pill-aditivo { background: #DDD6FE; color: #5B21B6; }
+    .pill-subproducto { background: #F3F4F6; color: #374151; }
 
     .ing-checkbox {
       width: 18px; height: 18px;
@@ -142,12 +300,8 @@
       box-shadow: 0 0 0 3px rgba(46,107,168,0.1);
     }
 
-    .table-scroll {
-      max-height: 600px;
-      overflow-y: auto;
-    }
+    .table-scroll { max-height: 600px; overflow-y: auto; }
 
-    /* Search */
     .search-wrapper {
       position: relative;
       padding: var(--space-3) var(--space-5);
@@ -163,6 +317,8 @@
       font-size: 0.875rem;
     }
 
+    .search-input:focus { outline: none; border-color: var(--primary-light); box-shadow: var(--shadow-focus); }
+
     .search-icon {
       position: absolute;
       left: calc(var(--space-5) + 0.625rem);
@@ -171,7 +327,83 @@
       color: var(--neutral-400);
     }
 
-    /* Results card */
+    /* ============================================
+       SUGERENCIAS DEL EXPERTO
+       ============================================ */
+    .expert-card {
+      background: linear-gradient(135deg, #1B4D7C 0%, #0F3457 100%);
+      color: white;
+      border: none;
+    }
+
+    .expert-card .fm-card-header {
+      background: transparent;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .expert-card .fm-card-header h3 {
+      color: white;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .expert-card .fm-card-header p {
+      color: rgba(255,255,255,0.7);
+    }
+
+    .tip-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .tip-list li {
+      display: flex;
+      gap: var(--space-3);
+      padding: var(--space-3) 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.875rem;
+      line-height: 1.5;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .tip-list li:last-child { border-bottom: none; }
+
+    .tip-icon {
+      font-size: 1.125rem;
+      flex-shrink: 0;
+      line-height: 1.3;
+    }
+
+    /* Sugerencias dinámicas */
+    .sug-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .sug-item {
+      display: flex;
+      gap: var(--space-2);
+      padding: var(--space-3);
+      border-radius: var(--radius);
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      border-left: 3px solid;
+    }
+
+    .sug-icon {
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .sug-info { background: #EFF6FF; color: #1E40AF; border-color: #3B82F6; }
+    .sug-warning { background: #FEF3C7; color: #92400E; border-color: #F59E0B; }
+    .sug-danger { background: #FEE2E2; color: #991B1B; border-color: #EF4444; }
+    .sug-tip { background: #ECFDF5; color: #065F46; border-color: #10B981; }
+    .sug-success { background: #D1FAE5; color: #065F46; border-color: #10B981; }
+
+    /* ============================================
+       RESULTADO
+       ============================================ */
     .result-summary {
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
       color: white;
@@ -179,6 +411,17 @@
       text-align: center;
       border-radius: var(--radius-lg);
       margin-bottom: var(--space-5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .result-summary::before {
+      content: "";
+      position: absolute;
+      top: -50px; right: -50px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(245,158,11,0.2) 0%, transparent 70%);
+      border-radius: 50%;
     }
 
     .result-summary-label {
@@ -188,6 +431,7 @@
       text-transform: uppercase;
       color: rgba(255,255,255,0.7);
       margin-bottom: var(--space-2);
+      position: relative;
     }
 
     .result-summary-value {
@@ -196,12 +440,14 @@
       font-weight: 800;
       letter-spacing: -0.03em;
       line-height: 1;
+      position: relative;
     }
 
     .result-summary-sub {
       font-size: 0.875rem;
       color: rgba(255,255,255,0.8);
       margin-top: var(--space-2);
+      position: relative;
     }
 
     .result-row {
@@ -212,7 +458,6 @@
     }
 
     .result-row:last-child { border-bottom: none; }
-
     .result-row strong {
       font-family: var(--font-mono);
       font-weight: 600;
@@ -221,6 +466,7 @@
 
     .result-row.met strong { color: var(--success); }
     .result-row.unmet strong { color: var(--danger); }
+    .result-row.partial strong { color: var(--warning); }
 
     .result-empty {
       padding: var(--space-8) var(--space-5);
@@ -238,59 +484,28 @@
     }
 
     /* Sticky CTA */
-    .formulador-sticky-cta {
+    .optimize-cta {
       position: sticky;
       bottom: var(--space-4);
       margin-top: var(--space-4);
       z-index: 10;
     }
 
-    /* Etapa selector */
-    .etapa-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-2);
-      margin-top: var(--space-3);
-    }
-
-    .etapa-card {
-      padding: var(--space-3);
-      border: 1.5px solid var(--neutral-200);
-      border-radius: var(--radius);
-      background: white;
-      cursor: pointer;
-      text-align: center;
-      transition: all var(--transition);
-    }
-
-    .etapa-card:hover { border-color: var(--primary-light); }
-
-    .etapa-card.active {
-      border-color: var(--primary);
-      background: var(--primary-50);
-    }
-
-    .etapa-card strong {
-      display: block;
-      font-size: 0.8125rem;
+    .section-title {
+      font-size: 0.75rem;
       font-weight: 700;
-      color: var(--neutral-900);
-      margin-bottom: 2px;
-    }
-
-    .etapa-card small {
-      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
       color: var(--neutral-500);
+      margin-bottom: var(--space-3);
+      display: flex; align-items: center; gap: var(--space-2);
     }
-
-    .etapa-card.active strong { color: var(--primary); }
   </style>
 </head>
 <body>
 
   <div class="app-shell">
 
-    <!-- SIDEBAR -->
     <aside class="app-sidebar">
       <a href="index.html" class="brand">
         <span class="brand-mark">
@@ -304,32 +519,19 @@
       </a>
 
       <ul class="sidebar-nav">
-        <li><a href="panel.html">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          Panel
-        </a></li>
-        <li><a href="formulador.html" class="active">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-          Formulador
-        </a></li>
-        <li><a href="ingredientes.html">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-          Ingredientes
-        </a></li>
-        <li><a href="historial.html">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          Historial
-        </a></li>
+        <li><a href="panel.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Panel</a></li>
+        <li><a href="formulador.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>Formulador</a></li>
+        <li><a href="ingredientes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Ingredientes</a></li>
+        <li><a href="historial.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Historial</a></li>
       </ul>
     </aside>
 
-    <!-- MAIN -->
     <div class="app-main">
 
       <div class="app-topbar">
         <div>
           <h2 style="font-size:1.25rem;font-weight:700;">Nuevo formulado</h2>
-          <div style="font-size:0.875rem;color:var(--neutral-500);">Programación lineal de mínimo costo</div>
+          <div style="font-size:0.875rem;color:var(--neutral-500);" id="topbarSubtitle">Configura tipo, raza y etapa</div>
         </div>
         <div style="display:flex;gap:var(--space-3);">
           <button class="btn btn-ghost btn-sm" id="btnSave">
@@ -347,45 +549,39 @@
 
         <div class="formulador-layout">
 
-          <!-- COLUMNA 1: SETUP -->
-          <div class="formulador-card">
-            <div class="formulador-card-header">
-              <h3>Configuración del lote</h3>
-              <p>Define cliente, etapa y volumen</p>
+          <!-- ============================================
+               COLUMNA 1: SETUP
+               ============================================ -->
+          <div class="fm-card">
+            <div class="fm-card-header">
+              <h3>1. Configuración del lote</h3>
+              <p>Define tipo, raza, etapa y volumen</p>
             </div>
-            <div class="formulador-card-body">
+            <div class="fm-card-body">
 
               <div class="setup-step">
-                <label class="form-label"><span class="setup-step-num">1</span>Cliente / referencia</label>
+                <div class="step-label"><span class="step-num">1</span> Cliente / referencia</div>
                 <input type="text" class="form-input" id="cliente" placeholder="Granja San Miguel — lote 8">
               </div>
 
               <div class="setup-step">
-                <label class="form-label"><span class="setup-step-num">2</span>Especie y etapa</label>
-                <select class="form-select" id="especie">
-                  <option value="engorda">Pollo de engorda</option>
-                  <option value="postura">Gallina ponedora</option>
-                  <option value="reproductora">Reproductora pesada</option>
-                </select>
-
-                <div class="etapa-grid" id="etapaGrid">
-                  <!-- Generado dinámicamente -->
-                </div>
+                <div class="step-label"><span class="step-num">2</span> Tipo de producción</div>
+                <div class="tipo-grid" id="tipoGrid"></div>
               </div>
 
               <div class="setup-step">
-                <label class="form-label"><span class="setup-step-num">3</span>Estirpe genética</label>
-                <select class="form-select" id="estirpe">
-                  <option value="cobb500">Cobb 500</option>
-                  <option value="ross308">Ross 308</option>
-                  <option value="hyline-w36">Hy-Line W-36</option>
-                  <option value="hyline-brown">Hy-Line Brown</option>
-                  <option value="generico">Genérico (NRC)</option>
-                </select>
+                <div class="step-label"><span class="step-num">3</span> Raza / línea genética</div>
+                <select class="form-select" id="razaSelect"></select>
+                <div class="raza-info" id="razaInfo"></div>
               </div>
 
               <div class="setup-step">
-                <label class="form-label"><span class="setup-step-num">4</span>Volumen del lote</label>
+                <div class="step-label"><span class="step-num">4</span> Etapa</div>
+                <div class="etapa-grid" id="etapaGrid"></div>
+              </div>
+
+              <div class="setup-step">
+                <div class="step-label"><span class="step-num">5</span> Volumen del lote</div>
                 <div style="display:flex;gap:var(--space-2);">
                   <input type="number" class="form-input" id="volumen" value="1000" min="50">
                   <select class="form-select" id="unidad" style="width:auto;">
@@ -393,18 +589,24 @@
                     <option value="ton" selected>ton</option>
                   </select>
                 </div>
-                <div class="form-hint">El reporte muestra resultados por tonelada y por lote completo.</div>
+              </div>
+
+              <div class="setup-step" style="border-bottom:none;padding-bottom:0;">
+                <div class="step-label">📋 Requerimientos NRC de la etapa</div>
+                <div class="req-grid" id="reqGrid"></div>
               </div>
 
             </div>
           </div>
 
-          <!-- COLUMNA 2: INGREDIENTES -->
-          <div class="formulador-card">
-            <div class="formulador-card-header" style="display:flex;justify-content:space-between;align-items:center;">
+          <!-- ============================================
+               COLUMNA 2: INGREDIENTES
+               ============================================ -->
+          <div class="fm-card">
+            <div class="fm-card-header" style="display:flex;justify-content:space-between;align-items:center;">
               <div>
-                <h3>Ingredientes disponibles</h3>
-                <p>Activa los que tienes en bodega y ajusta precios</p>
+                <h3>2. Ingredientes disponibles</h3>
+                <p>Activa los que tienes en bodega · Ajusta precios actuales</p>
               </div>
               <span class="badge badge-primary" id="ingActiveCount">0 activos</span>
             </div>
@@ -415,7 +617,7 @@
             </div>
 
             <div class="table-scroll">
-              <table class="ingredients-table">
+              <table class="ing-table">
                 <thead>
                   <tr>
                     <th style="width:32px;"></th>
@@ -427,54 +629,77 @@
                     <th class="num">Máx %</th>
                   </tr>
                 </thead>
-                <tbody id="ingTbody">
-                  <!-- Generado dinámicamente -->
-                </tbody>
+                <tbody id="ingTbody"></tbody>
               </table>
             </div>
           </div>
 
-          <!-- COLUMNA 3: RESULTADOS -->
-          <div class="formulador-card">
-            <div class="formulador-card-header">
-              <h3>Resultado óptimo</h3>
-              <p>Mínimo costo cumpliendo requerimientos</p>
-            </div>
-            <div class="formulador-card-body" id="resultBody">
+          <!-- ============================================
+               COLUMNA 3: SUGERENCIAS + RESULTADO
+               ============================================ -->
+          <div class="col-resultado" style="display:flex;flex-direction:column;gap:var(--space-5);">
 
-              <div class="result-empty" id="resultEmpty">
-                <div class="result-empty-icon">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                  </svg>
-                </div>
-                <p style="font-weight:600;color:var(--neutral-700);margin-bottom:var(--space-2);">Listo para optimizar</p>
-                <p style="font-size:0.875rem;line-height:1.55;">Configura el lote, activa ingredientes y presiona <strong>Optimizar</strong> para calcular la fórmula de mínimo costo.</p>
+            <!-- Sugerencias del experto (siempre visibles) -->
+            <div class="fm-card expert-card">
+              <div class="fm-card-header">
+                <h3>🧠 Sugerencias del experto</h3>
+                <p id="expertSubtitle">Tips contextuales para esta etapa</p>
               </div>
+              <div class="fm-card-body" style="padding-top:var(--space-3);">
+                <ul class="tip-list" id="tipList"></ul>
+              </div>
+            </div>
 
-              <!-- Resultado real (oculto inicialmente) -->
-              <div id="resultOk" class="hidden">
+            <!-- Sugerencias dinámicas (validaciones) -->
+            <div class="fm-card hidden" id="sugCard">
+              <div class="fm-card-header">
+                <h3>⚡ Validaciones en tiempo real</h3>
+                <p>Análisis automático de tu fórmula</p>
+              </div>
+              <div class="fm-card-body">
+                <div class="sug-list" id="sugList"></div>
+              </div>
+            </div>
 
-                <div class="result-summary">
-                  <div class="result-summary-label">Costo por tonelada</div>
-                  <div class="result-summary-value" id="resCost">$0</div>
-                  <div class="result-summary-sub" id="resCostLote">— por lote</div>
+            <!-- Resultado de optimización -->
+            <div class="fm-card">
+              <div class="fm-card-header">
+                <h3>📊 Resultado óptimo</h3>
+                <p>Mínimo costo cumpliendo requerimientos</p>
+              </div>
+              <div class="fm-card-body" id="resultBody">
+
+                <div class="result-empty" id="resultEmpty">
+                  <div class="result-empty-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </svg>
+                  </div>
+                  <p style="font-weight:600;color:var(--neutral-700);margin-bottom:var(--space-2);">Listo para optimizar</p>
+                  <p style="font-size:0.875rem;line-height:1.55;">Activa ingredientes y presiona <strong>Optimizar</strong> para calcular la fórmula de mínimo costo.</p>
                 </div>
 
-                <h4 style="font-size:0.875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--neutral-500);margin-bottom:var(--space-3);">Fórmula</h4>
-                <div id="resFormula"></div>
+                <div id="resultOk" class="hidden">
+                  <div class="result-summary">
+                    <div class="result-summary-label">Costo por tonelada</div>
+                    <div class="result-summary-value" id="resCost">$0</div>
+                    <div class="result-summary-sub" id="resCostLote">— por lote</div>
+                  </div>
 
-                <h4 style="font-size:0.875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--neutral-500);margin:var(--space-5) 0 var(--space-3);">Perfil nutricional</h4>
-                <div id="resPerfil"></div>
+                  <div class="section-title">📦 Fórmula resultante</div>
+                  <div id="resFormula"></div>
 
-                <button class="btn btn-accent btn-block mt-6" id="btnPdf">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                  Descargar PDF
-                </button>
+                  <div class="section-title" style="margin-top:var(--space-5);">🧬 Perfil nutricional vs requerimientos</div>
+                  <div id="resPerfil"></div>
 
+                  <button class="btn btn-accent btn-block mt-6" id="btnPdf">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    Descargar PDF
+                  </button>
+                </div>
               </div>
-
             </div>
+
           </div>
 
         </div>
@@ -484,123 +709,234 @@
   </div>
 
   <script src="assets/firebase-config.js"></script>
+  <script src="assets/avicola-data.js"></script>
   <script type="module">
     import "./assets/shared.js";
-
     await window.fmAuthGuard({ requireAuth: true });
 
-    // ============================================
-    // DATOS BASE (placeholder — en v2 vienen de Firestore)
-    // ============================================
+    const A = window.FM_AVICOLA;
 
-    const ETAPAS = {
-      engorda: [
-        { id: "iniciador", label: "Iniciador", sub: "0–10 días" },
-        { id: "crecimiento", label: "Crecimiento", sub: "11–24 días" },
-        { id: "finalizador", label: "Finalizador", sub: "25–42 días" },
-        { id: "retiro", label: "Retiro", sub: "43+ días" }
-      ],
-      postura: [
-        { id: "prepostura", label: "Prepostura", sub: "16–18 sem" },
-        { id: "fase1", label: "Fase 1", sub: "18–45 sem" },
-        { id: "fase2", label: "Fase 2", sub: "46–65 sem" },
-        { id: "fase3", label: "Fase 3", sub: "66+ sem" }
-      ],
-      reproductora: [
-        { id: "ini-rep", label: "Iniciador", sub: "0–6 sem" },
-        { id: "des-rep", label: "Desarrollo", sub: "7–22 sem" },
-        { id: "pre-rep", label: "Prepostura", sub: "23–25 sem" },
-        { id: "post-rep", label: "Postura", sub: "26+ sem" }
-      ]
-    };
-
-    // 12 ingredientes representativos para MVP visual
-    // (la biblioteca completa de 40+ se carga desde Firestore en v2)
+    // ============================================
+    // INGREDIENTES (catálogo más amplio)
+    // ============================================
     const INGREDIENTES = [
-      { id: "maiz",     name: "Maíz amarillo",       em: 3350, pc: 8.5,  precio: 6.50,  min: 30, max: 65 },
-      { id: "sorgo",    name: "Sorgo",               em: 3280, pc: 9.0,  precio: 6.20,  min: 0,  max: 40 },
-      { id: "soya48",   name: "Pasta de soya 48%",   em: 2440, pc: 47.5, precio: 14.20, min: 0,  max: 40 },
-      { id: "soya44",   name: "Pasta de soya 44%",   em: 2350, pc: 44.0, precio: 13.50, min: 0,  max: 40 },
-      { id: "harpez",   name: "Harina de pescado",   em: 3000, pc: 60.0, precio: 28.00, min: 0,  max: 5  },
-      { id: "ddgs",     name: "DDGS",                em: 2700, pc: 27.0, precio: 8.80,  min: 0,  max: 8  },
-      { id: "salv",     name: "Salvado de trigo",    em: 1900, pc: 16.0, precio: 4.50,  min: 0,  max: 10 },
-      { id: "aceite",   name: "Aceite de soya",      em: 8800, pc: 0,    precio: 32.00, min: 0,  max: 6  },
-      { id: "carb",     name: "Carbonato de calcio", em: 0,    pc: 0,    precio: 0.90,  min: 0,  max: 10 },
-      { id: "fosf",     name: "Fosfato monocálcico", em: 0,    pc: 0,    precio: 18.50, min: 0,  max: 3  },
-      { id: "sal",      name: "Sal",                 em: 0,    pc: 0,    precio: 1.80,  min: 0,  max: 1  },
-      { id: "metio",    name: "DL-Metionina",        em: 5000, pc: 58.0, precio: 88.00, min: 0,  max: 0.4},
-      { id: "lisina",   name: "L-Lisina HCl",        em: 4200, pc: 78.0, precio: 38.00, min: 0,  max: 0.5},
-      { id: "premix",   name: "Premezcla vit/min",   em: 0,    pc: 0,    precio: 24.00, min: 0.3,max: 0.5}
+      { id: "maiz",     name: "Maíz amarillo",          cat: "cereal",       em: 3350, pc: 8.5,  ca: 0.02, p: 0.08, lys: 0.20, met: 0.18, precio: 6.50, min: 0, max: 65 },
+      { id: "sorgo",    name: "Sorgo",                  cat: "cereal",       em: 3280, pc: 9.0,  ca: 0.03, p: 0.09, lys: 0.18, met: 0.16, precio: 6.20, min: 0, max: 40 },
+      { id: "trigo",    name: "Trigo grano",            cat: "cereal",       em: 3120, pc: 12.5, ca: 0.05, p: 0.13, lys: 0.30, met: 0.20, precio: 7.80, min: 0, max: 30 },
+      { id: "cebada",   name: "Cebada",                 cat: "cereal",       em: 2700, pc: 11.0, ca: 0.05, p: 0.15, lys: 0.39, met: 0.18, precio: 6.00, min: 0, max: 15 },
+      { id: "soya48",   name: "Pasta soya 48%",         cat: "proteina",     em: 2440, pc: 47.5, ca: 0.32, p: 0.32, lys: 2.85, met: 0.65, precio: 14.20, min: 0, max: 40 },
+      { id: "soya44",   name: "Pasta soya 44%",         cat: "proteina",     em: 2350, pc: 44.0, ca: 0.29, p: 0.30, lys: 2.62, met: 0.60, precio: 13.50, min: 0, max: 40 },
+      { id: "harpez",   name: "Harina de pescado",      cat: "proteina",     em: 3000, pc: 60.0, ca: 4.50, p: 2.80, lys: 4.80, met: 1.65, precio: 28.00, min: 0, max: 5  },
+      { id: "harcarn",  name: "Harina carne y hueso",   cat: "proteina",     em: 2700, pc: 50.0, ca: 9.20, p: 4.50, lys: 2.60, met: 0.70, precio: 16.00, min: 0, max: 5  },
+      { id: "canola",   name: "Pasta de canola",        cat: "proteina",     em: 1900, pc: 36.0, ca: 0.62, p: 0.50, lys: 2.05, met: 0.70, precio: 11.00, min: 0, max: 8  },
+      { id: "ddgs",     name: "DDGS",                   cat: "subproducto",  em: 2700, pc: 27.0, ca: 0.10, p: 0.40, lys: 0.78, met: 0.50, precio: 8.80, min: 0, max: 8 },
+      { id: "salv",     name: "Salvado de trigo",       cat: "subproducto",  em: 1900, pc: 16.0, ca: 0.13, p: 0.32, lys: 0.55, met: 0.20, precio: 4.50, min: 0, max: 10 },
+      { id: "alfa",     name: "Harina de alfalfa",      cat: "subproducto",  em: 1500, pc: 17.0, ca: 1.40, p: 0.20, lys: 0.85, met: 0.25, precio: 5.50, min: 0, max: 5 },
+      { id: "aceite",   name: "Aceite de soya",         cat: "energetico",   em: 8800, pc: 0,    ca: 0,    p: 0,    lys: 0,    met: 0,    precio: 32.00, min: 0, max: 6  },
+      { id: "sebo",     name: "Sebo bovino",            cat: "energetico",   em: 7700, pc: 0,    ca: 0,    p: 0,    lys: 0,    met: 0,    precio: 22.00, min: 0, max: 4 },
+      { id: "carb",     name: "Carbonato de calcio",    cat: "mineral",      em: 0,    pc: 0,    ca: 38.0, p: 0,    lys: 0,    met: 0,    precio: 0.90, min: 0, max: 12 },
+      { id: "fosf",     name: "Fosfato monocálcico",    cat: "mineral",      em: 0,    pc: 0,    ca: 16.0, p: 21.0, lys: 0,    met: 0,    precio: 18.50, min: 0, max: 3  },
+      { id: "fosbi",    name: "Fosfato bicálcico",      cat: "mineral",      em: 0,    pc: 0,    ca: 22.0, p: 18.5, lys: 0,    met: 0,    precio: 17.00, min: 0, max: 3 },
+      { id: "sal",      name: "Sal común",              cat: "mineral",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    met: 0,    precio: 1.80, min: 0, max: 0.5},
+      { id: "metio",    name: "DL-Metionina",           cat: "aa",           em: 5000, pc: 58.0, ca: 0,    p: 0,    lys: 0,    met: 99.0, precio: 88.00, min: 0, max: 0.4},
+      { id: "lisina",   name: "L-Lisina HCl",           cat: "aa",           em: 4200, pc: 78.0, ca: 0,    p: 0,    lys: 78.4, met: 0,    precio: 38.00, min: 0, max: 0.5},
+      { id: "treo",     name: "L-Treonina",             cat: "aa",           em: 3700, pc: 73.0, ca: 0,    p: 0,    lys: 0,    met: 0,    precio: 62.00, min: 0, max: 0.3},
+      { id: "premix",   name: "Premezcla vit/min",      cat: "aditivo",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    met: 0,    precio: 24.00, min: 0.3, max: 0.5},
+      { id: "fitasa",   name: "Fitasa",                 cat: "aditivo",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    met: 0,    precio: 180.00, min: 0, max: 0.05},
+      { id: "colina",   name: "Cloruro de colina 60%",  cat: "aditivo",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    met: 0,    precio: 28.00, min: 0, max: 0.2},
+      { id: "coccid",   name: "Coccidiostato",          cat: "aditivo",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    met: 0,    precio: 75.00, min: 0, max: 0.1}
     ];
 
     // ============================================
     // STATE
     // ============================================
-
     let state = {
-      especie: "engorda",
-      etapa: "iniciador",
-      ingredientes: INGREDIENTES.map(i => ({ ...i, active: ["maiz","soya48","aceite","carb","fosf","sal","metio","premix"].includes(i.id) }))
+      tipo: "engorda",
+      razaId: "ross308",
+      etapaId: "preiniciador",
+      ingredientes: INGREDIENTES.map(i => ({ ...i, active: ["maiz","soya48","aceite","carb","fosf","sal","metio","lisina","premix"].includes(i.id) })),
+      formula: null
     };
 
     // ============================================
-    // RENDER ETAPAS
+    // RENDER: TIPOS
     // ============================================
-
-    function renderEtapas() {
-      const grid = document.getElementById("etapaGrid");
-      const etapas = ETAPAS[state.especie];
-      grid.innerHTML = etapas.map(e => `
-        <div class="etapa-card ${e.id === state.etapa ? 'active' : ''}" data-etapa="${e.id}">
-          <strong>${e.label}</strong>
-          <small>${e.sub}</small>
+    function renderTipos() {
+      const grid = document.getElementById("tipoGrid");
+      grid.innerHTML = Object.entries(A.TIPOS).map(([id, t]) => `
+        <div class="tipo-card ${id === state.tipo ? 'active' : ''}" data-tipo="${id}">
+          <span class="tipo-card-icon">${t.icon}</span>
+          <strong>${t.nombre}</strong>
         </div>
       `).join("");
-
-      grid.querySelectorAll(".etapa-card").forEach(el => {
+      grid.querySelectorAll(".tipo-card").forEach(el => {
         el.addEventListener("click", () => {
-          state.etapa = el.dataset.etapa;
+          state.tipo = el.dataset.tipo;
+          // Auto-seleccionar primera raza del tipo
+          const razas = A.getRazasPorTipo(state.tipo);
+          if (razas.length > 0) {
+            state.razaId = razas[0].id;
+            const etapas = A.getEtapas(state.razaId);
+            state.etapaId = etapas[0]?.id;
+          }
+          renderTipos();
+          renderRazas();
           renderEtapas();
+          renderRequerimientos();
+          renderTips();
+          actualizarValidaciones();
         });
       });
     }
 
-    document.getElementById("especie").addEventListener("change", (e) => {
-      state.especie = e.target.value;
-      state.etapa = ETAPAS[state.especie][0].id;
-      renderEtapas();
-    });
+    // ============================================
+    // RENDER: RAZAS
+    // ============================================
+    function renderRazas() {
+      const select = document.getElementById("razaSelect");
+      const razas = A.getRazasPorTipo(state.tipo);
+      select.innerHTML = razas.map(r =>
+        `<option value="${r.id}" ${r.id === state.razaId ? 'selected' : ''}>${r.nombre}</option>`
+      ).join("");
 
-    renderEtapas();
+      select.onchange = () => {
+        state.razaId = select.value;
+        const etapas = A.getEtapas(state.razaId);
+        state.etapaId = etapas[0]?.id;
+        renderRazaInfo();
+        renderEtapas();
+        renderRequerimientos();
+        renderTips();
+        actualizarValidaciones();
+      };
+
+      renderRazaInfo();
+    }
+
+    function renderRazaInfo() {
+      const raza = A.getRaza(state.razaId);
+      if (!raza) return;
+      document.getElementById("razaInfo").innerHTML = `
+        <strong>${raza.nombre}</strong>
+        <div style="color:var(--neutral-700);">${raza.descripcion}</div>
+        <div class="raza-info-meta">
+          <span>🏢 ${raza.pais}</span>
+          <span>🎯 ${raza.mercado}</span>
+        </div>
+      `;
+    }
 
     // ============================================
-    // RENDER INGREDIENTES
+    // RENDER: ETAPAS
     // ============================================
+    function renderEtapas() {
+      const grid = document.getElementById("etapaGrid");
+      const etapas = A.getEtapas(state.razaId);
+      grid.innerHTML = etapas.map(e => `
+        <div class="etapa-card ${e.id === state.etapaId ? 'active' : ''}" data-etapa="${e.id}">
+          <strong>${e.nombre}</strong>
+          <small>${e.rango}</small>
+        </div>
+      `).join("");
+      grid.querySelectorAll(".etapa-card").forEach(el => {
+        el.addEventListener("click", () => {
+          state.etapaId = el.dataset.etapa;
+          renderEtapas();
+          renderRequerimientos();
+          renderTips();
+          actualizarValidaciones();
+          state.formula = null;
+          document.getElementById("resultEmpty").classList.remove("hidden");
+          document.getElementById("resultOk").classList.add("hidden");
+        });
+      });
+    }
 
+    // ============================================
+    // RENDER: REQUERIMIENTOS
+    // ============================================
+    function renderRequerimientos() {
+      const req = A.getRequerimientos(state.razaId, state.etapaId);
+      if (!req) return;
+      const items = [
+        ["EM (kcal/kg)", req.em],
+        ["PC mín %", req.pc?.toFixed(1)],
+        ["Lys dig %", req.lys?.toFixed(2)],
+        ["Met dig %", req.met?.toFixed(2)],
+        ["Met+Cys %", req.metcys?.toFixed(2)],
+        ["Thr dig %", req.thr?.toFixed(2)],
+        ["Ca %", req.ca?.toFixed(2)],
+        ["P disp %", req.p?.toFixed(2)],
+        ["Na %", req.na?.toFixed(2)]
+      ].filter(([_, v]) => v !== undefined);
+
+      document.getElementById("reqGrid").innerHTML = items.map(([k, v]) =>
+        `<div class="req-item"><span>${k}</span><strong>${v}</strong></div>`
+      ).join("");
+
+      // Topbar
+      const raza = A.getRaza(state.razaId);
+      const etapa = A.getEtapa(state.razaId, state.etapaId);
+      document.getElementById("topbarSubtitle").textContent =
+        `${raza.nombre} · ${etapa.nombre} (${etapa.rango})`;
+    }
+
+    // ============================================
+    // RENDER: TIPS DEL EXPERTO
+    // ============================================
+    function renderTips() {
+      const tips = A.getTips(state.razaId, state.etapaId);
+      const etapa = A.getEtapa(state.razaId, state.etapaId);
+      const raza = A.getRaza(state.razaId);
+
+      document.getElementById("expertSubtitle").textContent =
+        `${raza.nombre} — ${etapa?.nombre || ""}`;
+
+      const tipsHtml = tips.map(t => `
+        <li>
+          <span class="tip-icon">💡</span>
+          <span>${t}</span>
+        </li>
+      `).join("");
+
+      // Agregar la descripción de la etapa al inicio
+      const introHtml = etapa?.descripcion ? `
+        <li>
+          <span class="tip-icon">📌</span>
+          <span><strong style="color:white;">${etapa.descripcion}</strong></span>
+        </li>
+      ` : "";
+
+      document.getElementById("tipList").innerHTML = introHtml + tipsHtml;
+    }
+
+    // ============================================
+    // RENDER: INGREDIENTES TABLE
+    // ============================================
     function renderIngredientes(filter = "") {
       const tbody = document.getElementById("ingTbody");
       const f = filter.toLowerCase();
-      tbody.innerHTML = state.ingredientes
-        .filter(i => i.name.toLowerCase().includes(f))
-        .map((i, idx) => `
-          <tr class="${i.active ? '' : 'disabled'}" data-id="${i.id}">
-            <td><input type="checkbox" class="ing-checkbox" ${i.active ? 'checked' : ''} data-action="toggle"></td>
-            <td><div class="ing-name">${i.name}</div></td>
-            <td class="num">${i.em || '—'}</td>
-            <td class="num">${i.pc || '—'}</td>
-            <td class="num">
-              <input type="number" step="0.01" class="ing-input" data-action="precio" value="${i.precio}">
-            </td>
-            <td class="num">
-              <input type="number" step="0.1" class="ing-input" data-action="min" value="${i.min}">
-            </td>
-            <td class="num">
-              <input type="number" step="0.1" class="ing-input" data-action="max" value="${i.max}">
-            </td>
-          </tr>
-        `).join("");
+      const list = state.ingredientes.filter(i =>
+        i.name.toLowerCase().includes(f) || i.cat.toLowerCase().includes(f)
+      );
 
-      // Eventos
+      tbody.innerHTML = list.map(i => `
+        <tr class="${i.active ? '' : 'disabled'}" data-id="${i.id}">
+          <td><input type="checkbox" class="ing-checkbox" ${i.active ? 'checked' : ''} data-action="toggle"></td>
+          <td>
+            <div style="font-weight:600;color:var(--neutral-900);">
+              ${i.name}
+              <span class="ing-cat-pill pill-${i.cat}">${i.cat}</span>
+            </div>
+          </td>
+          <td class="num">${i.em || '—'}</td>
+          <td class="num">${i.pc.toFixed(1)}</td>
+          <td class="num"><input type="number" step="0.01" class="ing-input" data-action="precio" value="${i.precio}"></td>
+          <td class="num"><input type="number" step="0.1" class="ing-input" data-action="min" value="${i.min}"></td>
+          <td class="num"><input type="number" step="0.1" class="ing-input" data-action="max" value="${i.max}"></td>
+        </tr>
+      `).join("");
+
       tbody.querySelectorAll("tr").forEach(tr => {
         const id = tr.dataset.id;
         const ing = state.ingredientes.find(i => i.id === id);
@@ -609,6 +945,7 @@
           ing.active = e.target.checked;
           renderIngredientes(document.getElementById("searchIng").value);
           updateActiveCount();
+          actualizarValidaciones();
         });
 
         ["precio", "min", "max"].forEach(field => {
@@ -630,89 +967,246 @@
       renderIngredientes(e.target.value);
     });
 
-    renderIngredientes();
-
     // ============================================
-    // OPTIMIZAR (placeholder — glpk.js viene en próximo drop)
+    // VALIDACIONES INTELIGENTES
     // ============================================
-
-    document.getElementById("btnOptimize").addEventListener("click", async () => {
+    function actualizarValidaciones() {
       const activos = state.ingredientes.filter(i => i.active);
-      if (activos.length < 4) {
-        window.fmToast("Activa al menos 4 ingredientes para optimizar", "warning");
+      const sugerencias = A.generarSugerencias(state.razaId, state.etapaId, activos, state.formula);
+
+      const sugCard = document.getElementById("sugCard");
+      const sugList = document.getElementById("sugList");
+
+      if (sugerencias.length === 0) {
+        sugCard.classList.add("hidden");
         return;
       }
 
-      // TODO v2: integrar glpk.js para programación lineal real
-      // Por ahora mostramos un resultado mock representativo
-      window.fmToast("Optimizando fórmula...", "info");
+      sugCard.classList.remove("hidden");
+      sugList.innerHTML = sugerencias.map(s => `
+        <div class="sug-item sug-${s.tipo}">
+          <span class="sug-icon">${s.icon}</span>
+          <span>${s.msg}</span>
+        </div>
+      `).join("");
+    }
 
-      await new Promise(r => setTimeout(r, 1200));
+    // ============================================
+    // OPTIMIZADOR (mock pragmático que respeta restricciones)
+    // ============================================
+    function optimizar() {
+      const activos = state.ingredientes.filter(i => i.active);
+      if (activos.length < 4) {
+        window.fmToast("Activa al menos 4 ingredientes para optimizar", "warning");
+        return null;
+      }
 
-      // Mock: distribución plausible para iniciador
-      const formula = [
-        { id: "maiz",   name: "Maíz amarillo",       pct: 58.4 },
-        { id: "soya48", name: "Pasta de soya 48%",   pct: 32.1 },
-        { id: "aceite", name: "Aceite de soya",      pct: 4.8  },
-        { id: "carb",   name: "Carbonato de calcio", pct: 1.2  },
-        { id: "fosf",   name: "Fosfato monocálcico", pct: 1.6  },
-        { id: "sal",    name: "Sal",                 pct: 0.4  },
-        { id: "metio",  name: "DL-Metionina",        pct: 0.28 },
-        { id: "premix", name: "Premezcla vit/min",   pct: 0.4  }
-      ];
+      const req = A.getRequerimientos(state.razaId, state.etapaId);
+      if (!req) return null;
 
-      // Calcular costo
-      let costoTon = 0;
-      let perfilEM = 0, perfilPC = 0;
-      formula.forEach(f => {
-        const ing = state.ingredientes.find(i => i.id === f.id);
-        if (ing) {
-          costoTon += (f.pct / 100) * 1000 * ing.precio; // kg en ton × precio/kg
-          perfilEM += (f.pct / 100) * ing.em;
-          perfilPC += (f.pct / 100) * ing.pc;
-        }
+      // Algoritmo greedy aproximado (mientras integramos glpk.js real):
+      // 1. Empieza con maíz/sorgo (cereal base) ~55-65%
+      // 2. Pasta de soya para alcanzar PC objetivo
+      // 3. Aceite para alcanzar EM objetivo
+      // 4. Minerales para Ca y P
+      // 5. AA sintéticos para Lys y Met digestibles
+      // 6. Premezcla y aditivos al final
+      // 7. Resto se rellena con cereal hasta 100%
+
+      const formula = [];
+      let restante = 100;
+
+      // Ingredientes obligatorios (mín)
+      activos.filter(i => i.min > 0).forEach(ing => {
+        const pct = Math.min(ing.min, restante);
+        formula.push({ id: ing.id, name: ing.name, pct, ing });
+        restante -= pct;
       });
+
+      // Cereal base (más barato)
+      const cereales = activos.filter(i => i.cat === "cereal").sort((a,b) => a.precio - b.precio);
+      if (cereales.length > 0) {
+        const cereal = cereales[0];
+        const cerealPct = Math.min(cereal.max, 60);
+        const existing = formula.find(f => f.id === cereal.id);
+        if (existing) existing.pct = Math.max(existing.pct, cerealPct);
+        else { formula.push({ id: cereal.id, name: cereal.name, pct: cerealPct, ing: cereal }); }
+        restante = 100 - formula.reduce((s, f) => s + f.pct, 0);
+      }
+
+      // Pasta soya — cuanto necesitamos para alcanzar PC
+      const soya = activos.find(i => i.id === "soya48") || activos.find(i => i.id === "soya44") || activos.find(i => i.cat === "proteina");
+      if (soya && req.pc) {
+        // Estimación rápida: si maíz aporta ~5% PC y soya 47%, necesitamos ~30% para PC=21%
+        const cerealActual = formula.find(f => f.id === cereales[0]?.id);
+        const aportePC = (cerealActual?.pct || 60) * 0.085;
+        const pcFaltante = req.pc - aportePC;
+        const soyaPct = Math.min(Math.max(pcFaltante / soya.pc * 100 * 1.05, 18), soya.max, restante - 8);
+        if (soyaPct > 0) {
+          formula.push({ id: soya.id, name: soya.name, pct: soyaPct, ing: soya });
+          restante -= soyaPct;
+        }
+      }
+
+      // Aceite — para alcanzar EM
+      const aceite = activos.find(i => i.id === "aceite") || activos.find(i => i.cat === "energetico");
+      if (aceite && req.em > 3000) {
+        const aceitePct = Math.min(req.em > 3150 ? 4.5 : 3.0, aceite.max, restante - 4);
+        if (aceitePct > 0) {
+          formula.push({ id: aceite.id, name: aceite.name, pct: aceitePct, ing: aceite });
+          restante -= aceitePct;
+        }
+      }
+
+      // Carbonato (Ca)
+      const carb = activos.find(i => i.id === "carb");
+      if (carb && req.ca) {
+        const carbPct = Math.min(req.ca / 38 * 100 * 1.05, carb.max, restante - 2);
+        if (carbPct > 0) {
+          formula.push({ id: carb.id, name: carb.name, pct: carbPct, ing: carb });
+          restante -= carbPct;
+        }
+      }
+
+      // Fosfato (P)
+      const fosf = activos.find(i => i.id === "fosf") || activos.find(i => i.id === "fosbi");
+      if (fosf && req.p) {
+        const fosfPct = Math.min(req.p / 21 * 100 * 1.05, fosf.max, restante - 1);
+        if (fosfPct > 0) {
+          formula.push({ id: fosf.id, name: fosf.name, pct: fosfPct, ing: fosf });
+          restante -= fosfPct;
+        }
+      }
+
+      // Sal
+      const sal = activos.find(i => i.id === "sal");
+      if (sal) {
+        const salPct = Math.min(0.35, sal.max, restante);
+        formula.push({ id: sal.id, name: sal.name, pct: salPct, ing: sal });
+        restante -= salPct;
+      }
+
+      // Aminoácidos sintéticos (más para etapas iniciales)
+      const aaImportancia = state.etapaId.includes("ini") || state.etapaId.includes("preini") ? 1 : 0.7;
+      const metio = activos.find(i => i.id === "metio");
+      if (metio) {
+        const metioPct = Math.min(0.25 * aaImportancia, metio.max, restante);
+        formula.push({ id: metio.id, name: metio.name, pct: metioPct, ing: metio });
+        restante -= metioPct;
+      }
+      const lisina = activos.find(i => i.id === "lisina");
+      if (lisina) {
+        const lisinaPct = Math.min(0.20 * aaImportancia, lisina.max, restante);
+        formula.push({ id: lisina.id, name: lisina.name, pct: lisinaPct, ing: lisina });
+        restante -= lisinaPct;
+      }
+
+      // Premezcla
+      const premix = activos.find(i => i.id === "premix");
+      if (premix && !formula.find(f => f.id === premix.id)) {
+        formula.push({ id: premix.id, name: premix.name, pct: 0.4, ing: premix });
+        restante -= 0.4;
+      }
+
+      // Coccidiostato si es etapa de engorda no-retiro
+      const cocc = activos.find(i => i.id === "coccid");
+      if (cocc && state.etapaId !== "retiro" && state.tipo === "engorda") {
+        formula.push({ id: cocc.id, name: cocc.name, pct: 0.05, ing: cocc });
+        restante -= 0.05;
+      }
+
+      // Rellenar diferencia con cereal base
+      if (restante > 0.1 && cereales.length > 0) {
+        const cerealMain = formula.find(f => f.id === cereales[0].id);
+        if (cerealMain) cerealMain.pct += restante;
+        else formula.push({ id: cereales[0].id, name: cereales[0].name, pct: restante, ing: cereales[0] });
+      }
+
+      // Consolidar duplicados
+      const consolidated = [];
+      formula.forEach(f => {
+        const ex = consolidated.find(c => c.id === f.id);
+        if (ex) ex.pct += f.pct;
+        else consolidated.push({ ...f });
+      });
+
+      // Ordenar por % descendente
+      consolidated.sort((a, b) => b.pct - a.pct);
+
+      // Calcular perfil nutricional resultante
+      let perfil = { em: 0, pc: 0, ca: 0, p: 0, lys: 0, met: 0 };
+      let costoTon = 0;
+      consolidated.forEach(f => {
+        const ing = f.ing;
+        const factor = f.pct / 100;
+        perfil.em += factor * (ing.em || 0);
+        perfil.pc += factor * (ing.pc || 0);
+        perfil.ca += factor * (ing.ca || 0);
+        perfil.p += factor * (ing.p || 0);
+        perfil.lys += factor * (ing.lys || 0);
+        perfil.met += factor * (ing.met || 0);
+        costoTon += factor * 1000 * ing.precio;
+      });
+
+      return { formula: consolidated, perfil, costoTon, requerido: req };
+    }
+
+    document.getElementById("btnOptimize").addEventListener("click", async () => {
+      window.fmToast("Optimizando fórmula...", "info");
+      await new Promise(r => setTimeout(r, 800));
+
+      const result = optimizar();
+      if (!result) return;
+
+      state.formula = result.formula;
 
       const volumen = parseFloat(document.getElementById("volumen").value) || 1;
       const unidad = document.getElementById("unidad").value;
       const tons = unidad === "ton" ? volumen : volumen / 1000;
-      const costoLote = costoTon * tons;
+      const costoLote = result.costoTon * tons;
 
-      // Render resultado
       document.getElementById("resultEmpty").classList.add("hidden");
       document.getElementById("resultOk").classList.remove("hidden");
 
-      document.getElementById("resCost").textContent = window.fmCurrency(costoTon).replace(".00", "");
+      document.getElementById("resCost").textContent = window.fmCurrency(result.costoTon).replace(".00", "");
       document.getElementById("resCostLote").textContent = `${window.fmCurrency(costoLote).replace(".00","")} por ${tons} ton`;
 
-      document.getElementById("resFormula").innerHTML = formula.map(f => `
+      document.getElementById("resFormula").innerHTML = result.formula.map(f => `
         <div class="result-row">
-          <span style="color:var(--neutral-700);">${f.name}</span>
+          <span style="color:var(--neutral-700);">
+            <span class="ing-cat-pill pill-${f.ing.cat}" style="font-size:0.625rem;">${f.ing.cat}</span>
+            ${f.name}
+          </span>
           <strong>${f.pct.toFixed(2)}%</strong>
         </div>
       `).join("");
 
-      document.getElementById("resPerfil").innerHTML = `
-        <div class="result-row met">
-          <span>EM (kcal/kg)</span><strong>${Math.round(perfilEM)} ✓</strong>
-        </div>
-        <div class="result-row met">
-          <span>Proteína Cruda</span><strong>${perfilPC.toFixed(1)}% ✓</strong>
-        </div>
-        <div class="result-row met">
-          <span>Lisina dig.</span><strong>1.28% ✓</strong>
-        </div>
-        <div class="result-row met">
-          <span>Met + Cys</span><strong>0.95% ✓</strong>
-        </div>
-        <div class="result-row met">
-          <span>Calcio</span><strong>0.92% ✓</strong>
-        </div>
-        <div class="result-row met">
-          <span>Fósforo disp.</span><strong>0.46% ✓</strong>
-        </div>
-      `;
+      const req = result.requerido;
+      const perfil = result.perfil;
+      const checks = [
+        { label: "EM (kcal/kg)", actual: Math.round(perfil.em), req: req.em, unit: "" },
+        { label: "Proteína Cruda", actual: perfil.pc.toFixed(1), req: req.pc, unit: "%" },
+        { label: "Lisina total", actual: perfil.lys.toFixed(2), req: req.lys, unit: "%" },
+        { label: "Metionina total", actual: perfil.met.toFixed(2), req: req.met, unit: "%" },
+        { label: "Calcio", actual: perfil.ca.toFixed(2), req: req.ca, unit: "%" },
+        { label: "Fósforo disp.", actual: perfil.p.toFixed(2), req: req.p, unit: "%" }
+      ];
 
+      document.getElementById("resPerfil").innerHTML = checks.map(c => {
+        const actual = parseFloat(c.actual);
+        const reqV = parseFloat(c.req) || 0;
+        let cls = "met", icon = "✓";
+        if (actual < reqV * 0.95) { cls = "unmet"; icon = "✗"; }
+        else if (actual < reqV) { cls = "partial"; icon = "≈"; }
+        return `
+          <div class="result-row ${cls}">
+            <span>${c.label}</span>
+            <strong>${c.actual}${c.unit} ${icon} <span style="font-size:0.7rem;color:var(--neutral-400);">(req ${c.req}${c.unit})</span></strong>
+          </div>
+        `;
+      }).join("");
+
+      actualizarValidaciones();
       window.fmToast("Fórmula optimizada exitosamente", "success");
     });
 
@@ -723,6 +1217,17 @@
     document.getElementById("btnSave").addEventListener("click", () => {
       window.fmToast("Guardado de fórmulas disponible en próxima versión", "info");
     });
+
+    // ============================================
+    // INIT
+    // ============================================
+    renderTipos();
+    renderRazas();
+    renderEtapas();
+    renderRequerimientos();
+    renderTips();
+    renderIngredientes();
+    actualizarValidaciones();
   </script>
 
 </body>
