@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="assets/shared.css?v=8">
+  <link rel="stylesheet" href="assets/shared.css?v=12">
 
   <style>
     .welcome-banner {
@@ -489,9 +489,9 @@
 
   </div>
 
-  <script src="assets/firebase-config.js?v=8"></script>
+  <script src="assets/firebase-config.js?v=12"></script>
   <script type="module">
-    import "./assets/shared.js?v=8";
+    import "./assets/shared.js?v=12";
 
     const user = await window.fmAuthGuard({ requireAuth: true });
 
@@ -598,15 +598,15 @@
     cargarFormulasRecientes();
   </script>
 
-  <script src="assets/guide-system.js?v=10"></script>
-  <script src="assets/species-system.js?v=10"></script>
+  <script src="assets/guide-system.js?v=12"></script>
+  <script src="assets/species-system.js?v=12"></script>
   <script>
-    // Mostrar onboarding la primera vez después del login
+    // Si no ha elegido especie, redirigir a página de elección
     setTimeout(() => {
       if (!window.FM_SPECIES.yaEligio()) {
-        window.FM_SPECIES.mostrarOnboarding();
+        location.href = "elegir-especie.html";
       }
-    }, 500);
+    }, 400);
   </script>
 </body>
 </html>

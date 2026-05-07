@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="assets/shared.css?v=9">
+  <link rel="stylesheet" href="assets/shared.css?v=12">
 
   <style>
     /* ============================================
@@ -1572,7 +1572,7 @@
       <ul class="sidebar-nav">
         <li><a href="panel.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Panel</a></li>
         <li><a href="formulador.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>Formulador</a></li>
-        
+        <li><a href="ingredientes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Ingredientes</a></li>
         <li><a href="nucleos.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>Núcleos</a></li>
         <li><a href="historial.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Historial</a></li>
         <li><a href="recomendaciones.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1M3.34 7l.7.7M20.66 7l-.7.7M21 14h-1M4 14H3M16 17a4 4 0 0 0-8 0v3h8v-3z"/></svg>Recomendaciones</a></li>
@@ -2026,12 +2026,12 @@
     </div>
   </div>
 
-  <script src="assets/firebase-config.js?v=9"></script>
-  <script src="assets/avicola-data.js?v=9"></script>
-  <script src="assets/nucleos-data.js?v=9"></script>
-  <script src="assets/species-system.js?v=11"></script>
+  <script src="assets/firebase-config.js?v=12"></script>
+  <script src="assets/avicola-data.js?v=12"></script>
+  <script src="assets/nucleos-data.js?v=12"></script>
+  <script src="assets/species-system.js?v=12"></script>
   <script type="module">
-    import "./assets/shared.js?v=9";
+    import "./assets/shared.js?v=12";
     await window.fmAuthGuard({ requireAuth: true });
 
     const A = window.FM_AVICOLA;
@@ -3576,36 +3576,38 @@
       if (btnSacosImp) btnSacosImp.addEventListener("click", () => {
         const cliente = document.getElementById("cliente").value || "Sin cliente";
         const tons = obtenerVolumenTon();
+        const tablaHtml = document.getElementById("sacosTable").outerHTML;
+        const fecha = new Date().toLocaleDateString("es-MX");
+
+        const html = '<!DOCTYPE html><html><head><title>Lista de sacos - ' + cliente + '</title>' +
+          '<style>' +
+          'body { font-family: -apple-system, sans-serif; padding: 24px; color: #0F172A; }' +
+          'h1 { color: #3F4F2E; margin-bottom: 4px; }' +
+          '.meta { color: #5A6E45; font-size: 0.875rem; margin-bottom: 24px; }' +
+          'table { width: 100%; border-collapse: collapse; }' +
+          'th, td { padding: 10px; text-align: left; border-bottom: 1px solid #E5EAD8; }' +
+          'th { background: #F4F6F0; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }' +
+          'td.right, th.right { text-align: right; font-family: monospace; }' +
+          'tr.total td { background: #E5EAD8; font-weight: bold; border-top: 2px solid #3F4F2E; }' +
+          '.firma { margin-top: 60px; border-top: 1px solid #ccc; padding-top: 8px; width: 280px; font-size: 0.875rem; color: #5A6E45; }' +
+          '</style></head><body>' +
+          '<h1>📦 Lista de sacos a comprar</h1>' +
+          '<div class="meta"><strong>Cliente:</strong> ' + cliente + ' · <strong>Volumen:</strong> ' + tons + ' ton · <strong>Fecha:</strong> ' + fecha + '</div>' +
+          tablaHtml +
+          '<div class="firma">Firma de quien compra</div>' +
+          '</body></html>';
+
         const printWin = window.open("", "_blank");
-        printWin.document.write(`
-          <!DOCTYPE html><html><head><title>Lista de sacos - ${cliente}</title>
-          <style>
-            body { font-family: -apple-system, sans-serif; padding: 24px; color: #0F172A; }
-            h1 { color: #1B4D7C; margin-bottom: 4px; }
-            .meta { color: #64748B; font-size: 0.875rem; margin-bottom: 24px; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { padding: 10px; text-align: left; border-bottom: 1px solid #E2E8F0; }
-            th { background: #F1F5F9; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
-            td.right, th.right { text-align: right; font-family: monospace; }
-            tr.total td { background: #DBEAFE; font-weight: bold; border-top: 2px solid #1B4D7C; }
-            .firma { margin-top: 60px; border-top: 1px solid #ccc; padding-top: 8px; width: 280px; font-size: 0.875rem; color: #64748B; }
-          </style></head><body>
-          <h1>📦 Lista de sacos a comprar</h1>
-          <div class="meta"><strong>Cliente:</strong> ${cliente} · <strong>Volumen:</strong> ${tons} ton · <strong>Fecha:</strong> ${new Date().toLocaleDateString("es-MX")}</div>
-          ${document.getElementById("sacosTable").outerHTML}
-          <div class="firma">Firma de quien compra</div>
-          </body></html>
-        `);
+        printWin.document.write(html);
         printWin.document.close();
         setTimeout(() => printWin.print(), 300);
       });
 
       // ============================================
-      // FEATURE D: RECETA OPERADOR
+      // FEATURE D: RECETA OPERADOR — generación
       // ============================================
       function generarReceta() {
         if (!window.state || !window.state.formula || window.state.formula.length === 0) return false;
-
         const tons = obtenerVolumenTon();
         const totalKg = tons * 1000;
         const ordenadas = [...window.state.formula].sort((a, b) => b.pct - a.pct);
@@ -3613,24 +3615,22 @@
         const stepsHtml = ordenadas.map((f, i) => {
           const kg = (f.pct / 100) * totalKg;
           const detalleAccion = i === 0
-            ? `<strong>PRIMERO:</strong> Vacía en la mezcladora`
+            ? '<strong>PRIMERO:</strong> Vacía en la mezcladora'
             : i === ordenadas.length - 1
-              ? `<strong>ÚLTIMO:</strong> Agrega como aditivo final`
-              : `Después del paso ${i}`;
+              ? '<strong>ÚLTIMO:</strong> Agrega como aditivo final'
+              : 'Después del paso ' + i;
 
-          return `
-            <div class="receta-step" data-step="${i}">
-              <div class="receta-step-num">${i + 1}</div>
-              <div class="receta-step-content">
-                <div class="receta-step-action">${f.name}</div>
-                <div class="receta-step-detail">${detalleAccion}</div>
-                <div class="receta-step-amount">${fmt(kg)} kg <small style="font-size:0.6875rem;color:var(--neutral-500);">(${f.pct.toFixed(2)}%)</small></div>
-              </div>
-              <button class="receta-step-check" data-step-check="${i}" aria-label="Marcar completado">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              </button>
-            </div>
-          `;
+          return '<div class="receta-step" data-step="' + i + '">' +
+            '<div class="receta-step-num">' + (i + 1) + '</div>' +
+            '<div class="receta-step-content">' +
+              '<div class="receta-step-action">' + f.name + '</div>' +
+              '<div class="receta-step-detail">' + detalleAccion + '</div>' +
+              '<div class="receta-step-amount">' + fmt(kg) + ' kg <small style="font-size:0.6875rem;color:var(--neutral-500);">(' + f.pct.toFixed(2) + '%)</small></div>' +
+            '</div>' +
+            '<button class="receta-step-check" data-step-check="' + i + '" aria-label="Marcar completado">' +
+              '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+            '</button>' +
+          '</div>';
         }).join("");
 
         document.getElementById("recetaSteps").innerHTML = stepsHtml;
@@ -3638,7 +3638,7 @@
 
         const tiempoBase = 6;
         const extra = Math.min(ordenadas.length, 12) * 0.5;
-        document.getElementById("recetaTime").textContent = `${Math.round(tiempoBase + extra)} minutos`;
+        document.getElementById("recetaTime").textContent = Math.round(tiempoBase + extra) + " minutos";
 
         document.querySelectorAll('[data-step-check]').forEach(btn => {
           btn.addEventListener('click', () => {
@@ -3647,7 +3647,6 @@
             actualizarProgresoReceta();
           });
         });
-
         return true;
       }
 
@@ -3661,50 +3660,55 @@
         if (barEl) barEl.style.width = pct + "%";
       }
 
+      // Imprimir receta — usando concatenación para evitar bugs de template
       const btnRecetaImp = document.getElementById("btnRecetaImprimir");
       if (btnRecetaImp) btnRecetaImp.addEventListener("click", () => {
         const cliente = document.getElementById("cliente").value || "Sin cliente";
         const tons = obtenerVolumenTon();
+        const fecha = new Date().toLocaleDateString("es-MX");
+        const tiempo = document.getElementById("recetaTime").textContent;
+
+        let stepsHtml = "";
+        document.querySelectorAll('.receta-step').forEach((s, i) => {
+          const action = s.querySelector('.receta-step-action').textContent;
+          const detail = s.querySelector('.receta-step-detail').textContent;
+          const amount = s.querySelector('.receta-step-amount').textContent;
+          stepsHtml += '<div class="step">' +
+            '<div class="step-num">' + (i + 1) + '</div>' +
+            '<div style="flex:1;">' +
+              '<div class="step-action">' + action + '</div>' +
+              '<div style="color:#5A6E45;font-size:0.875rem;margin-bottom:4px;">' + detail + '</div>' +
+              '<div class="step-amount">' + amount + '</div>' +
+            '</div>' +
+            '<div class="check-box"></div>' +
+          '</div>';
+        });
+
+        const html = '<!DOCTYPE html><html><head><title>Receta - ' + cliente + '</title>' +
+          '<style>' +
+          'body { font-family: -apple-system, sans-serif; padding: 24px; color: #0F172A; }' +
+          'h1 { color: #B87333; margin-bottom: 4px; }' +
+          '.meta { color: #5A6E45; font-size: 0.875rem; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #E5EAD8; }' +
+          '.step { display: flex; gap: 12px; padding: 14px; background: #FAF7F0; border: 1px solid #E5EAD8; border-radius: 8px; margin-bottom: 10px; page-break-inside: avoid; }' +
+          '.step-num { width: 36px; height: 36px; background: #B87333; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }' +
+          '.step-action { font-weight: 700; margin-bottom: 4px; }' +
+          '.step-amount { font-family: monospace; font-size: 1.125rem; font-weight: 800; color: #8B5024; }' +
+          '.check-box { width: 28px; height: 28px; border: 2px solid #D6D3D1; border-radius: 50%; flex-shrink: 0; }' +
+          '.mezcla { background: #3F4F2E; color: white; padding: 16px; border-radius: 8px; text-align: center; margin-top: 24px; }' +
+          '.mezcla strong { display: block; font-size: 2rem; font-weight: 800; color: #D4925A; }' +
+          '</style></head><body>' +
+          '<h1>👨‍🍳 Receta de mezcla</h1>' +
+          '<div class="meta"><strong>Cliente:</strong> ' + cliente + ' · <strong>Volumen:</strong> ' + tons + ' ton · <strong>Fecha:</strong> ' + fecha + '</div>' +
+          stepsHtml +
+          '<div class="mezcla">' +
+            '<div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;opacity:0.85;">Tiempo de mezcla</div>' +
+            '<strong>' + tiempo + '</strong>' +
+            '<div style="font-size:0.875rem;opacity:0.9;">A velocidad media después de agregar todo</div>' +
+          '</div>' +
+          '</body></html>';
+
         const printWin = window.open("", "_blank");
-        printWin.document.write(`
-          <!DOCTYPE html><html><head><title>Receta - ${cliente}</title>
-          <style>
-            body { font-family: -apple-system, sans-serif; padding: 24px; color: #0F172A; }
-            h1 { color: #C2410C; margin-bottom: 4px; }
-            .meta { color: #64748B; font-size: 0.875rem; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #FED7AA; }
-            .step { display: flex; gap: 12px; padding: 14px; background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; margin-bottom: 10px; page-break-inside: avoid; }
-            .step-num { width: 36px; height: 36px; background: #F97316; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
-            .step-action { font-weight: 700; margin-bottom: 4px; }
-            .step-amount { font-family: monospace; font-size: 1.125rem; font-weight: 800; color: #C2410C; }
-            .check-box { width: 28px; height: 28px; border: 2px solid #D6D3D1; border-radius: 50%; flex-shrink: 0; }
-            .mezcla { background: #1B4D7C; color: white; padding: 16px; border-radius: 8px; text-align: center; margin-top: 24px; }
-            .mezcla strong { display: block; font-size: 2rem; font-weight: 800; color: #FCD34D; }
-          </style></head><body>
-          <h1>👨‍🍳 Receta de mezcla</h1>
-          <div class="meta"><strong>Cliente:</strong> ${cliente} · <strong>Volumen:</strong> ${tons} ton · <strong>Fecha:</strong> ${new Date().toLocaleDateString("es-MX")}</div>
-          ${[...document.querySelectorAll('.receta-step')].map((s, i) => {
-            const action = s.querySelector('.receta-step-action').textContent;
-            const detail = s.querySelector('.receta-step-detail').textContent;
-            const amount = s.querySelector('.receta-step-amount').textContent;
-            return `
-              <div class="step">
-                <div class="step-num">${i + 1}</div>
-                <div style="flex:1;">
-                  <div class="step-action">${action}</div>
-                  <div style="color:#64748B;font-size:0.875rem;margin-bottom:4px;">${detail}</div>
-                  <div class="step-amount">${amount}</div>
-                </div>
-                <div class="check-box"></div>
-              </div>
-            `;
-          }).join("")}
-          <div class="mezcla">
-            <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;opacity:0.85;">Tiempo de mezcla</div>
-            <strong>${document.getElementById('recetaTime').textContent}</strong>
-            <div style="font-size:0.875rem;opacity:0.9;">A velocidad media después de agregar todo</div>
-          </div>
-          </body></html>
-        `);
+        printWin.document.write(html);
         printWin.document.close();
         setTimeout(() => printWin.print(), 300);
       });
@@ -3717,7 +3721,6 @@
         const tonsMes = parseFloat(document.getElementById("toneladasMes").value) || 0;
 
         if (!window.state || !window.state.formula || window.state.formula.length === 0) return;
-
         if (precioAlimento === 0 || tonsMes === 0) {
           document.getElementById("compararResult").style.display = "none";
           document.getElementById("compararSavings").style.display = "none";
@@ -3725,7 +3728,6 @@
         }
 
         const costoCompradoTon = precioAlimento * 1000;
-
         let costoFeedmix = 0;
         window.state.formula.forEach(f => {
           costoFeedmix += (f.pct / 100) * 1000 * f.ing.precio;
@@ -3738,29 +3740,23 @@
 
         document.getElementById("costoComprado").textContent = fmtCurr(costoCompradoTon);
         document.getElementById("costoFeedmix").textContent = fmtCurr(costoFeedmix);
-
         document.getElementById("compararA").classList.toggle("winner", costoCompradoTon < costoFeedmix);
         document.getElementById("compararB").classList.toggle("winner", costoFeedmix < costoCompradoTon);
-
         document.getElementById("compararResult").style.display = "grid";
 
         const savings = document.getElementById("compararSavings");
         if (ahorroAnual > 0) {
           savings.classList.remove("negative");
           document.getElementById("ahorroAnual").textContent = fmtCurr(ahorroAnual);
-          document.getElementById("ahorroDetalle").innerHTML = `
-            Ahorras <strong>${fmtCurr(ahorroPorTon)}/ton</strong> (${pctAhorro.toFixed(1)}%).<br>
-            <strong>${fmtCurr(ahorroMes)}/mes</strong> en ${tonsMes} toneladas.
-          `;
+          document.getElementById("ahorroDetalle").innerHTML =
+            'Ahorras <strong>' + fmtCurr(ahorroPorTon) + '/ton</strong> (' + pctAhorro.toFixed(1) + '%).<br>' +
+            '<strong>' + fmtCurr(ahorroMes) + '/mes</strong> en ' + tonsMes + ' toneladas.';
         } else {
           savings.classList.add("negative");
           document.getElementById("ahorroAnual").textContent = fmtCurr(Math.abs(ahorroAnual));
-          document.getElementById("ahorroDetalle").innerHTML = `
-            En este momento te conviene <strong>comprar terminado</strong>.<br>
-            Considera renegociar precios.
-          `;
+          document.getElementById("ahorroDetalle").innerHTML =
+            'En este momento te conviene <strong>comprar terminado</strong>.<br>Considera renegociar precios.';
         }
-
         savings.style.display = "block";
       }
 
@@ -3771,202 +3767,8 @@
     })();
   </script>
 
-</body></html>
-        `);
-        printWin.document.close();
-        setTimeout(() => printWin.print(), 300);
-      });
-
-      // ============================================
-      // FEATURE D: RECETA OPERADOR
-      // ============================================
-      function generarReceta() {
-        if (!window.state || !window.state.formula || window.state.formula.length === 0) {
-          window.fmToast("Primero optimiza una fórmula", "warning");
-          return false;
-        }
-
-        const tons = obtenerVolumenTon();
-        const totalKg = tons * 1000;
-
-        // Ordenar por % descendente (volúmenes grandes primero, aditivos al final)
-        const ordenadas = [...window.state.formula].sort((a, b) => b.pct - a.pct);
-
-        const stepsHtml = ordenadas.map((f, i) => {
-          const kg = (f.pct / 100) * totalKg;
-          const detalleAccion = i === 0
-            ? `<strong>PRIMERO:</strong> Vacía en la mezcladora`
-            : i === ordenadas.length - 1
-              ? `<strong>ÚLTIMO:</strong> Agrega como aditivo final`
-              : `Agrega después del paso ${i}`;
-
-          return `
-            <div class="receta-step" data-step="${i}">
-              <div class="receta-step-num">${i + 1}</div>
-              <div class="receta-step-content">
-                <div class="receta-step-action">${f.name}</div>
-                <div class="receta-step-detail">${detalleAccion}</div>
-                <div class="receta-step-amount">${fmt(kg)} kg <small style="font-size:0.75rem;color:var(--neutral-500);">(${f.pct.toFixed(2)}%)</small></div>
-              </div>
-              <button class="receta-step-check" data-step-check="${i}" aria-label="Marcar completado">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              </button>
-            </div>
-          `;
-        }).join("");
-
-        document.getElementById("recetaSteps").innerHTML = stepsHtml;
-        actualizarProgresoReceta();
-
-        // Tiempo de mezcla recomendado según número de ingredientes
-        const tiempoBase = 6;
-        const extra = Math.min(ordenadas.length, 12) * 0.5;
-        document.getElementById("recetaTime").textContent = `${Math.round(tiempoBase + extra)} minutos`;
-
-        // Eventos de check
-        document.querySelectorAll('[data-step-check]').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const step = btn.closest('.receta-step');
-            step.classList.toggle('completado');
-            actualizarProgresoReceta();
-          });
-        });
-
-        return true;
-      }
-
-      function actualizarProgresoReceta() {
-        const total = document.querySelectorAll('.receta-step').length;
-        const done = document.querySelectorAll('.receta-step.completado').length;
-        const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-        document.getElementById('recetaProgress').textContent = pct + "%";
-        document.getElementById('recetaProgressBar').style.width = pct + "%";
-      }
-
-      document.getElementById("btnReceta").addEventListener("click", () => {
-        if (generarReceta()) abrirModal("modalReceta");
-      });
-
-      // Imprimir receta
-      document.getElementById("btnRecetaImprimir").addEventListener("click", () => {
-        const cliente = document.getElementById("cliente").value || "Sin cliente";
-        const tons = obtenerVolumenTon();
-        const printWin = window.open("", "_blank");
-        printWin.document.write(`
-          <!DOCTYPE html><html><head><title>Receta - ${cliente}</title>
-          <style>
-            body { font-family: -apple-system, sans-serif; padding: 24px; color: #0F172A; }
-            h1 { color: #C2410C; margin-bottom: 4px; }
-            .meta { color: #64748B; font-size: 0.875rem; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #FED7AA; }
-            .step { display: flex; gap: 12px; padding: 14px; background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; margin-bottom: 10px; page-break-inside: avoid; }
-            .step-num { width: 36px; height: 36px; background: #F97316; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
-            .step-action { font-weight: 700; margin-bottom: 4px; }
-            .step-amount { font-family: monospace; font-size: 1.125rem; font-weight: 800; color: #C2410C; }
-            .check-box { width: 28px; height: 28px; border: 2px solid #D6D3D1; border-radius: 50%; flex-shrink: 0; }
-            .mezcla { background: #1B4D7C; color: white; padding: 16px; border-radius: 8px; text-align: center; margin-top: 24px; }
-            .mezcla strong { display: block; font-size: 2rem; font-weight: 800; color: #FCD34D; }
-          </style></head><body>
-          <h1>👨‍🍳 Receta de mezcla</h1>
-          <div class="meta"><strong>Cliente:</strong> ${cliente} · <strong>Volumen:</strong> ${tons} ton · <strong>Fecha:</strong> ${new Date().toLocaleDateString("es-MX")}</div>
-          ${[...document.querySelectorAll('.receta-step')].map((s, i) => {
-            const action = s.querySelector('.receta-step-action').textContent;
-            const detail = s.querySelector('.receta-step-detail').textContent;
-            const amount = s.querySelector('.receta-step-amount').textContent;
-            return `
-              <div class="step">
-                <div class="step-num">${i + 1}</div>
-                <div style="flex:1;">
-                  <div class="step-action">${action}</div>
-                  <div style="color:#64748B;font-size:0.875rem;margin-bottom:4px;">${detail}</div>
-                  <div class="step-amount">${amount}</div>
-                </div>
-                <div class="check-box"></div>
-              </div>
-            `;
-          }).join("")}
-          <div class="mezcla">
-            <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;opacity:0.85;">Tiempo de mezcla</div>
-            <strong>${document.getElementById('recetaTime').textContent}</strong>
-            <div style="font-size:0.875rem;opacity:0.9;">A velocidad media después de agregar todo</div>
-          </div>
-          </body></html>
-        `);
-        printWin.document.close();
-        setTimeout(() => printWin.print(), 300);
-      });
-
-      // ============================================
-      // FEATURE G: COMPARAR CON ALIMENTO COMPRADO
-      // ============================================
-      function calcularComparacion() {
-        const precioAlimento = parseFloat(document.getElementById("precioAlimento").value) || 0;
-        const tonsMes = parseFloat(document.getElementById("toneladasMes").value) || 0;
-
-        if (!window.state || !window.state.formula || window.state.formula.length === 0) {
-          return;
-        }
-
-        if (precioAlimento === 0 || tonsMes === 0) {
-          document.getElementById("compararResult").style.display = "none";
-          document.getElementById("compararSavings").style.display = "none";
-          return;
-        }
-
-        const costoCompradoTon = precioAlimento * 1000;
-
-        let costoFeedmix = 0;
-        window.state.formula.forEach(f => {
-          costoFeedmix += (f.pct / 100) * 1000 * f.ing.precio;
-        });
-
-        const ahorroPorTon = costoCompradoTon - costoFeedmix;
-        const ahorroMes = ahorroPorTon * tonsMes;
-        const ahorroAnual = ahorroMes * 12;
-        const pctAhorro = (ahorroPorTon / costoCompradoTon) * 100;
-
-        document.getElementById("costoComprado").textContent = fmtCurr(costoCompradoTon);
-        document.getElementById("costoFeedmix").textContent = fmtCurr(costoFeedmix);
-
-        // Determinar ganador
-        document.getElementById("compararA").classList.toggle("winner", costoCompradoTon < costoFeedmix);
-        document.getElementById("compararB").classList.toggle("winner", costoFeedmix < costoCompradoTon);
-
-        document.getElementById("compararResult").style.display = "grid";
-
-        const savings = document.getElementById("compararSavings");
-        if (ahorroAnual > 0) {
-          savings.classList.remove("negative");
-          document.getElementById("ahorroAnual").textContent = fmtCurr(ahorroAnual);
-          document.getElementById("ahorroDetalle").innerHTML = `
-            Formulando con FeedMix ahorras <strong>${fmtCurr(ahorroPorTon)}/ton</strong> (${pctAhorro.toFixed(1)}%).<br>
-            Eso son <strong>${fmtCurr(ahorroMes)}/mes</strong> en ${tonsMes} toneladas.
-          `;
-        } else {
-          savings.classList.add("negative");
-          document.getElementById("ahorroAnual").textContent = fmtCurr(Math.abs(ahorroAnual));
-          document.getElementById("ahorroDetalle").innerHTML = `
-            En este momento te conviene <strong>comprar terminado</strong>.<br>
-            Considera renegociar precios de tus ingredientes.
-          `;
-        }
-
-        savings.style.display = "block";
-      }
-
-      document.getElementById("btnComparar").addEventListener("click", () => {
-        if (!window.state || !window.state.formula || window.state.formula.length === 0) {
-          window.fmToast("Primero optimiza una fórmula", "warning");
-          return;
-        }
-        abrirModal("modalComparar");
-      });
-
-      document.getElementById("precioAlimento").addEventListener("input", calcularComparacion);
-      document.getElementById("toneladasMes").addEventListener("input", calcularComparacion);
-    })();
-  </script>
-
-  <script src="assets/guide-system.js?v=11"></script>
+  <script src="assets/guide-system.js?v=12"></script>
+  <script src="assets/species-system.js?v=12"></script>
 
 </body>
 </html>

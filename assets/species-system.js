@@ -215,80 +215,17 @@ window.FM_SPECIES = {
   },
 
   // ============================================
-  // MODAL DE ONBOARDING (estilo Linear)
+  // NAVEGACIÓN A PÁGINA DE ELECCIÓN
+  // (ya no es popup — es página dedicada)
   // ============================================
   mostrarOnboarding(force = false) {
     if (!force && this.yaEligio()) return;
-
-    // Inyectar estilos si no existen
-    if (!document.getElementById("fm-species-styles")) {
-      const style = document.createElement("style");
-      style.id = "fm-species-styles";
-      style.textContent = this._getStyles();
-      document.head.appendChild(style);
-    }
-
-    // Crear modal
-    const modal = document.createElement("div");
-    modal.id = "fmSpeciesModal";
-    modal.className = "fm-species-modal-backdrop";
-    modal.innerHTML = `
-      <div class="fm-species-modal">
-        <div class="fm-species-modal-header">
-          <div class="fm-species-eyebrow">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2z"/></svg>
-            Configuración inicial
-          </div>
-          <h2>¿Para qué especie vas a formular?</h2>
-          <p>Esto personaliza toda tu experiencia: razas filtradas, etapas relevantes, tips específicos y catálogo de núcleos contextual. Puedes cambiar después en tu perfil.</p>
-        </div>
-
-        <div class="fm-species-grid">
-          ${this.CATALOGO.map(s => this.renderCard(s)).join("")}
-        </div>
-
-        <div class="fm-species-modal-footer">
-          <small>💡 Esta selección se guarda automáticamente en tu cuenta</small>
-        </div>
-      </div>
-    `;
-
-    document.body.appendChild(modal);
-    document.body.style.overflow = "hidden";
-
-    // Event listeners
-    modal.querySelectorAll(".species-card").forEach(card => {
-      card.addEventListener("click", () => {
-        const id = card.dataset.especie;
-        this.setActiva(id);
-        // Animación de salida
-        modal.classList.add("closing");
-        setTimeout(() => {
-          modal.remove();
-          document.body.style.overflow = "";
-          // Trigger callback si existe
-          if (typeof window.onEspecieElegida === "function") {
-            window.onEspecieElegida(id);
-          }
-          // Reload para que filtrado tome efecto
-          if (window.fmToast) {
-            const especie = this.CATALOGO.find(s => s.id === id);
-            window.fmToast(`¡Listo! Modo ${especie.nombre} activado`, "success");
-          }
-          // Reload la pagina para aplicar filtros
-          setTimeout(() => location.reload(), 600);
-        }, 300);
-      });
-    });
-
-    // Animación de entrada
-    requestAnimationFrame(() => {
-      modal.classList.add("active");
-    });
+    // Redirigir a página dedicada
+    location.href = "elegir-especie.html";
   },
 
   // ============================================
-  // BANNER MODO ACTIVO (topbar)
+  // BANNER MODO ACTIVO (sidebar)
   // ============================================
   renderBanner() {
     const activa = this.getActiva();
@@ -296,22 +233,26 @@ window.FM_SPECIES = {
 
     return `
       <button type="button" class="fm-mode-banner" id="fmModeBanner" style="--mode-color:${activa.color};--mode-bg:${activa.colorBg};">
-        <span class="fm-mode-icon">${activa.icon}</span>
+        <span class="fm-mode-icon">
+          <img src="${activa.svg}" alt="${activa.nombre}">
+        </span>
         <span class="fm-mode-text">
-          <strong>Modo ${activa.nombre}</strong>
-          <small>Click para cambiar</small>
+          <strong>${activa.nombre}</strong>
+          <small>Cambiar</small>
         </span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
     `;
   },
 
-  // Inyecta el banner en el topbar de cualquier página
+  // Inyecta el banner en el sidebar (debajo del logo) de cualquier página
   injectBanner() {
     if (!this.getActiva()) return;
-    const topbar = document.querySelector(".app-topbar");
-    if (!topbar) return;
-    if (document.getElementById("fmModeBanner")) return; // ya existe
+    const sidebar = document.querySelector(".app-sidebar");
+    if (!sidebar) return;
+    // Doble check: si ya existe NO duplicar
+    if (sidebar.querySelector("#fmModeBanner")) return;
+    if (document.getElementById("fmModeBanner")) return;
 
     // Inyectar estilos
     if (!document.getElementById("fm-species-styles")) {
@@ -324,7 +265,16 @@ window.FM_SPECIES = {
     const wrapper = document.createElement("div");
     wrapper.innerHTML = this.renderBanner();
     const banner = wrapper.firstElementChild;
-    topbar.appendChild(banner);
+    if (!banner) return;
+
+    // Buscar el primer ul del sidebar e insertar banner ANTES de él
+    const firstNav = sidebar.querySelector("ul.sidebar-nav");
+    if (firstNav) {
+      firstNav.parentNode.insertBefore(banner, firstNav);
+    } else {
+      // Fallback: agregar al final del sidebar
+      sidebar.appendChild(banner);
+    }
 
     banner.addEventListener("click", () => this.mostrarOnboarding(true));
   },
@@ -553,20 +503,22 @@ window.FM_SPECIES = {
       }
 
       /* ============================================
-         BANNER DE MODO ACTIVO
+         BANNER DE MODO ACTIVO (en sidebar)
          ============================================ */
       .fm-mode-banner {
-        display: inline-flex;
+        display: flex;
         align-items: center;
         gap: 10px;
-        padding: 6px 14px 6px 8px;
+        padding: 10px 12px;
         background: var(--mode-bg, #F1F5F9);
         border: 1.5px solid color-mix(in srgb, var(--mode-color, #1B4D7C) 30%, transparent);
-        border-radius: 999px;
+        border-radius: 12px;
         cursor: pointer;
         transition: all 0.2s;
         font-family: inherit;
-        margin-left: auto;
+        margin: 12px 16px 16px;
+        width: calc(100% - 32px);
+        text-align: left;
       }
 
       .fm-mode-banner:hover {
@@ -576,26 +528,39 @@ window.FM_SPECIES = {
       }
 
       .fm-mode-icon {
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         background: white;
-        border-radius: 50%;
+        border-radius: 10px;
         display: grid;
         place-items: center;
-        font-size: 1.125rem;
+        font-size: 1.25rem;
         box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        flex-shrink: 0;
+        overflow: hidden;
+      }
+
+      .fm-mode-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
 
       .fm-mode-text {
         display: flex;
         flex-direction: column;
-        line-height: 1.1;
+        line-height: 1.15;
+        flex: 1;
+        min-width: 0;
       }
 
       .fm-mode-text strong {
         font-size: 0.8125rem;
         font-weight: 700;
         color: var(--mode-color, #0F172A);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .fm-mode-text small {
@@ -603,8 +568,10 @@ window.FM_SPECIES = {
         color: #64748B;
       }
 
-      @media (max-width: 600px) {
-        .fm-mode-text small { display: none; }
+      .fm-mode-banner svg {
+        flex-shrink: 0;
+        color: var(--mode-color, #64748B);
+        opacity: 0.6;
       }
     `;
   }

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configura tu especie — FeedMix MX</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/favicon.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/shared.css?v=12">
+
+  <style>
+    body {
+      background: linear-gradient(180deg, #F4F6F0 0%, #FFFFFF 50%, #F4F6F0 100%);
+      min-height: 100vh;
+    }
+
+    .elegir-wrapper {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    .elegir-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .elegir-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: linear-gradient(135deg, rgba(184, 115, 51, 0.12) 0%, rgba(184, 115, 51, 0.18) 100%);
+      border: 1px solid rgba(184, 115, 51, 0.35);
+      border-radius: 999px;
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #8B5024;
+      margin-bottom: 24px;
+    }
+
+    .elegir-eyebrow svg {
+      color: #B87333;
+    }
+
+    .elegir-header h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: #2A3520;
+      margin-bottom: 16px;
+      line-height: 1.1;
+    }
+
+    .elegir-header p {
+      font-size: 1.0625rem;
+      color: #5A6E45;
+      max-width: 640px;
+      margin: 0 auto;
+      line-height: 1.55;
+    }
+
+    .elegir-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 900px) {
+      .elegir-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 540px) {
+      .elegir-grid { grid-template-columns: 1fr; }
+    }
+
+    .esp-card {
+      background: white;
+      border: 2px solid #E5EAD8;
+      border-radius: 20px;
+      padding: 0;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      font-family: inherit;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 1px 3px rgba(63, 79, 46, 0.04);
+    }
+
+    .esp-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--esp-bg);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .esp-card:hover {
+      border-color: var(--esp-color);
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(63, 79, 46, 0.15);
+    }
+
+    .esp-card:hover::before {
+      opacity: 0.4;
+    }
+
+    .esp-card-image {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      background: var(--esp-bg);
+      position: relative;
+      z-index: 1;
+    }
+
+    .esp-card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .esp-card:hover .esp-card-image img {
+      transform: scale(1.06);
+    }
+
+    .esp-card-body {
+      padding: 22px 24px 28px;
+      position: relative;
+      z-index: 1;
+      flex: 1;
+    }
+
+    .esp-card-name {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #2A3520;
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+
+    .esp-card-desc {
+      font-size: 0.875rem;
+      color: #5A6E45;
+      margin-bottom: 12px;
+      line-height: 1.45;
+    }
+
+    .esp-card-tagline {
+      display: inline-block;
+      font-size: 0.6875rem;
+      color: var(--esp-color);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      background: var(--esp-bg);
+      border-radius: 999px;
+    }
+
+    .esp-card-arrow {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all 0.3s;
+      z-index: 2;
+      color: var(--esp-color);
+    }
+
+    .esp-card:hover .esp-card-arrow {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .elegir-footer {
+      text-align: center;
+      padding: 24px;
+      background: white;
+      border: 1px solid #E5EAD8;
+      border-radius: 16px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .elegir-footer-icon {
+      display: inline-grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      background: rgba(184, 115, 51, 0.12);
+      border-radius: 50%;
+      color: #B87333;
+      margin-bottom: 12px;
+    }
+
+    .elegir-footer p {
+      font-size: 0.875rem;
+      color: #5A6E45;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .elegir-footer strong {
+      color: #2A3520;
+      font-weight: 700;
+    }
+
+    /* Logo top-left */
+    .elegir-brand {
+      position: absolute;
+      top: 32px;
+      left: 32px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .elegir-brand-mark {
+      width: 36px;
+      height: 36px;
+      background: #3F4F2E;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      color: white;
+    }
+
+    .elegir-brand-name {
+      font-weight: 800;
+      font-size: 1rem;
+      color: #2A3520;
+      letter-spacing: -0.01em;
+    }
+
+    .elegir-brand-name small {
+      display: block;
+      font-size: 0.625rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: #5A6E45;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 600px) {
+      .elegir-brand { position: relative; top: 0; left: 0; margin: 24px auto; justify-content: center; }
+      .elegir-wrapper { padding-top: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="panel.html" class="elegir-brand">
+    <span class="elegir-brand-mark">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2v4"/><path d="M5.5 5.5l2.8 2.8"/><path d="M18.5 5.5l-2.8 2.8"/>
+        <path d="M12 8a6 6 0 0 1 6 6c0 4-3 8-6 8s-6-4-6-8a6 6 0 0 1 6-6z"/>
+        <circle cx="12" cy="14" r="1.5" fill="currentColor"/>
+      </svg>
+    </span>
+    <span class="elegir-brand-name">FeedMix MX<small>Avicultura</small></span>
+  </a>
+
+  <div class="elegir-wrapper">
+
+    <div class="elegir-header">
+      <div class="elegir-eyebrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2z"/></svg>
+        Configuración inicial
+      </div>
+      <h1>¿Para qué especie vas a formular?</h1>
+      <p>Esto personaliza toda tu experiencia: razas filtradas, etapas relevantes, tips específicos y catálogo de núcleos contextual. Puedes cambiar después en tu perfil.</p>
+    </div>
+
+    <div class="elegir-grid" id="especiesGrid"></div>
+
+    <div class="elegir-footer">
+      <div class="elegir-footer-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      </div>
+      <p>Esta selección se guarda automáticamente en tu cuenta. Si tu negocio maneja varias especies, elige <strong>Multi-especie</strong> para acceso completo sin filtros.</p>
+    </div>
+
+  </div>
+
+  <script src="assets/firebase-config.js?v=12"></script>
+  <script src="assets/species-system.js?v=12"></script>
+  <script type="module">
+    import "./assets/shared.js?v=12";
+    await window.fmAuthGuard({ requireAuth: true });
+
+    const grid = document.getElementById("especiesGrid");
+    const especies = window.FM_SPECIES.CATALOGO;
+
+    grid.innerHTML = especies.map(esp => `
+      <button type="button" class="esp-card" data-especie="${esp.id}" style="--esp-color:${esp.color};--esp-bg:${esp.colorBg};">
+        <div class="esp-card-arrow">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="esp-card-image">
+          <img src="${esp.svg}" alt="${esp.nombre}" loading="lazy">
+        </div>
+        <div class="esp-card-body">
+          <div class="esp-card-name">${esp.nombre}</div>
+          <div class="esp-card-desc">${esp.descripcion}</div>
+          <span class="esp-card-tagline">${esp.tagline}</span>
+        </div>
+      </button>
+    `).join("");
+
+    grid.querySelectorAll(".esp-card").forEach(card => {
+      card.addEventListener("click", () => {
+        const id = card.dataset.especie;
+        window.FM_SPECIES.setActiva(id);
+        const especie = window.FM_SPECIES.CATALOGO.find(s => s.id === id);
+        if (window.fmToast) window.fmToast(`¡Listo! Modo ${especie.nombre} activado`, "success");
+        // Redirigir al panel
+        setTimeout(() => location.href = "panel.html", 600);
+      });
+    });
+  </script>
+
+</body>
+</html>

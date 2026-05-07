@@ -5,24 +5,26 @@
 
 :root {
   /* Paleta primaria: azul profesional profundo (confianza médica/técnica) */
-  --primary: #1B4D7C;
-  --primary-dark: #0F3457;
-  --primary-light: #2E6BA8;
-  --primary-50: #EEF4FB;
-  --primary-100: #D5E3F2;
+  /* PALETA AGRO-TECH PREMIUM
+     Inspirada en Climate FieldView — verde olivo profundo + cobre */
+  --primary: #3F4F2E;        /* Verde olivo oscuro */
+  --primary-dark: #2A3520;   /* Verde bosque profundo */
+  --primary-light: #5A6E45;  /* Verde olivo medio */
+  --primary-50: #F4F6F0;     /* Verde olivo crema */
+  --primary-100: #E5EAD8;    /* Verde olivo claro */
 
-  /* Acento: ámbar premium (CTAs, highlights, planes) */
-  --accent: #F59E0B;
-  --accent-dark: #D97706;
-  --accent-light: #FCD34D;
+  --accent: #B87333;          /* Cobre */
+  --accent-dark: #8B5024;    /* Cobre oscuro */
+  --accent-light: #D4925A;   /* Cobre claro */
+
+  --success: #4F7C2A;         /* Verde tierra (más cálido que esmeralda) */
+  --success-light: #DCE9C8;
 
   /* Estados */
-  --success: #10B981;
-  --success-light: #D1FAE5;
   --danger: #EF4444;
   --danger-light: #FEE2E2;
-  --warning: #F59E0B;
-  --info: #0EA5E9;
+  --warning: #B87333;
+  --info: #5A6E45;
 
   /* Neutros */
   --neutral-0: #FFFFFF;
