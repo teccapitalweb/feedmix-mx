@@ -330,7 +330,24 @@ else {
 window.fmAuthGuard = function(opts = {}) {
   const { requireAuth = true, redirectIfAuth = null } = opts;
   return new Promise((resolve) => {
+    let resolved = false;
     window.fmFirebase.onAuthStateChanged(window.fmAuth, async (user) => {
+      if (resolved) return;
+
+      // ⚡ MODO DEMO: si la página requiere auth y no hay sesión,
+      // auto-login con cuenta demo (sin redirigir al login)
+      if (requireAuth && !user && IS_DEMO) {
+        try {
+          await window.fmFirebase.signInWithEmailAndPassword(
+            window.fmAuth, "demo@feedmix.mx", "demo123"
+          );
+          // El listener se dispara de nuevo con el user logueado, ahí resolvemos
+          return;
+        } catch (e) {
+          console.error("Auto-login demo falló:", e);
+        }
+      }
+
       if (requireAuth && !user) {
         window.location.href = "login.html";
         return;
@@ -349,6 +366,7 @@ window.fmAuthGuard = function(opts = {}) {
           window.fmProfile = null;
         }
       }
+      resolved = true;
       resolve(user);
     });
   });
@@ -395,13 +413,18 @@ window.fmShowDemoBanner = function() {
   const b = document.createElement("div");
   b.id = "fmDemoBanner";
   b.style.cssText = `
-    background: #FEF3C7; color: #92400E;
-    padding: 10px 16px; text-align: center;
+    background: linear-gradient(90deg, #FEF3C7 0%, #FDE68A 100%);
+    color: #78350F;
+    padding: 8px 16px; text-align: center;
     font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 600;
     border-bottom: 1px solid #FCD34D;
     position: sticky; top: 0; z-index: 200;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
   `;
-  b.innerHTML = `🟡 <strong>Modo demo activo</strong> · Datos guardados localmente · Cuenta demo: <code style="background:rgba(0,0,0,.06);padding:2px 6px;border-radius:4px;">demo@feedmix.mx</code> / <code style="background:rgba(0,0,0,.06);padding:2px 6px;border-radius:4px;">demo123</code>`;
+  b.innerHTML = `
+    <span>🟡 <strong>Modo demo</strong> — Datos guardados localmente en tu navegador</span>
+    <a href="index.html" style="color:#78350F;text-decoration:underline;font-weight:700;">Volver al inicio</a>
+  `;
   document.body.insertBefore(b, document.body.firstChild);
 };
 
