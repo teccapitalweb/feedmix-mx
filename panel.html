@@ -598,6 +598,15 @@
     cargarFormulasRecientes();
   </script>
 
-  <script src="assets/guide-system.js?v=9"></script>
+  <script src="assets/guide-system.js?v=10"></script>
+  <script src="assets/species-system.js?v=10"></script>
+  <script>
+    // Mostrar onboarding la primera vez después del login
+    setTimeout(() => {
+      if (!window.FM_SPECIES.yaEligio()) {
+        window.FM_SPECIES.mostrarOnboarding();
+      }
+    }, 500);
+  </script>
 </body>
 </html>

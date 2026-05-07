@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="bgRep" cx="50%" cy="40%" r="80%">
+      <stop offset="0%" stop-color="#FEE2E2"/>
+      <stop offset="60%" stop-color="#FCA5A5"/>
+      <stop offset="100%" stop-color="#7F1D1D"/>
+    </radialGradient>
+    <linearGradient id="bodyRep" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7F1D1D"/>
+      <stop offset="50%" stop-color="#991B1B"/>
+      <stop offset="100%" stop-color="#450A0A"/>
+    </linearGradient>
+    <linearGradient id="bellyRep" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1F2937"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+    <linearGradient id="tailRep" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#065F46"/>
+      <stop offset="50%" stop-color="#1F2937"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+    <radialGradient id="combRep" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#EF4444"/>
+      <stop offset="100%" stop-color="#7F1D1D"/>
+    </radialGradient>
+    <linearGradient id="beakRep" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="100%" stop-color="#92400E"/>
+    </linearGradient>
+    <linearGradient id="goldenRep" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+    <filter id="softShadowRep" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="0" dy="2" result="offsetblur"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.4"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="400" height="300" fill="url(#bgRep)"/>
+
+  <!-- Sombra del cuerpo -->
+  <ellipse cx="200" cy="280" rx="160" ry="14" fill="rgba(0,0,0,0.25)"/>
+
+  <!-- GALLO REPRODUCTOR (postura erguida, dominante) -->
+  <g filter="url(#softShadowRep)">
+
+    <!-- Cola larga y vistosa (atrás) -->
+    <g>
+      <path d="M 290 155 Q 350 110 360 145 Q 365 170 340 175 Q 320 175 300 175 Z" fill="url(#tailRep)"/>
+      <path d="M 295 165 Q 355 130 370 165 Q 365 195 345 195 Q 320 190 305 185 Z" fill="url(#tailRep)" opacity="0.85"/>
+      <path d="M 300 180 Q 350 165 365 195 Q 355 215 335 215 Q 315 210 305 200 Z" fill="url(#tailRep)" opacity="0.7"/>
+    </g>
+
+    <!-- Cuerpo robusto rojo oscuro -->
+    <ellipse cx="200" cy="195" rx="85" ry="70" fill="url(#bodyRep)"/>
+
+    <!-- Pecho con detalle dorado -->
+    <ellipse cx="170" cy="210" rx="40" ry="55" fill="url(#bellyRep)"/>
+
+    <!-- Ala con plumas largas -->
+    <path d="M 235 155 Q 285 165 290 210 Q 285 250 240 255 Q 220 250 215 225 Q 215 175 235 155 Z" fill="url(#bodyRep)" stroke="#450A0A" stroke-width="0.8"/>
+    <path d="M 250 175 Q 270 185 275 205" stroke="#FCD34D" stroke-width="1.5" fill="none" opacity="0.6"/>
+    <path d="M 245 200 Q 268 210 275 230" stroke="#FCD34D" stroke-width="1.5" fill="none" opacity="0.6"/>
+    <path d="M 240 225 Q 260 235 268 250" stroke="#FCD34D" stroke-width="1.5" fill="none" opacity="0.6"/>
+
+    <!-- Cuello dorado (capa de plumas) -->
+    <ellipse cx="148" cy="135" rx="35" ry="42" fill="url(#goldenRep)"/>
+    <path d="M 130 110 Q 148 105 168 110 Q 175 130 168 165 Q 148 175 128 165 Q 120 140 130 110 Z" fill="url(#goldenRep)" opacity="0.9"/>
+
+    <!-- Detalles de plumas doradas -->
+    <g stroke="#7C2D12" stroke-width="0.8" fill="none" opacity="0.5">
+      <path d="M 130 125 Q 145 130 160 125"/>
+      <path d="M 128 145 Q 145 150 162 145"/>
+      <path d="M 132 165 Q 148 170 162 165"/>
+    </g>
+
+    <!-- Cabeza -->
+    <circle cx="135" cy="100" r="36" fill="url(#bodyRep)"/>
+
+    <!-- Cresta GRANDE de gallo (característica) -->
+    <g fill="url(#combRep)">
+      <path d="M 110 70 Q 100 45 115 50 Q 125 30 135 45 Q 145 25 155 45 Q 165 30 170 50 Q 180 40 175 65 Q 168 80 130 80 Z"/>
+      <path d="M 120 75 Q 115 60 125 65 Q 132 55 140 67 Q 150 60 152 78 Z" opacity="0.85"/>
+    </g>
+
+    <!-- Barbillas dobles grandes -->
+    <path d="M 130 130 Q 118 158 132 162 Q 145 158 138 130 Z" fill="url(#combRep)"/>
+    <path d="M 115 130 Q 105 152 118 156 Q 125 152 122 130 Z" fill="url(#combRep)" opacity="0.85"/>
+
+    <!-- Pico fuerte -->
+    <path d="M 100 105 L 78 105 L 100 116 Z" fill="url(#beakRep)" stroke="#451A03" stroke-width="0.6"/>
+
+    <!-- Ojo intenso -->
+    <circle cx="120" cy="95" r="5.5" fill="#FCD34D"/>
+    <circle cx="119" cy="96" r="3.8" fill="#000"/>
+    <circle cx="118" cy="94.5" r="1.4" fill="#FFFFFF"/>
+
+    <!-- Patas fuertes con espolones -->
+    <g>
+      <line x1="180" y1="260" x2="180" y2="278" stroke="url(#beakRep)" stroke-width="5" stroke-linecap="round"/>
+      <line x1="220" y1="260" x2="220" y2="278" stroke="url(#beakRep)" stroke-width="5" stroke-linecap="round"/>
+      <!-- Espolón característico -->
+      <line x1="178" y1="270" x2="170" y2="265" stroke="#92400E" stroke-width="2" stroke-linecap="round"/>
+      <line x1="222" y1="270" x2="230" y2="265" stroke="#92400E" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g stroke="url(#beakRep)" stroke-width="2.5" stroke-linecap="round" fill="none">
+      <line x1="175" y1="278" x2="167" y2="284"/>
+      <line x1="180" y1="278" x2="180" y2="285"/>
+      <line x1="185" y1="278" x2="193" y2="284"/>
+      <line x1="215" y1="278" x2="207" y2="284"/>
+      <line x1="220" y1="278" x2="220" y2="285"/>
+      <line x1="225" y1="278" x2="233" y2="284"/>
+    </g>
+  </g>
+
+  <!-- Brillo metálico en el cuerpo -->
+  <ellipse cx="180" cy="170" rx="20" ry="35" fill="white" opacity="0.18"/>
+</svg>

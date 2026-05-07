@@ -128,6 +128,60 @@
     }
 
     @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+    .especie-actual-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      background: var(--especie-bg, #F1F5F9);
+      border: 1.5px solid var(--especie-color, #CBD5E1);
+      border-radius: var(--radius);
+      transition: all var(--transition);
+    }
+
+    .especie-actual-card-img {
+      width: 64px;
+      height: 64px;
+      border-radius: var(--radius);
+      background: white;
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .especie-actual-card-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    .especie-actual-card-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .especie-actual-card-name {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--especie-color, #0F172A);
+      margin-bottom: 2px;
+    }
+
+    .especie-actual-card-desc {
+      font-size: 0.8125rem;
+      color: var(--neutral-600);
+      line-height: 1.4;
+    }
+
+    .especie-actual-card.empty {
+      background: #F1F5F9;
+      border-style: dashed;
+      color: #64748B;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      font-size: 0.875rem;
+    }
+
   </style>
 </head>
 <body>
@@ -250,6 +304,16 @@
                 <input type="text" class="form-input" id="location" placeholder="Ej: Tehuacán, Puebla">
               </div>
 
+              <!-- Especie principal -->
+              <div class="form-group">
+                <label class="form-label">Especie principal</label>
+                <div id="especieActualCard" class="especie-actual-card"></div>
+                <button type="button" class="btn btn-outline btn-block" id="btnCambiarEspecie" style="margin-top:8px;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-15-6.7L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"/><path d="M16 16h5v5"/></svg>
+                  Cambiar especie
+                </button>
+              </div>
+
               <button type="submit" class="btn btn-primary btn-lg" id="btnSave">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                 <span id="btnSaveText">Guardar cambios</span>
@@ -343,8 +407,49 @@
     document.getElementById("btnLogout").addEventListener("click", () => {
       if (confirm("¿Cerrar sesión?")) window.fmLogout();
     });
+
+    // ============================================
+    // ESPECIE PRINCIPAL — Render card y cambiar
+    // ============================================
+    function renderEspecieCard() {
+      const card = document.getElementById("especieActualCard");
+      if (!card || !window.FM_SPECIES) return;
+
+      const activa = window.FM_SPECIES.getActiva();
+      if (!activa) {
+        card.className = "especie-actual-card empty";
+        card.innerHTML = `
+          <div>
+            <strong>Aún no has elegido una especie principal</strong><br>
+            <small>Click en "Cambiar especie" para configurarla</small>
+          </div>
+        `;
+        return;
+      }
+
+      card.className = "especie-actual-card";
+      card.style.setProperty("--especie-color", activa.color);
+      card.style.setProperty("--especie-bg", activa.colorBg);
+      card.innerHTML = `
+        <div class="especie-actual-card-img">
+          <img src="${activa.svg}" alt="${activa.nombre}">
+        </div>
+        <div class="especie-actual-card-info">
+          <div class="especie-actual-card-name">${activa.icon} ${activa.nombre}</div>
+          <div class="especie-actual-card-desc">${activa.descripcion}</div>
+        </div>
+      `;
+    }
+
+    renderEspecieCard();
+
+    // Botón cambiar especie
+    document.getElementById("btnCambiarEspecie").addEventListener("click", () => {
+      window.FM_SPECIES.mostrarOnboarding(true);
+    });
   </script>
 
-  <script src="assets/guide-system.js?v=9"></script>
+  <script src="assets/guide-system.js?v=10"></script>
+  <script src="assets/species-system.js?v=10"></script>
 </body>
 </html>

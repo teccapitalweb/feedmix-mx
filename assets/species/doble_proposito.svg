@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="bgDp" cx="50%" cy="40%" r="80%">
+      <stop offset="0%" stop-color="#FEF3C7"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#78350F"/>
+    </radialGradient>
+    <linearGradient id="bodyDp" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#A16207"/>
+      <stop offset="50%" stop-color="#713F12"/>
+      <stop offset="100%" stop-color="#422006"/>
+    </linearGradient>
+    <linearGradient id="bellyDp" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="100%" stop-color="#92400E"/>
+    </linearGradient>
+    <linearGradient id="wingDp" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#92400E"/>
+      <stop offset="50%" stop-color="#451A03"/>
+      <stop offset="100%" stop-color="#1C1917"/>
+    </linearGradient>
+    <radialGradient id="combDp" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#EF4444"/>
+      <stop offset="100%" stop-color="#7F1D1D"/>
+    </radialGradient>
+    <linearGradient id="beakDp" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="100%" stop-color="#92400E"/>
+    </linearGradient>
+    <linearGradient id="tailDp" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1C1917"/>
+      <stop offset="50%" stop-color="#065F46"/>
+      <stop offset="100%" stop-color="#1C1917"/>
+    </linearGradient>
+    <filter id="softShadowDp" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="0" dy="2" result="offsetblur"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.4"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="400" height="300" fill="url(#bgDp)"/>
+
+  <!-- Maíz seco al piso (típico de gallinero criollo) -->
+  <g opacity="0.55">
+    <ellipse cx="55" cy="270" rx="6" ry="4" fill="#FCD34D"/>
+    <ellipse cx="72" cy="275" rx="5" ry="3.5" fill="#D97706"/>
+    <ellipse cx="345" cy="265" rx="6" ry="4" fill="#FCD34D"/>
+    <ellipse cx="330" cy="273" rx="5" ry="3.5" fill="#D97706"/>
+    <ellipse cx="362" cy="270" rx="4" ry="3" fill="#FCD34D"/>
+    <ellipse cx="42" cy="278" rx="4" ry="3" fill="#D97706"/>
+  </g>
+
+  <!-- Sombra del cuerpo -->
+  <ellipse cx="200" cy="275" rx="160" ry="13" fill="rgba(0,0,0,0.22)"/>
+
+  <!-- POLLO CRIOLLO / DOBLE PROPÓSITO -->
+  <g filter="url(#softShadowDp)">
+
+    <!-- Cola tipo gallo criollo -->
+    <g>
+      <path d="M 280 145 Q 340 110 350 150 Q 345 175 320 175 Q 295 170 285 165 Z" fill="url(#tailDp)"/>
+      <path d="M 285 165 Q 345 145 360 180 Q 350 205 325 200 Q 300 195 290 185 Z" fill="url(#tailDp)" opacity="0.85"/>
+      <path d="M 290 190 Q 340 180 355 215 Q 340 230 320 225 Q 300 215 295 205 Z" fill="url(#tailDp)" opacity="0.75"/>
+    </g>
+
+    <!-- Cuerpo color tierra (multicolor criollo) -->
+    <ellipse cx="195" cy="195" rx="90" ry="72" fill="url(#bodyDp)"/>
+
+    <!-- Pecho dorado -->
+    <ellipse cx="165" cy="210" rx="48" ry="55" fill="url(#bellyDp)"/>
+
+    <!-- Ala oscura con manchas -->
+    <path d="M 230 155 Q 280 165 290 210 Q 285 250 240 255 Q 220 250 215 225 Q 215 175 230 155 Z" fill="url(#wingDp)" stroke="#1C1917" stroke-width="0.8"/>
+
+    <!-- Manchas tipo plumaje criollo -->
+    <ellipse cx="245" cy="185" rx="6" ry="4" fill="#FCD34D" opacity="0.6"/>
+    <ellipse cx="260" cy="205" rx="5" ry="4" fill="#FCD34D" opacity="0.6"/>
+    <ellipse cx="245" cy="225" rx="6" ry="4" fill="#FCD34D" opacity="0.6"/>
+    <ellipse cx="265" cy="240" rx="5" ry="3.5" fill="#FCD34D" opacity="0.6"/>
+
+    <!-- Detalles de plumas -->
+    <path d="M 240 175 Q 265 185 270 210" stroke="#FCD34D" stroke-width="1.2" fill="none" opacity="0.5"/>
+    <path d="M 235 205 Q 262 215 268 235" stroke="#FCD34D" stroke-width="1.2" fill="none" opacity="0.5"/>
+
+    <!-- Cuello dorado/marrón -->
+    <ellipse cx="148" cy="135" rx="32" ry="40" fill="url(#bellyDp)"/>
+    <path d="M 130 110 Q 150 105 168 115 Q 170 135 165 165 Q 145 175 128 165 Q 120 140 130 110 Z" fill="url(#bellyDp)" opacity="0.85"/>
+
+    <!-- Detalles de plumas en cuello -->
+    <g stroke="#7C2D12" stroke-width="0.7" fill="none" opacity="0.5">
+      <path d="M 130 130 Q 145 135 158 130"/>
+      <path d="M 128 148 Q 145 153 160 148"/>
+    </g>
+
+    <!-- Cabeza -->
+    <circle cx="135" cy="105" r="35" fill="url(#bodyDp)"/>
+
+    <!-- Cresta criolla (simple, mediana) -->
+    <g fill="url(#combDp)">
+      <path d="M 112 78 Q 105 60 118 65 Q 125 50 132 62 Q 142 50 148 64 Q 158 55 162 75 Z"/>
+      <path d="M 122 80 Q 118 70 128 73 Q 135 65 140 75 Q 148 70 152 82 Z" opacity="0.85"/>
+    </g>
+
+    <!-- Barbilla -->
+    <path d="M 130 130 Q 122 145 132 148 Q 140 145 138 130 Z" fill="url(#combDp)"/>
+
+    <!-- Pico -->
+    <path d="M 102 108 L 82 108 L 102 118 Z" fill="url(#beakDp)" stroke="#451A03" stroke-width="0.5"/>
+
+    <!-- Ojo -->
+    <circle cx="120" cy="100" r="5" fill="#FFFFFF"/>
+    <circle cx="119" cy="101" r="3.5" fill="#1C1917"/>
+    <circle cx="118" cy="99.5" r="1.2" fill="#FFFFFF"/>
+
+    <!-- Patas amarillas (criollo es rústico, patas firmes) -->
+    <g>
+      <line x1="180" y1="260" x2="180" y2="275" stroke="url(#beakDp)" stroke-width="4.5" stroke-linecap="round"/>
+      <line x1="220" y1="260" x2="220" y2="275" stroke="url(#beakDp)" stroke-width="4.5" stroke-linecap="round"/>
+    </g>
+    <g stroke="url(#beakDp)" stroke-width="2.5" stroke-linecap="round" fill="none">
+      <line x1="175" y1="275" x2="167" y2="280"/>
+      <line x1="180" y1="275" x2="180" y2="282"/>
+      <line x1="185" y1="275" x2="193" y2="280"/>
+      <line x1="215" y1="275" x2="207" y2="280"/>
+      <line x1="220" y1="275" x2="220" y2="282"/>
+      <line x1="225" y1="275" x2="233" y2="280"/>
+    </g>
+  </g>
+
+  <!-- Brillo en el cuerpo -->
+  <ellipse cx="180" cy="170" rx="20" ry="35" fill="white" opacity="0.15"/>
+</svg>

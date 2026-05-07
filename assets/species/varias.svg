@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="bgVar" cx="50%" cy="40%" r="80%">
+      <stop offset="0%" stop-color="#DBEAFE"/>
+      <stop offset="50%" stop-color="#93C5FD"/>
+      <stop offset="100%" stop-color="#1E3A8A"/>
+    </radialGradient>
+    <linearGradient id="silWhite" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E5E7EB"/>
+    </linearGradient>
+    <linearGradient id="silOrange" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <linearGradient id="silDark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7C2D12"/>
+      <stop offset="100%" stop-color="#1C1917"/>
+    </linearGradient>
+    <linearGradient id="silRed" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#991B1B"/>
+      <stop offset="100%" stop-color="#450A0A"/>
+    </linearGradient>
+    <filter id="softShadowVar" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+      <feOffset dx="0" dy="2" result="offsetblur"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.3"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="400" height="300" fill="url(#bgVar)"/>
+
+  <!-- Sombra del grupo -->
+  <ellipse cx="200" cy="280" rx="180" ry="14" fill="rgba(0,0,0,0.25)"/>
+
+  <!-- AVE 1 (atrás-izquierda) — Pavo pequeño silhouette -->
+  <g filter="url(#softShadowVar)" opacity="0.85">
+    <ellipse cx="80" cy="200" rx="40" ry="35" fill="url(#silDark)"/>
+    <ellipse cx="80" cy="170" rx="14" ry="20" fill="url(#silDark)"/>
+    <circle cx="80" cy="155" r="14" fill="url(#silDark)"/>
+    <!-- Cresta -->
+    <path d="M 73 144 Q 70 138 76 140 Q 80 134 84 140 Q 88 136 88 144 Z" fill="url(#silRed)"/>
+    <!-- Pico -->
+    <path d="M 67 158 L 60 158 L 67 162 Z" fill="url(#silOrange)"/>
+    <!-- Patas -->
+    <line x1="70" y1="232" x2="70" y2="248" stroke="url(#silOrange)" stroke-width="3" stroke-linecap="round"/>
+    <line x1="90" y1="232" x2="90" y2="248" stroke="url(#silOrange)" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- AVE 2 (centro-grande) — Gallo dominante con cola -->
+  <g filter="url(#softShadowVar)">
+    <!-- Cola larga -->
+    <path d="M 260 145 Q 320 110 330 150 Q 320 175 290 175 Z" fill="url(#silDark)"/>
+    <path d="M 260 170 Q 325 150 340 185 Q 325 205 295 200 Z" fill="url(#silDark)" opacity="0.85"/>
+
+    <!-- Cuerpo -->
+    <ellipse cx="200" cy="195" rx="65" ry="52" fill="url(#silRed)"/>
+    <!-- Pecho -->
+    <ellipse cx="180" cy="210" rx="32" ry="42" fill="url(#silDark)"/>
+    <!-- Ala -->
+    <path d="M 220 165 Q 250 175 255 210 Q 248 240 220 245 Q 210 235 210 215 Q 210 180 220 165 Z" fill="url(#silRed)" stroke="#450A0A" stroke-width="0.5"/>
+
+    <!-- Cuello dorado -->
+    <ellipse cx="160" cy="145" rx="22" ry="30" fill="url(#silOrange)"/>
+
+    <!-- Cabeza -->
+    <circle cx="148" cy="118" r="24" fill="url(#silRed)"/>
+
+    <!-- Cresta GRANDE de gallo -->
+    <g fill="url(#silRed)">
+      <path d="M 130 95 Q 122 78 135 82 Q 142 70 150 80 Q 158 68 165 80 Q 172 72 175 90 Z"/>
+    </g>
+
+    <!-- Barbilla -->
+    <path d="M 142 138 Q 135 152 144 154 Q 152 150 148 138 Z" fill="url(#silRed)"/>
+
+    <!-- Pico -->
+    <path d="M 122 120 L 105 120 L 122 128 Z" fill="url(#silOrange)"/>
+
+    <!-- Ojo -->
+    <circle cx="138" cy="113" r="3.5" fill="#FCD34D"/>
+    <circle cx="138" cy="113" r="2" fill="#000"/>
+
+    <!-- Patas -->
+    <line x1="180" y1="245" x2="180" y2="265" stroke="url(#silOrange)" stroke-width="4" stroke-linecap="round"/>
+    <line x1="215" y1="245" x2="215" y2="265" stroke="url(#silOrange)" stroke-width="4" stroke-linecap="round"/>
+    <g stroke="url(#silOrange)" stroke-width="2" stroke-linecap="round" fill="none">
+      <line x1="175" y1="265" x2="168" y2="270"/>
+      <line x1="180" y1="265" x2="180" y2="272"/>
+      <line x1="185" y1="265" x2="192" y2="270"/>
+      <line x1="210" y1="265" x2="203" y2="270"/>
+      <line x1="215" y1="265" x2="215" y2="272"/>
+      <line x1="220" y1="265" x2="227" y2="270"/>
+    </g>
+  </g>
+
+  <!-- AVE 3 (derecha) — Gallina blanca ponedora -->
+  <g filter="url(#softShadowVar)" opacity="0.95">
+    <ellipse cx="320" cy="220" rx="50" ry="42" fill="url(#silWhite)"/>
+    <ellipse cx="305" cy="230" rx="25" ry="32" fill="url(#silWhite)"/>
+    <!-- Ala -->
+    <path d="M 340 195 Q 365 205 365 230 Q 360 255 340 258 Q 330 250 332 230 Q 332 205 340 195 Z" fill="url(#silWhite)" stroke="#9CA3AF" stroke-width="0.5"/>
+
+    <!-- Cuello -->
+    <ellipse cx="285" cy="175" rx="16" ry="22" fill="url(#silWhite)"/>
+
+    <!-- Cabeza -->
+    <circle cx="278" cy="153" r="18" fill="url(#silWhite)"/>
+
+    <!-- Cresta de gallina (chiquita) -->
+    <path d="M 268 138 Q 265 130 272 132 Q 278 124 285 135 Q 290 130 290 140 Z" fill="url(#silRed)"/>
+
+    <!-- Pico -->
+    <path d="M 258 155 L 245 155 L 258 161 Z" fill="url(#silOrange)"/>
+
+    <!-- Ojo -->
+    <circle cx="270" cy="148" r="3" fill="#FFFFFF"/>
+    <circle cx="270" cy="148" r="1.8" fill="#000"/>
+
+    <!-- Patas -->
+    <line x1="305" y1="260" x2="305" y2="275" stroke="url(#silOrange)" stroke-width="3" stroke-linecap="round"/>
+    <line x1="335" y1="260" x2="335" y2="275" stroke="url(#silOrange)" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- Iconos sutiles de tipos en esquinas (sugerencia visual) -->
+  <g opacity="0.4">
+    <!-- Esquina superior derecha: huevo pequeño -->
+    <ellipse cx="370" cy="40" rx="8" ry="10" fill="white"/>
+    <!-- Esquina superior izquierda: granos -->
+    <ellipse cx="30" cy="40" rx="3" ry="2" fill="#FCD34D"/>
+    <ellipse cx="38" cy="42" rx="3" ry="2" fill="#FCD34D"/>
+    <ellipse cx="46" cy="40" rx="3" ry="2" fill="#FCD34D"/>
+  </g>
+
+  <!-- Texto sutil en la esquina superior central -->
+  <text x="200" y="35" text-anchor="middle" fill="white" font-family="sans-serif" font-size="12" font-weight="700" letter-spacing="2" opacity="0.6">MULTI ESPECIE</text>
+</svg>

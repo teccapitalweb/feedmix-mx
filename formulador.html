@@ -1769,6 +1769,7 @@
   <script src="assets/firebase-config.js?v=9"></script>
   <script src="assets/avicola-data.js?v=9"></script>
   <script src="assets/nucleos-data.js?v=9"></script>
+  <script src="assets/species-system.js?v=10"></script>
   <script type="module">
     import "./assets/shared.js?v=9";
     await window.fmAuthGuard({ requireAuth: true });
@@ -1809,14 +1810,38 @@
     // ============================================
     // STATE
     // ============================================
+    // Si hay especie activa, pre-seleccionar el tipo
+    const especieGuardada = (typeof window.FM_SPECIES !== "undefined" && window.FM_SPECIES) ? window.FM_SPECIES.getActiva() : null;
+    const tipoInicial = especieGuardada && especieGuardada.tipoFormulador ? especieGuardada.tipoFormulador : "engorda";
+
+    // Determinar raza inicial según especie
+    const razasPorTipo = {
+      engorda: "ross308",
+      ponedora: "hyline-w36",
+      reproductora: "cobb-breeder",
+      pavo: "nicholas-select",
+      doble_proposito: "criollo-mexicano"
+    };
+    const razaInicial = razasPorTipo[tipoInicial] || "ross308";
+
+    // Determinar etapa inicial
+    const etapasPorTipo = {
+      engorda: "preiniciador",
+      ponedora: "fase1",
+      reproductora: "rep-pico",
+      pavo: "pavo-ini",
+      doble_proposito: "dp-crec"
+    };
+    const etapaInicial = etapasPorTipo[tipoInicial] || "preiniciador";
+
     let state = {
-      tipo: "engorda",
-      razaId: "ross308",
-      etapaId: "preiniciador",
+      tipo: tipoInicial,
+      razaId: razaInicial,
+      etapaId: etapaInicial,
       ingredientes: INGREDIENTES.map(i => ({ ...i, active: ["maiz","soya48","aceite","carb","fosf","sal","metio","lisina","premix"].includes(i.id) })),
       formula: null
     };
-    window.state = state; // Expuesto para modales (sacos, receta, comparar)
+    window.state = state;
 
     // ============================================
     // RENDER: TIPOS
@@ -3498,6 +3523,8 @@
       document.getElementById("toneladasMes").addEventListener("input", calcularComparacion);
     })();
   </script>
+
+  <script src="assets/guide-system.js?v=10"></script>
 
 </body>
 </html>
