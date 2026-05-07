@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Núcleos — FeedMix MX</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/favicon.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/shared.css?v=8">
+
+  <style>
+    /* HERO DETECTOR */
+    .detector-hero {
+      background: linear-gradient(135deg, #1B4D7C 0%, #0F3457 100%);
+      color: white;
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      margin-bottom: var(--space-6);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .detector-hero::before {
+      content: "";
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(245,158,11,0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .detector-hero-content {
+      position: relative;
+      max-width: 720px;
+    }
+
+    .detector-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(245, 158, 11, 0.18);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: var(--radius-full);
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      margin-bottom: var(--space-3);
+    }
+
+    .detector-hero h2 {
+      color: white;
+      font-size: clamp(1.5rem, 2vw + 0.5rem, 2rem);
+      margin-bottom: var(--space-2);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .detector-hero p {
+      color: rgba(255,255,255,0.85);
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: var(--space-5);
+    }
+
+    .detector-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: var(--space-3);
+      align-items: end;
+      padding: var(--space-4);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(8px);
+    }
+
+    @media (max-width: 768px) {
+      .detector-form { grid-template-columns: 1fr; }
+    }
+
+    .detector-form label {
+      display: block;
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 6px;
+    }
+
+    .detector-form select {
+      width: 100%;
+      padding: 0.625rem 0.875rem;
+      padding-right: 2rem;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23FCD34D' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+    }
+
+    .detector-form select option {
+      background: var(--neutral-900);
+      color: white;
+    }
+
+    /* RESULTADO DETECTOR */
+    .detector-result {
+      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+      border: 2px solid var(--accent);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      margin-top: var(--space-5);
+      display: none;
+    }
+
+    .detector-result.active { display: block; animation: slideIn 0.3s ease; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .detector-result-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: var(--accent);
+      color: var(--neutral-900);
+      border-radius: var(--radius-full);
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: var(--space-3);
+    }
+
+    .detector-result h3 {
+      color: #78350F;
+      font-size: 1.5rem;
+      margin-bottom: var(--space-2);
+      font-weight: 800;
+    }
+
+    .detector-result-marca {
+      color: #92400E;
+      font-size: 0.9375rem;
+      margin-bottom: var(--space-4);
+      font-weight: 600;
+    }
+
+    .detector-result-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-3);
+      margin-bottom: var(--space-4);
+    }
+
+    @media (max-width: 600px) {
+      .detector-result-stats { grid-template-columns: 1fr 1fr; }
+    }
+
+    .det-stat {
+      background: white;
+      border-radius: var(--radius);
+      padding: var(--space-3);
+      text-align: center;
+    }
+
+    .det-stat-num {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #78350F;
+      line-height: 1;
+    }
+
+    .det-stat-label {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      color: #92400E;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .detector-razones {
+      background: white;
+      border-radius: var(--radius);
+      padding: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+
+    .detector-razones h4 {
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: var(--space-2);
+    }
+
+    .detector-razones ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .detector-razones li {
+      display: flex;
+      gap: var(--space-2);
+      padding: 4px 0;
+      font-size: 0.875rem;
+      color: var(--neutral-700);
+    }
+
+    .detector-razones li::before {
+      content: "✓";
+      color: var(--success);
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .detector-actions {
+      display: flex;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+
+    /* TABLA DE NÚCLEOS */
+    .nucleos-section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: var(--space-8) 0 var(--space-4);
+      flex-wrap: wrap;
+      gap: var(--space-3);
+    }
+
+    .nucleos-section-title h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .nucleos-section-title p {
+      font-size: 0.875rem;
+      color: var(--neutral-500);
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+      margin-bottom: var(--space-4);
+    }
+
+    .filter-pill {
+      padding: 0.4rem 0.875rem;
+      background: white;
+      border: 1.5px solid var(--neutral-200);
+      border-radius: var(--radius-full);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--neutral-700);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .filter-pill:hover { border-color: var(--neutral-300); }
+    .filter-pill.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .nucleos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .nucleo-card {
+      background: white;
+      border: 1.5px solid var(--neutral-200);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      transition: all var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nucleo-card:hover {
+      border-color: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .nucleo-card.is-propio {
+      border-color: var(--accent);
+      background: linear-gradient(180deg, #FFFBEB 0%, white 30%);
+    }
+
+    .nucleo-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-3);
+      margin-bottom: var(--space-3);
+    }
+
+    .nucleo-card-name {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--neutral-900);
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+
+    .nucleo-card-marca {
+      font-size: 0.75rem;
+      color: var(--neutral-500);
+      font-weight: 600;
+    }
+
+    .nucleo-card-incl {
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border-radius: var(--radius);
+      padding: 4px 10px;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1rem;
+      box-shadow: 0 2px 6px rgba(27,77,124,0.2);
+    }
+
+    .nucleo-card-desc {
+      font-size: 0.8125rem;
+      color: var(--neutral-600);
+      line-height: 1.5;
+      margin-bottom: var(--space-3);
+    }
+
+    .nucleo-card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: var(--space-3);
+    }
+
+    .nucleo-tag {
+      font-size: 0.625rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .nucleo-tag-tipo { background: var(--primary-50); color: var(--primary-dark); }
+    .nucleo-tag-etapa { background: var(--neutral-100); color: var(--neutral-700); }
+    .nucleo-tag-propio { background: #FEF3C7; color: #92400E; }
+
+    .nucleo-card-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: var(--space-3) 0;
+      border-top: 1px solid var(--neutral-100);
+      border-bottom: 1px solid var(--neutral-100);
+      margin-bottom: var(--space-3);
+    }
+
+    .nucleo-stat {
+      font-size: 0.75rem;
+      color: var(--neutral-500);
+      display: flex;
+      justify-content: space-between;
+      padding: 2px 0;
+    }
+
+    .nucleo-stat strong {
+      font-family: var(--font-mono);
+      color: var(--neutral-900);
+      font-weight: 700;
+    }
+
+    .nucleo-card-precio {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: var(--space-3);
+    }
+
+    .nucleo-card-precio-label {
+      font-size: 0.75rem;
+      color: var(--neutral-500);
+    }
+
+    .nucleo-card-precio strong {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+
+    .nucleo-card-precio small {
+      font-size: 0.75rem;
+      color: var(--neutral-500);
+      font-weight: 500;
+    }
+
+    .nucleo-card-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .nucleo-card-actions .btn {
+      flex: 1;
+      padding: 0.5rem;
+      font-size: 0.8125rem;
+    }
+
+    /* MODAL */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 52, 87, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-4);
+    }
+
+    .modal-backdrop.active { display: flex; }
+
+    .modal {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: var(--space-7);
+      max-width: 640px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes modalIn {
+      from { transform: translateY(20px) scale(0.96); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: var(--space-5);
+    }
+
+    .modal-header h3 { font-size: 1.375rem; font-weight: 800; }
+    .modal-header p { font-size: 0.875rem; color: var(--neutral-500); margin-top: 4px; }
+
+    .modal-close {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--neutral-100);
+      color: var(--neutral-600);
+      display: grid; place-items: center;
+      cursor: pointer;
+      border: none;
+    }
+
+    .modal-close:hover { background: var(--neutral-200); }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+    }
+
+    @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <aside class="app-sidebar">
+      <a href="index.html" class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v4"/><path d="M5.5 5.5l2.8 2.8"/><path d="M18.5 5.5l-2.8 2.8"/>
+            <path d="M12 8a6 6 0 0 1 6 6c0 4-3 8-6 8s-6-4-6-8a6 6 0 0 1 6-6z"/>
+            <circle cx="12" cy="14" r="1.5" fill="currentColor"/>
+          </svg>
+        </span>
+        <span class="brand-name">FeedMix MX<small>Avicultura</small></span>
+      </a>
+
+      <ul class="sidebar-nav">
+        <li><a href="panel.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Panel</a></li>
+        <li><a href="formulador.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>Formulador</a></li>
+        <li><a href="ingredientes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Ingredientes</a></li>
+        <li><a href="nucleos.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>Núcleos</a></li>
+        <li><a href="historial.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Historial</a></li>
+        <li><a href="recomendaciones.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1M3.34 7l.7.7M20.66 7l-.7.7M21 14h-1M4 14H3M16 17a4 4 0 0 0-8 0v3h8v-3z"/></svg>Recomendaciones</a></li>
+      </ul>
+
+      <div class="sidebar-section-title">Configuración</div>
+      <ul class="sidebar-nav">
+        <li><a href="perfil.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Mi perfil
+        </a></li>
+        <li><a href="suscripcion.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Suscripción
+        </a></li>
+        <li><a href="https://wa.me/5212382514313?text=Hola%2C%20necesito%20ayuda%20o%20informaci%C3%B3n%20sobre%20cursos" target="_blank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Soporte / Cursos
+        </a></li>
+      </ul>
+    </aside>
+
+    <div class="app-main">
+
+      <div class="app-topbar">
+        <div>
+          <h2 style="font-size:1.25rem;font-weight:700;">Núcleos premezclados</h2>
+          <div style="font-size:0.875rem;color:var(--neutral-500);">Catálogo de núcleos comerciales + detector inteligente</div>
+        </div>
+        <button class="btn btn-primary btn-sm" id="btnAddNucleo">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Mi núcleo
+        </button>
+      </div>
+
+      <div class="app-content">
+
+        <!-- DETECTOR INTELIGENTE -->
+        <div class="detector-hero">
+          <div class="detector-hero-content">
+            <span class="detector-eyebrow">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 22h20L12 2z"/></svg>
+              Detector inteligente
+            </span>
+            <h2>¿Qué núcleo me conviene?</h2>
+            <p>Selecciona tipo, raza y etapa. El sistema analiza el catálogo y sugiere el núcleo ideal según los requerimientos NRC.</p>
+
+            <div class="detector-form">
+              <div>
+                <label>Tipo de producción</label>
+                <select id="detTipo">
+                  <option value="engorda">Pollo de engorda</option>
+                  <option value="ponedora">Gallina ponedora</option>
+                  <option value="reproductora">Reproductora pesada</option>
+                  <option value="pavo">Pavo</option>
+                  <option value="doble_proposito">Doble propósito / Criolla</option>
+                </select>
+              </div>
+              <div>
+                <label>Etapa</label>
+                <select id="detEtapa"></select>
+              </div>
+              <div>
+                <label>Presupuesto</label>
+                <select id="detPresupuesto">
+                  <option value="economico">Económico</option>
+                  <option value="balanceado" selected>Balanceado</option>
+                  <option value="premium">Premium</option>
+                </select>
+              </div>
+              <button class="btn btn-accent btn-lg" id="btnDetectar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Detectar
+              </button>
+            </div>
+
+            <!-- Resultado del detector -->
+            <div class="detector-result" id="detectorResult"></div>
+          </div>
+        </div>
+
+        <!-- CATÁLOGO -->
+        <div class="nucleos-section-title">
+          <div>
+            <h2>Catálogo completo</h2>
+            <p>Núcleos genéricos, marcas comerciales y los tuyos</p>
+          </div>
+          <div style="display:flex;gap:var(--space-2);">
+            <span class="badge badge-neutral" id="totalCount">— núcleos</span>
+          </div>
+        </div>
+
+        <!-- FILTROS -->
+        <div class="filter-bar" id="filterBar"></div>
+
+        <!-- GRID -->
+        <div class="nucleos-grid" id="nucleosGrid"></div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Crear/editar núcleo propio -->
+  <div class="modal-backdrop" id="modal">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h3 id="modalTitle">Crear mi núcleo</h3>
+          <p>Captura los datos de tu núcleo personalizado</p>
+        </div>
+        <button class="modal-close" id="modalClose">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form id="nucleoForm">
+        <div class="form-group">
+          <label class="form-label">Nombre del núcleo</label>
+          <input type="text" class="form-input" id="mNombre" placeholder="Ej: Mi mezcla postura especial" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Marca / Proveedor</label>
+            <input type="text" class="form-input" id="mMarca" placeholder="Ej: Granja propia">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tipo</label>
+            <select class="form-select" id="mTipo" required>
+              <option value="engorda">Pollo de engorda</option>
+              <option value="ponedora">Gallina ponedora</option>
+              <option value="reproductora">Reproductora</option>
+              <option value="pavo">Pavo</option>
+              <option value="doble_proposito">Doble propósito</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">% de inclusión</label>
+            <input type="number" step="0.5" class="form-input" id="mInclusion" placeholder="2.5" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Precio MXN/kg</label>
+            <input type="number" step="0.01" class="form-input" id="mPrecio" placeholder="38.00" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Descripción / Notas</label>
+          <textarea class="form-input" id="mDesc" rows="2" placeholder="Notas sobre este núcleo..."></textarea>
+        </div>
+
+        <div style="background:var(--neutral-50);padding:var(--space-3);border-radius:var(--radius);margin-bottom:var(--space-4);">
+          <div style="font-size:0.75rem;font-weight:700;color:var(--neutral-600);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:var(--space-2);">Aportes nutricionales (en el núcleo)</div>
+          <div class="form-row">
+            <div class="form-group" style="margin-bottom:var(--space-2);">
+              <label class="form-label" style="font-size:0.75rem;">Proteína %</label>
+              <input type="number" step="0.1" class="form-input" id="mPc" placeholder="18.0">
+            </div>
+            <div class="form-group" style="margin-bottom:var(--space-2);">
+              <label class="form-label" style="font-size:0.75rem;">Calcio %</label>
+              <input type="number" step="0.1" class="form-input" id="mCa" placeholder="22.0">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group" style="margin-bottom:var(--space-2);">
+              <label class="form-label" style="font-size:0.75rem;">Fósforo %</label>
+              <input type="number" step="0.1" class="form-input" id="mP" placeholder="12.0">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label" style="font-size:0.75rem;">Lisina %</label>
+              <input type="number" step="0.1" class="form-input" id="mLys" placeholder="6.5">
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+          Guardar núcleo
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="assets/firebase-config.js?v=8"></script>
+  <script src="assets/avicola-data.js?v=8"></script>
+  <script src="assets/nucleos-data.js?v=8"></script>
+  <script type="module">
+    import "./assets/shared.js?v=8";
+    await window.fmAuthGuard({ requireAuth: true });
+
+    const A = window.FM_AVICOLA;
+    const N = window.FM_NUCLEOS;
+
+    let filtroTipo = "todos";
+
+    // ============================================
+    // POBLAR ETAPAS DEL DETECTOR según tipo
+    // ============================================
+    function poblarEtapasDetector() {
+      const tipo = document.getElementById("detTipo").value;
+      const etapasMap = {
+        engorda: [
+          { id: "preiniciador", nombre: "Pre-iniciador (0-7 días)" },
+          { id: "iniciador", nombre: "Iniciador (8-14 días)" },
+          { id: "crecimiento", nombre: "Crecimiento (15-28 días)" },
+          { id: "finalizador", nombre: "Finalizador (29-42 días)" },
+          { id: "retiro", nombre: "Retiro (43+ días)" }
+        ],
+        ponedora: [
+          { id: "pollita-ini", nombre: "Pollita iniciación" },
+          { id: "pollita-crec", nombre: "Pollita crecimiento" },
+          { id: "pollona-des", nombre: "Pollona desarrollo" },
+          { id: "prepostura", nombre: "Pre-postura" },
+          { id: "fase1", nombre: "Postura fase 1 (pico)" },
+          { id: "fase2", nombre: "Postura fase 2" },
+          { id: "fase3", nombre: "Postura fase 3" }
+        ],
+        reproductora: [
+          { id: "rep-ini", nombre: "Iniciación" },
+          { id: "rep-crec", nombre: "Crecimiento" },
+          { id: "rep-des", nombre: "Desarrollo" },
+          { id: "rep-prepost", nombre: "Pre-postura" },
+          { id: "rep-pico", nombre: "Pico postura" },
+          { id: "rep-media", nombre: "Postura media" },
+          { id: "rep-final", nombre: "Postura final" }
+        ],
+        pavo: [
+          { id: "pavo-preini", nombre: "Pre-iniciador" },
+          { id: "pavo-ini", nombre: "Iniciador" },
+          { id: "pavo-crec", nombre: "Crecimiento" },
+          { id: "pavo-des", nombre: "Desarrollo" },
+          { id: "pavo-fin", nombre: "Finalizador" },
+          { id: "pavo-acab", nombre: "Acabado" }
+        ],
+        doble_proposito: [
+          { id: "dp-ini", nombre: "Iniciación" },
+          { id: "dp-crec", nombre: "Crecimiento" },
+          { id: "dp-post", nombre: "Postura criolla" },
+          { id: "dp-mant", nombre: "Mantenimiento adulto" }
+        ]
+      };
+
+      const etapas = etapasMap[tipo] || [];
+      document.getElementById("detEtapa").innerHTML = etapas.map(e =>
+        `<option value="${e.id}">${e.nombre}</option>`
+      ).join("");
+    }
+
+    document.getElementById("detTipo").addEventListener("change", poblarEtapasDetector);
+    poblarEtapasDetector();
+
+    // ============================================
+    // DETECTAR NÚCLEO
+    // ============================================
+    document.getElementById("btnDetectar").addEventListener("click", () => {
+      const tipo = document.getElementById("detTipo").value;
+      const etapaId = document.getElementById("detEtapa").value;
+      const presupuesto = document.getElementById("detPresupuesto").value;
+
+      const result = N.detectarMejorNucleo(tipo, etapaId, presupuesto);
+
+      const container = document.getElementById("detectorResult");
+
+      if (!result.sugerido) {
+        container.innerHTML = `
+          <div class="detector-result-eyebrow">⚠️ Sin coincidencias</div>
+          <h3>No encontramos núcleos para esta combinación</h3>
+          <p style="color:#92400E;">${result.razon}</p>
+          <div class="detector-actions">
+            <button class="btn btn-primary" onclick="document.getElementById('btnAddNucleo').click()">
+              + Crear mi núcleo
+            </button>
+          </div>
+        `;
+      } else {
+        const n = result.sugerido;
+        const etapaName = document.getElementById("detEtapa").options[document.getElementById("detEtapa").selectedIndex].text;
+
+        container.innerHTML = `
+          <div class="detector-result-eyebrow">⚡ Sugerencia óptima</div>
+          <h3>${n.nombre}</h3>
+          <div class="detector-result-marca">${n.marca} · ${etapaName}</div>
+
+          <div class="detector-result-stats">
+            <div class="det-stat">
+              <div class="det-stat-num">${n.inclusion}%</div>
+              <div class="det-stat-label">Inclusión</div>
+            </div>
+            <div class="det-stat">
+              <div class="det-stat-num">$${n.precio.toFixed(0)}</div>
+              <div class="det-stat-label">MXN/kg</div>
+            </div>
+            <div class="det-stat">
+              <div class="det-stat-num">${result.sugerido.score}</div>
+              <div class="det-stat-label">Score match</div>
+            </div>
+          </div>
+
+          <div class="detector-razones">
+            <h4>📌 Por qué te lo sugerimos</h4>
+            <p style="font-size:0.875rem;margin-bottom:var(--space-2);color:var(--neutral-700);"><strong>${result.justificacionEtapa}</strong></p>
+            <ul>
+              ${n.razones.map(r => `<li>${r}</li>`).join("")}
+            </ul>
+          </div>
+
+          <div class="detector-actions">
+            <a href="formulador.html?modo=express&nucleo=${encodeURIComponent(n.id)}&tipo=${tipo}&etapa=${etapaId}" class="btn btn-primary btn-lg">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Usar en formulador
+            </a>
+            ${result.ranking.length > 1 ? `
+              <button class="btn btn-outline btn-lg" id="verAlternativas">
+                Ver ${result.ranking.length - 1} alternativas
+              </button>
+            ` : ''}
+          </div>
+        `;
+      }
+
+      container.classList.add("active");
+    });
+
+    // ============================================
+    // RENDER FILTROS
+    // ============================================
+    function renderFiltros() {
+      const todos = N.getTodos();
+      const tipos = ["todos", ...new Set(todos.map(n => n.tipo))];
+      const labels = {
+        todos: "Todos",
+        engorda: "Engorda",
+        ponedora: "Ponedora",
+        reproductora: "Reproductora",
+        pavo: "Pavo",
+        doble_proposito: "Doble propósito"
+      };
+
+      document.getElementById("filterBar").innerHTML = tipos.map(t => `
+        <button class="filter-pill ${t === filtroTipo ? 'active' : ''}" data-tipo="${t}">
+          ${labels[t] || t}
+        </button>
+      `).join("");
+
+      document.querySelectorAll(".filter-pill").forEach(b => {
+        b.addEventListener("click", () => {
+          filtroTipo = b.dataset.tipo;
+          renderFiltros();
+          renderGrid();
+        });
+      });
+    }
+
+    // ============================================
+    // RENDER GRID DE NÚCLEOS
+    // ============================================
+    function renderGrid() {
+      const todos = N.getTodos();
+      const lista = filtroTipo === "todos" ? todos : todos.filter(n => n.tipo === filtroTipo);
+
+      document.getElementById("totalCount").textContent = `${lista.length} de ${todos.length} núcleos`;
+
+      const grid = document.getElementById("nucleosGrid");
+
+      if (lista.length === 0) {
+        grid.innerHTML = `<p style="grid-column:1/-1;text-align:center;padding:var(--space-8);color:var(--neutral-500);">No hay núcleos en esta categoría</p>`;
+        return;
+      }
+
+      grid.innerHTML = lista.map(n => {
+        const isPropio = n.source === "propio";
+        const tipoLabel = { engorda: "Engorda", ponedora: "Ponedora", reproductora: "Reproductora", pavo: "Pavo", doble_proposito: "Doble propósito" }[n.tipo];
+        const etapasShort = n.etapas.length > 3 ? `${n.etapas.length} etapas` : n.etapas.join(", ");
+
+        return `
+          <div class="nucleo-card ${isPropio ? 'is-propio' : ''}" data-id="${n.id}">
+            <div class="nucleo-card-header">
+              <div>
+                <div class="nucleo-card-name">${n.nombre}</div>
+                <div class="nucleo-card-marca">${n.marca}</div>
+              </div>
+              <div class="nucleo-card-incl">${n.inclusion}%</div>
+            </div>
+
+            <div class="nucleo-card-tags">
+              <span class="nucleo-tag nucleo-tag-tipo">${tipoLabel}</span>
+              <span class="nucleo-tag nucleo-tag-etapa">${etapasShort}</span>
+              ${isPropio ? '<span class="nucleo-tag nucleo-tag-propio">★ Tuyo</span>' : ''}
+            </div>
+
+            <div class="nucleo-card-desc">${n.descripcion || ''}</div>
+
+            <div class="nucleo-card-stats">
+              <div class="nucleo-stat"><span>PC</span><strong>${(n.aportes?.pc || 0).toFixed(1)}%</strong></div>
+              <div class="nucleo-stat"><span>Ca</span><strong>${(n.aportes?.ca || 0).toFixed(1)}%</strong></div>
+              <div class="nucleo-stat"><span>P</span><strong>${(n.aportes?.p || 0).toFixed(1)}%</strong></div>
+              <div class="nucleo-stat"><span>Lys</span><strong>${(n.aportes?.lys || 0).toFixed(1)}%</strong></div>
+            </div>
+
+            <div class="nucleo-card-precio">
+              <span class="nucleo-card-precio-label">Precio</span>
+              <div>
+                <strong>$${n.precio.toFixed(2)}</strong>
+                <small> / kg</small>
+              </div>
+            </div>
+
+            <div class="nucleo-card-actions">
+              <a href="formulador.html?modo=express&nucleo=${encodeURIComponent(n.id)}&tipo=${n.tipo}&etapa=${n.etapas[0]}" class="btn btn-primary">
+                Usar
+              </a>
+              ${isPropio ? `
+                <button class="btn btn-ghost" data-action="delete">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg>
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      // Eventos de eliminar
+      grid.querySelectorAll('[data-action="delete"]').forEach(btn => {
+        btn.addEventListener("click", () => {
+          const card = btn.closest('.nucleo-card');
+          const id = card.dataset.id;
+          const propios = N.getNucleosPropios();
+          const nucleo = propios.find(p => p.id === id);
+          if (nucleo && confirm(`¿Eliminar "${nucleo.nombre}"?`)) {
+            N.saveNucleosPropios(propios.filter(p => p.id !== id));
+            renderGrid();
+            window.fmToast("Núcleo eliminado", "info");
+          }
+        });
+      });
+    }
+
+    // ============================================
+    // MODAL CREAR NÚCLEO
+    // ============================================
+    const modal = document.getElementById("modal");
+    document.getElementById("btnAddNucleo").addEventListener("click", () => modal.classList.add("active"));
+    document.getElementById("modalClose").addEventListener("click", () => modal.classList.remove("active"));
+    modal.addEventListener("click", e => { if (e.target === modal) modal.classList.remove("active"); });
+
+    document.getElementById("nucleoForm").addEventListener("submit", e => {
+      e.preventDefault();
+
+      const nuevo = {
+        id: "propio-" + Date.now(),
+        nombre: document.getElementById("mNombre").value.trim(),
+        marca: document.getElementById("mMarca").value.trim() || "Mi núcleo",
+        tipo: document.getElementById("mTipo").value,
+        etapas: [], // vacío = todas las etapas del tipo
+        inclusion: parseFloat(document.getElementById("mInclusion").value) || 2.5,
+        precio: parseFloat(document.getElementById("mPrecio").value) || 0,
+        descripcion: document.getElementById("mDesc").value.trim(),
+        aportes: {
+          em: 0,
+          pc: parseFloat(document.getElementById("mPc").value) || 0,
+          ca: parseFloat(document.getElementById("mCa").value) || 0,
+          p: parseFloat(document.getElementById("mP").value) || 0,
+          lys: parseFloat(document.getElementById("mLys").value) || 0,
+          met: 0,
+          na: 0
+        },
+        aditivos: [],
+        requiere_extras: [],
+        source: "propio"
+      };
+
+      const propios = N.getNucleosPropios();
+      propios.unshift(nuevo);
+      N.saveNucleosPropios(propios);
+
+      modal.classList.remove("active");
+      e.target.reset();
+      renderFiltros();
+      renderGrid();
+      window.fmToast(`"${nuevo.nombre}" guardado en tu catálogo`, "success");
+    });
+
+    // INIT
+    renderFiltros();
+    renderGrid();
+  </script>
+
+</body>
+</html>

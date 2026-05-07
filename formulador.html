@@ -11,9 +11,80 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="assets/shared.css?v=4">
+  <link rel="stylesheet" href="assets/shared.css?v=8">
 
   <style>
+    /* ============================================
+       BANNER SUGERENCIA DE NÚCLEO
+       ============================================ */
+    .nucleo-banner {
+      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+      border: 1.5px solid var(--accent);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4) var(--space-5);
+      margin-bottom: var(--space-5);
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: var(--space-4);
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
+      animation: bannerIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes bannerIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .nucleo-banner-icon {
+      width: 44px; height: 44px;
+      background: var(--accent);
+      color: var(--neutral-900);
+      border-radius: var(--radius);
+      display: grid; place-items: center;
+      flex-shrink: 0;
+    }
+
+    .nucleo-banner-icon svg {
+      width: 22px; height: 22px;
+    }
+
+    .nucleo-banner-content strong {
+      display: block;
+      font-size: 0.9375rem;
+      font-weight: 800;
+      color: #78350F;
+      margin-bottom: 2px;
+    }
+
+    .nucleo-banner-content p {
+      font-size: 0.8125rem;
+      color: #92400E;
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    .nucleo-banner-content small {
+      font-size: 0.75rem;
+      color: #92400E;
+      opacity: 0.8;
+    }
+
+    .nucleo-banner-actions {
+      display: flex;
+      gap: var(--space-2);
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 768px) {
+      .nucleo-banner {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .nucleo-banner-icon { margin: 0 auto; }
+      .nucleo-banner-actions { justify-content: center; flex-wrap: wrap; }
+    }
+
     /* ============================================
        VOLUMEN — toggle kg/ton mejorado
        ============================================ */
@@ -805,7 +876,8 @@
       <ul class="sidebar-nav">
         <li><a href="panel.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Panel</a></li>
         <li><a href="formulador.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>Formulador</a></li>
-        <li><a href="ingredientes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Ingredientes</a></li>
+        
+        <li><a href="nucleos.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>Núcleos</a></li>
         <li><a href="historial.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Historial</a></li>
         <li><a href="recomendaciones.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1M3.34 7l.7.7M20.66 7l-.7.7M21 14h-1M4 14H3M16 17a4 4 0 0 0-8 0v3h8v-3z"/></svg>Recomendaciones</a></li>
       </ul>
@@ -831,6 +903,9 @@
       </div>
 
       <div class="app-content" style="max-width:1500px;">
+
+        <!-- Banner sugerencia de núcleo (aparece dinámicamente) -->
+        <div id="nucleoSugerencia" class="nucleo-banner" style="display:none;"></div>
 
         <div class="formulador-layout">
 
@@ -1000,10 +1075,11 @@
     </div>
   </div>
 
-  <script src="assets/firebase-config.js?v=4"></script>
-  <script src="assets/avicola-data.js?v=4"></script>
+  <script src="assets/firebase-config.js?v=8"></script>
+  <script src="assets/avicola-data.js?v=8"></script>
+  <script src="assets/nucleos-data.js?v=8"></script>
   <script type="module">
-    import "./assets/shared.js?v=4";
+    import "./assets/shared.js?v=8";
     await window.fmAuthGuard({ requireAuth: true });
 
     const A = window.FM_AVICOLA;
@@ -1181,6 +1257,87 @@
       const etapa = A.getEtapa(state.razaId, state.etapaId);
       document.getElementById("topbarSubtitle").textContent =
         `${raza.nombre} · ${etapa.nombre} (${etapa.rango})`;
+
+      // Detectar núcleo sugerido para esta combinación
+      detectarNucleoSugerido();
+    }
+
+    // ============================================
+    // DETECCIÓN AUTOMÁTICA DE NÚCLEO
+    // ============================================
+    function detectarNucleoSugerido() {
+      const banner = document.getElementById("nucleoSugerencia");
+      if (!window.FM_NUCLEOS) {
+        banner.style.display = "none";
+        return;
+      }
+
+      // Si el usuario lo ocultó manualmente, no mostrarlo
+      const hidden = sessionStorage.getItem("fm_nucleo_banner_hidden");
+      if (hidden === "1") {
+        banner.style.display = "none";
+        return;
+      }
+
+      const raza = A.getRaza(state.razaId);
+      if (!raza) {
+        banner.style.display = "none";
+        return;
+      }
+
+      // Mapeo de etapas del formulador a etapas del catálogo de núcleos
+      const etapaMap = {
+        // Engorda
+        "preiniciador": "preiniciador", "iniciador": "iniciador",
+        "crecimiento": "crecimiento", "finalizador": "finalizador", "retiro": "retiro",
+        // Ponedora (las etapas de avicola-data pueden venir distinto)
+        "fase1": "fase1", "fase2": "fase2", "fase3": "fase3",
+        "pollita-ini": "pollita-ini", "pollita-crec": "pollita-crec",
+        // Pavo
+        "pavo-preini": "pavo-preini", "pavo-ini": "pavo-ini",
+        "pavo-crec": "pavo-crec", "pavo-fin": "pavo-fin"
+      };
+
+      const etapaCatalogo = etapaMap[state.etapaId] || state.etapaId;
+      const result = window.FM_NUCLEOS.detectarMejorNucleo(raza.tipo, etapaCatalogo, "balanceado");
+
+      if (!result.sugerido) {
+        banner.style.display = "none";
+        return;
+      }
+
+      const n = result.sugerido;
+
+      banner.innerHTML = `
+        <div class="nucleo-banner-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="12" cy="12" r="1" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="nucleo-banner-content">
+          <strong>💡 ¿Quieres ahorrar tiempo? Usa un núcleo premezclado</strong>
+          <p>Te sugerimos <strong>${n.nombre}</strong> al ${n.inclusion}% — ${result.justificacionEtapa}</p>
+          <small>Solo necesitas agregar maíz + soya. Ahorro de tiempo del 70% para casos típicos.</small>
+        </div>
+        <div class="nucleo-banner-actions">
+          <a href="nucleos.html" class="btn btn-accent btn-sm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Ver núcleos
+          </a>
+          <button class="btn btn-ghost btn-sm" id="btnCloseSugerencia">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      `;
+
+      banner.style.display = "grid";
+
+      document.getElementById("btnCloseSugerencia").addEventListener("click", () => {
+        banner.style.display = "none";
+        sessionStorage.setItem("fm_nucleo_banner_hidden", "1");
+      });
     }
 
     // ============================================
