@@ -9,168 +9,715 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="assets/shared.css?v=5">
+  <link rel="stylesheet" href="assets/shared.css?v=6">
 
   <style>
+    /* ============================================
+       HERO con ilustración SVG
+       ============================================ */
     .reco-hero {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      background: linear-gradient(135deg, #1B4D7C 0%, #0F3457 50%, #061f3a 100%);
       color: white;
-      padding: var(--space-8);
+      padding: var(--space-10);
       border-radius: var(--radius-xl);
       margin-bottom: var(--space-8);
       position: relative;
       overflow: hidden;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: var(--space-6);
+      align-items: center;
+    }
+
+    @media (max-width: 968px) {
+      .reco-hero { grid-template-columns: 1fr; padding: var(--space-6); }
+      .reco-hero-illu { display: none; }
     }
 
     .reco-hero::before {
       content: "";
       position: absolute;
-      top: -100px; right: -100px;
-      width: 400px; height: 400px;
-      background: radial-gradient(circle, rgba(245,158,11,0.2) 0%, transparent 70%);
+      top: -150px; right: -100px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(245,158,11,0.18) 0%, transparent 60%);
       border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .reco-hero::after {
+      content: "";
+      position: absolute;
+      bottom: -100px; left: -100px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(46,107,168,0.3) 0%, transparent 60%);
+      border-radius: 50%;
+      pointer-events: none;
     }
 
     .reco-hero-content {
       position: relative;
-      max-width: 700px;
+      z-index: 1;
+    }
+
+    .reco-hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(245, 158, 11, 0.18);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      margin-bottom: var(--space-4);
     }
 
     .reco-hero h1 {
       color: white;
-      font-size: clamp(1.75rem, 2vw + 1rem, 2.5rem);
-      margin-bottom: var(--space-3);
-      line-height: 1.1;
+      font-size: clamp(1.75rem, 2.2vw + 1rem, 2.75rem);
+      margin-bottom: var(--space-4);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
     }
 
     .reco-hero p {
-      color: rgba(255,255,255,0.9);
+      color: rgba(255,255,255,0.85);
       font-size: 1.0625rem;
       line-height: 1.6;
+      margin-bottom: var(--space-5);
+      max-width: 540px;
     }
 
-    .reco-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-5);
+    .reco-hero-stats {
+      display: flex; gap: var(--space-6);
+      padding-top: var(--space-5);
+      border-top: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .reco-hero-stat strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 1.875rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--accent-light);
+      line-height: 1;
+    }
+
+    .reco-hero-stat span {
+      font-size: 0.8125rem;
+      color: rgba(255,255,255,0.7);
+      margin-top: 4px;
+      display: block;
+    }
+
+    .reco-hero-illu {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ============================================
+       NAV de ejes (fijo arriba)
+       ============================================ */
+    .ejes-nav {
+      display: flex;
+      gap: var(--space-2);
+      flex-wrap: wrap;
       margin-bottom: var(--space-8);
+      padding: var(--space-3);
+      background: white;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--neutral-200);
+      box-shadow: 0 1px 3px rgba(15, 52, 87, 0.04);
     }
 
-    @media (max-width: 968px) { .reco-grid { grid-template-columns: 1fr; } }
+    .ejes-nav-item {
+      flex: 1 1 auto;
+      min-width: 130px;
+      padding: var(--space-3);
+      background: var(--neutral-50);
+      border-radius: var(--radius);
+      text-decoration: none;
+      color: var(--neutral-700);
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      border: 1.5px solid transparent;
+    }
 
-    .reco-card {
+    .ejes-nav-item:hover {
+      background: var(--primary-50);
+      color: var(--primary-dark);
+      border-color: var(--primary-light);
+      transform: translateY(-1px);
+    }
+
+    .ejes-nav-num {
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border-radius: 8px;
+      display: grid; place-items: center;
+      font-weight: 800;
+      font-size: 0.875rem;
+      box-shadow: 0 2px 4px rgba(27,77,124,0.2);
+    }
+
+    .ejes-nav-text {
+      font-size: 0.75rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    /* ============================================
+       EJES — cards grandes con ejemplo visual
+       ============================================ */
+    .eje-card {
       background: white;
       border: 1px solid var(--neutral-200);
-      border-radius: var(--radius-lg);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      margin-bottom: var(--space-8);
+      box-shadow: 0 1px 3px rgba(15, 52, 87, 0.04);
+      scroll-margin-top: 100px;
+    }
+
+    .eje-header {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: var(--space-5);
+      align-items: center;
       padding: var(--space-6);
-      transition: all var(--transition);
-      position: relative;
-    }
-
-    .reco-card:hover {
-      border-color: var(--primary-light);
-      box-shadow: var(--shadow-md);
-      transform: translateY(-2px);
-    }
-
-    .reco-card-header {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--space-4);
-      margin-bottom: var(--space-4);
-      padding-bottom: var(--space-4);
+      background: linear-gradient(135deg, white 0%, var(--neutral-50) 100%);
       border-bottom: 1px solid var(--neutral-100);
     }
 
-    .reco-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: var(--radius);
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
+    .eje-num-badge {
+      width: 64px; height: 64px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border-radius: var(--radius-lg);
+      display: grid; place-items: center;
+      font-family: var(--font-display);
       font-size: 1.75rem;
+      font-weight: 800;
+      box-shadow: 0 8px 20px rgba(27, 77, 124, 0.25);
+      flex-shrink: 0;
     }
 
-    .reco-icon-1 { background: #FEF3C7; }
-    .reco-icon-2 { background: #DBEAFE; }
-    .reco-icon-3 { background: #D1FAE5; }
-    .reco-icon-4 { background: #FCE7F3; }
-    .reco-icon-5 { background: #DDD6FE; }
-    .reco-icon-6 { background: #FED7AA; }
-
-    .reco-card-title {
-      font-size: 1.125rem;
-      font-weight: 700;
+    .eje-title {
+      font-size: 1.5rem;
+      font-weight: 800;
       color: var(--neutral-900);
       margin-bottom: 4px;
-      line-height: 1.3;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
     }
 
-    .reco-card-subtitle {
-      font-size: 0.8125rem;
-      color: var(--neutral-500);
-      font-weight: 600;
-      letter-spacing: 0.04em;
+    .eje-subtitle {
+      font-size: 0.9375rem;
+      color: var(--neutral-600);
+      line-height: 1.5;
+    }
+
+    .eje-saving {
+      flex-shrink: 0;
+      text-align: center;
+      padding: var(--space-3) var(--space-5);
+      background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+      border: 2px solid var(--success);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+    }
+
+    .eje-saving-num {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--success);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .eje-saving-label {
+      font-size: 0.6875rem;
+      color: #047857;
+      font-weight: 700;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
+      margin-top: 2px;
     }
 
-    .reco-list {
+    @media (max-width: 768px) {
+      .eje-header {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .eje-num-badge { margin: 0 auto; }
+      .eje-saving { margin: 0 auto; }
+    }
+
+    .eje-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    @media (max-width: 968px) {
+      .eje-body { grid-template-columns: 1fr; }
+    }
+
+    .eje-puntos {
+      padding: var(--space-6);
+      border-right: 1px solid var(--neutral-100);
+    }
+
+    @media (max-width: 968px) {
+      .eje-puntos { border-right: none; border-bottom: 1px solid var(--neutral-100); }
+    }
+
+    .eje-section-title {
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .eje-puntos-list {
       list-style: none;
       padding: 0;
     }
 
-    .reco-list li {
+    .eje-puntos-list li {
       display: flex;
+      align-items: flex-start;
       gap: var(--space-3);
-      padding: var(--space-2) 0;
+      padding: var(--space-3) 0;
+      border-bottom: 1px dashed var(--neutral-100);
       font-size: 0.9375rem;
       line-height: 1.5;
       color: var(--neutral-700);
     }
 
-    .reco-list li::before {
-      content: "✓";
-      color: var(--success);
-      font-weight: 700;
+    .eje-puntos-list li:last-child { border-bottom: none; }
+
+    .eje-puntos-list li svg {
       flex-shrink: 0;
-      margin-top: 2px;
+      width: 22px; height: 22px;
+      padding: 4px;
+      background: var(--success-light);
+      color: var(--success);
+      border-radius: 6px;
+      margin-top: 1px;
     }
 
-    .reco-detail {
-      background: var(--neutral-50);
-      border-radius: var(--radius);
-      padding: var(--space-4);
-      margin-top: var(--space-4);
-      font-size: 0.875rem;
-      line-height: 1.6;
-      color: var(--neutral-700);
-      border-left: 3px solid var(--primary);
-    }
-
-    .reco-detail strong {
+    .eje-puntos-list li strong {
       color: var(--neutral-900);
       font-weight: 700;
     }
 
-    /* Tabla de aditivos */
+    .eje-ejemplo {
+      padding: var(--space-6);
+      background: linear-gradient(180deg, white 0%, var(--neutral-50) 100%);
+    }
+
+    /* ============================================
+       VISUALIZACIONES SVG
+       ============================================ */
+    .viz-container {
+      background: white;
+      border-radius: var(--radius);
+      padding: var(--space-4);
+      border: 1px dashed var(--neutral-300);
+      margin-top: var(--space-3);
+    }
+
+    /* Comparativa antes/después */
+    .compare-table {
+      width: 100%;
+      font-size: 0.8125rem;
+    }
+
+    .compare-table th {
+      padding: 8px;
+      text-align: left;
+      font-size: 0.6875rem;
+      font-weight: 800;
+      color: var(--neutral-500);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--neutral-200);
+    }
+
+    .compare-table th.right { text-align: right; }
+    .compare-table td.right { text-align: right; font-family: var(--font-mono); }
+
+    .compare-table td {
+      padding: 8px;
+      border-bottom: 1px solid var(--neutral-100);
+    }
+
+    .compare-table tr.highlight td {
+      background: var(--success-light);
+      font-weight: 700;
+    }
+
+    .compare-table tr.highlight td:first-child { color: var(--success); }
+    .compare-table tr.highlight td:last-child { color: var(--success); font-weight: 800; }
+
+    /* Bar visualization */
+    .bar-viz {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-2) 0;
+      font-size: 0.8125rem;
+    }
+
+    .bar-viz-label {
+      flex: 0 0 80px;
+      font-weight: 600;
+      color: var(--neutral-700);
+    }
+
+    .bar-viz-bar-wrap {
+      flex: 1;
+      height: 24px;
+      background: var(--neutral-100);
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bar-viz-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      color: white;
+      font-weight: 700;
+      font-size: 0.6875rem;
+      min-width: 30px;
+    }
+
+    .bar-viz-bar.alt { background: linear-gradient(90deg, var(--accent-dark) 0%, var(--accent) 100%); }
+    .bar-viz-bar.success { background: linear-gradient(90deg, #047857 0%, var(--success) 100%); }
+
+    .bar-viz-num {
+      flex: 0 0 70px;
+      text-align: right;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--neutral-900);
+    }
+
+    /* Caso real */
+    .caso-real {
+      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+      border: 1px solid #F59E0B;
+      border-radius: var(--radius);
+      padding: var(--space-4);
+      margin-top: var(--space-4);
+      position: relative;
+    }
+
+    .caso-real::before {
+      content: "📍 CASO REAL";
+      position: absolute;
+      top: -10px; left: var(--space-3);
+      background: var(--accent);
+      color: var(--neutral-900);
+      padding: 2px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.625rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+    }
+
+    .caso-real-content {
+      padding-top: var(--space-2);
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: #78350F;
+    }
+
+    .caso-real-content strong {
+      color: #451A03;
+      font-weight: 800;
+    }
+
+    .ejemplo-titulo {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: var(--neutral-900);
+      margin-bottom: var(--space-3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ejemplo-titulo svg {
+      width: 18px; height: 18px;
+      color: var(--primary);
+    }
+
+    /* ============================================
+       CHECKLIST SEMANAL
+       ============================================ */
+    .checklist-section {
+      background: white;
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      margin-bottom: var(--space-8);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .checklist-section::before {
+      content: "";
+      position: absolute;
+      top: -50px; right: -50px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-4);
+      margin-top: var(--space-5);
+    }
+
+    @media (max-width: 768px) { .checklist-grid { grid-template-columns: 1fr; } }
+
+    .checklist-day {
+      background: linear-gradient(135deg, white 0%, var(--neutral-50) 100%);
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      transition: all var(--transition);
+      position: relative;
+    }
+
+    .checklist-day:hover {
+      border-color: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(27, 77, 124, 0.08);
+    }
+
+    .checklist-day-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-3);
+      padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--neutral-100);
+    }
+
+    .checklist-day-icon {
+      width: 44px; height: 44px;
+      border-radius: var(--radius);
+      display: grid; place-items: center;
+      flex-shrink: 0;
+    }
+
+    .checklist-day-1 { background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); color: #92400E; }
+    .checklist-day-2 { background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%); color: #1E40AF; }
+    .checklist-day-3 { background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%); color: #047857; }
+    .checklist-day-4 { background: linear-gradient(135deg, #FCE7F3 0%, #FBCFE8 100%); color: #9F1239; }
+
+    .checklist-day-icon svg { width: 22px; height: 22px; }
+
+    .checklist-day-title {
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--neutral-500);
+      margin-bottom: 2px;
+    }
+
+    .checklist-day-name {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--neutral-900);
+    }
+
+    .checklist-day ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .checklist-day ul li {
+      padding: 6px 0;
+      font-size: 0.875rem;
+      color: var(--neutral-700);
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .checklist-day ul li::before {
+      content: "□";
+      color: var(--primary);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ============================================
+       REGLA DE ORO
+       ============================================ */
+    .regla-oro {
+      background: linear-gradient(135deg, #1B4D7C 0%, #0F3457 100%);
+      color: white;
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      margin-bottom: var(--space-8);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .regla-oro::before {
+      content: """;
+      position: absolute;
+      top: -40px;
+      left: 30px;
+      font-family: Georgia, serif;
+      font-size: 18rem;
+      color: rgba(245, 158, 11, 0.15);
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .regla-oro-content {
+      position: relative;
+      max-width: 800px;
+    }
+
+    .regla-oro-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      margin-bottom: var(--space-3);
+    }
+
+    .regla-oro h2 {
+      color: white;
+      font-size: clamp(1.5rem, 2vw + 0.5rem, 2.25rem);
+      margin-bottom: var(--space-4);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .regla-oro p {
+      color: rgba(255,255,255,0.9);
+      font-size: 1.0625rem;
+      line-height: 1.6;
+      margin-bottom: var(--space-3);
+    }
+
+    .regla-oro p:last-child { margin-bottom: 0; }
+
+    .regla-oro-comparison {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: var(--space-4);
+      align-items: center;
+      margin-top: var(--space-6);
+      padding: var(--space-5);
+      background: rgba(255,255,255,0.06);
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    @media (max-width: 600px) {
+      .regla-oro-comparison { grid-template-columns: 1fr; text-align: center; }
+    }
+
+    .formula-comp {
+      text-align: center;
+      padding: var(--space-3);
+    }
+
+    .formula-comp-label {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.7);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    .formula-comp-cost {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 4px;
+    }
+
+    .formula-comp-cv {
+      font-size: 0.8125rem;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .formula-comp.winner {
+      background: rgba(245,158,11,0.15);
+      border: 1px solid rgba(245,158,11,0.4);
+      border-radius: var(--radius);
+    }
+
+    .formula-comp.winner .formula-comp-cost { color: var(--accent-light); }
+
+    .vs-badge {
+      width: 40px; height: 40px;
+      background: var(--accent);
+      color: var(--neutral-900);
+      border-radius: 50%;
+      display: grid; place-items: center;
+      font-weight: 800;
+      font-size: 0.8125rem;
+    }
+
+    /* ============================================
+       TABLA DE ADITIVOS — más visual
+       ============================================ */
     .aditivos-table {
       width: 100%;
       border-collapse: collapse;
       background: white;
       border-radius: var(--radius-lg);
       overflow: hidden;
-      box-shadow: var(--shadow-sm);
+      box-shadow: 0 1px 3px rgba(15,52,87,0.04);
       border: 1px solid var(--neutral-200);
     }
 
     .aditivos-table th {
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
       color: white;
       padding: 0.875rem 1rem;
       text-align: left;
-      font-size: 0.75rem;
-      font-weight: 700;
+      font-size: 0.6875rem;
+      font-weight: 800;
       letter-spacing: 0.06em;
       text-transform: uppercase;
     }
@@ -183,7 +730,7 @@
     }
 
     .aditivos-table tr:last-child td { border-bottom: none; }
-    .aditivos-table tr:hover td { background: var(--neutral-50); }
+    .aditivos-table tr:hover td { background: var(--primary-50); }
     .aditivos-table .num {
       text-align: right;
       font-family: var(--font-mono);
@@ -192,62 +739,62 @@
 
     .aditivos-table strong { color: var(--primary-dark); }
 
-    /* Sección destacada */
-    .destacada {
-      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
-      border: 2px solid #F59E0B;
-      padding: var(--space-6);
-      border-radius: var(--radius-lg);
-      margin: var(--space-8) 0;
-    }
-
-    .destacada h3 {
-      color: #78350F;
-      font-size: 1.25rem;
-      margin-bottom: var(--space-3);
-      display: flex;
+    .roi-badge {
+      display: inline-flex;
       align-items: center;
-      gap: var(--space-2);
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
     }
 
-    .destacada p {
-      color: #92400E;
-      font-size: 0.9375rem;
-      line-height: 1.6;
-      margin-bottom: var(--space-3);
-    }
+    .roi-alto { background: var(--success-light); color: #047857; }
+    .roi-medio { background: #FEF3C7; color: #92400E; }
+    .roi-condicional { background: #DBEAFE; color: #1E40AF; }
 
-    .destacada p:last-child { margin-bottom: 0; }
-
-    /* Quick CTA */
+    /* ============================================
+       CTA final
+       ============================================ */
     .quick-cta {
-      background: var(--neutral-900);
+      background: linear-gradient(135deg, var(--neutral-900) 0%, #0a1628 100%);
       color: white;
       border-radius: var(--radius-xl);
-      padding: var(--space-8);
+      padding: var(--space-10);
       text-align: center;
       margin-top: var(--space-8);
+      position: relative;
+      overflow: hidden;
     }
+
+    .quick-cta::before {
+      content: "";
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(245,158,11,0.1) 0%, transparent 60%);
+      border-radius: 50%;
+    }
+
+    .quick-cta > * { position: relative; }
 
     .quick-cta h3 {
       color: white;
-      font-size: 1.5rem;
+      font-size: 1.75rem;
       margin-bottom: var(--space-3);
+      font-weight: 800;
+      letter-spacing: -0.02em;
     }
 
     .quick-cta p {
-      color: rgba(255,255,255,0.8);
+      color: rgba(255,255,255,0.85);
       margin-bottom: var(--space-5);
-    }
-
-    .section-title {
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--primary);
-      margin-bottom: var(--space-3);
-      margin-top: var(--space-8);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 1rem;
+      line-height: 1.6;
     }
   </style>
 </head>
@@ -281,7 +828,7 @@
       <div class="app-topbar">
         <div>
           <h2 style="font-size:1.25rem;font-weight:700;">Recomendaciones del experto</h2>
-          <div style="font-size:0.875rem;color:var(--neutral-500);">Mejores prácticas para optimizar costos y desempeño</div>
+          <div style="font-size:0.875rem;color:var(--neutral-500);">Mejores prácticas con ejemplos reales y comparativas</div>
         </div>
         <a href="formulador.html" class="btn btn-primary btn-sm">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
@@ -291,322 +838,859 @@
 
       <div class="app-content">
 
-        <!-- HERO -->
+        <!-- ============================================
+             HERO con ilustración
+             ============================================ -->
         <div class="reco-hero">
           <div class="reco-hero-content">
+            <span class="reco-hero-eyebrow">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3"/></svg>
+              Guía profesional
+            </span>
             <h1>Los 6 ejes de la formulación moderna</h1>
             <p>Optimizar el costo de la fórmula sin sacrificar el desempeño productivo es posible aplicando estos seis principios. Cada uno reduce el costo por tonelada en 3-12% si se ejecuta correctamente.</p>
+
+            <div class="reco-hero-stats">
+              <div class="reco-hero-stat">
+                <strong>15-30%</strong>
+                <span>Ahorro acumulable</span>
+              </div>
+              <div class="reco-hero-stat">
+                <strong>6 ejes</strong>
+                <span>De optimización</span>
+              </div>
+              <div class="reco-hero-stat">
+                <strong>$200-800</strong>
+                <span>Ahorro/ton típico</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="reco-hero-illu">
+            <!-- SVG ilustración: pollo + gráfica de optimización -->
+            <svg viewBox="0 0 360 280" xmlns="http://www.w3.org/2000/svg">
+              <!-- Fondo ámbar suave -->
+              <ellipse cx="180" cy="240" rx="140" ry="20" fill="rgba(245,158,11,0.15)"/>
+
+              <!-- Gráfica de barras decreciente -->
+              <g transform="translate(50, 70)">
+                <rect x="0" y="60" width="35" height="120" fill="#EF4444" opacity="0.85" rx="4"/>
+                <rect x="50" y="80" width="35" height="100" fill="#F59E0B" opacity="0.85" rx="4"/>
+                <rect x="100" y="100" width="35" height="80" fill="#FCD34D" opacity="0.85" rx="4"/>
+                <rect x="150" y="115" width="35" height="65" fill="#10B981" opacity="0.85" rx="4"/>
+                <rect x="200" y="130" width="35" height="50" fill="#10B981" rx="4"/>
+
+                <!-- Línea descendente -->
+                <path d="M 17 60 Q 55 80, 67 80 Q 105 100, 117 100 Q 155 115, 167 115 Q 205 130, 217 130" stroke="white" stroke-width="2" fill="none" stroke-dasharray="4,3" opacity="0.6"/>
+
+                <!-- Etiquetas -->
+                <text x="17" y="195" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="9" font-family="Plus Jakarta Sans" font-weight="700">$10K</text>
+                <text x="217" y="195" text-anchor="middle" fill="#FCD34D" font-size="9" font-family="Plus Jakarta Sans" font-weight="700">$8.2K</text>
+              </g>
+
+              <!-- Pollo iconográfico -->
+              <g transform="translate(280, 90)">
+                <!-- Cuerpo -->
+                <ellipse cx="0" cy="35" rx="35" ry="40" fill="#F8FAFC"/>
+                <!-- Cabeza -->
+                <circle cx="-5" cy="-5" r="22" fill="#F8FAFC"/>
+                <!-- Cresta -->
+                <path d="M -10 -22 Q -15 -32, -8 -28 Q -3 -35, 3 -28 Q 7 -32, 5 -22" fill="#EF4444"/>
+                <!-- Pico -->
+                <path d="M 12 -3 L 22 -1 L 12 3" fill="#F59E0B"/>
+                <!-- Ojo -->
+                <circle cx="3" cy="-7" r="2" fill="#0F3457"/>
+                <!-- Ala -->
+                <ellipse cx="-5" cy="35" rx="20" ry="25" fill="#E2E8F0"/>
+                <path d="M -20 30 L -25 50 L -10 45 Z" fill="#CBD5E1"/>
+                <!-- Patas -->
+                <line x1="-10" y1="73" x2="-10" y2="85" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="5" y1="73" x2="5" y2="85" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round"/>
+                <!-- Pies -->
+                <line x1="-15" y1="85" x2="-5" y2="85" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
+                <line x1="0" y1="85" x2="10" y2="85" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
+              </g>
+
+              <!-- Estrellas decorativas -->
+              <g fill="#FCD34D" opacity="0.6">
+                <circle cx="40" cy="40" r="2"/>
+                <circle cx="320" cy="40" r="2.5"/>
+                <circle cx="60" cy="240" r="2"/>
+              </g>
+            </svg>
           </div>
         </div>
 
-        <!-- TARJETAS DE LOS 6 EJES -->
-        <div class="reco-grid">
-
-          <!-- 1. FORMULACIÓN POR ETAPAS Y SEXO -->
-          <div class="reco-card">
-            <div class="reco-card-header">
-              <div class="reco-icon reco-icon-1">📊</div>
-              <div>
-                <div class="reco-card-subtitle">Eje 1</div>
-                <div class="reco-card-title">Formulación por etapas y sexo</div>
-              </div>
-            </div>
-
-            <ul class="reco-list">
-              <li>Usa al menos 4-5 fases en pollo de engorda (preinic., inic., crec., final., retiro) en vez de 2-3</li>
-              <li>Separa machos y hembras desde semana 3 — sus requerimientos divergen</li>
-              <li>Hembras tienen menor consumo, pero mayor deposición de grasa abdominal</li>
-              <li>Machos requieren 0.05-0.1% más lisina digestible para pechuga</li>
-            </ul>
-
-            <div class="reco-detail">
-              <strong>Ahorro típico:</strong> 4-6% del costo total del alimento. Una fórmula única para todo el ciclo desperdicia nutrientes en finalizador y los limita en arranque.
-            </div>
-          </div>
-
-          <!-- 2. DISMINUIR MÁRGENES DE SEGURIDAD -->
-          <div class="reco-card">
-            <div class="reco-card-header">
-              <div class="reco-icon reco-icon-2">📏</div>
-              <div>
-                <div class="reco-card-subtitle">Eje 2</div>
-                <div class="reco-card-title">Disminuir márgenes de seguridad</div>
-              </div>
-            </div>
-
-            <ul class="reco-list">
-              <li>El nutricionista promedio formula con 5-15% sobre el requerimiento "por seguridad"</li>
-              <li>Confía en los valores reales de tus ingredientes (haz NIR si puedes)</li>
-              <li>Trabaja con AA digestibles, no totales — son menos variables</li>
-              <li>Margen recomendado: 2-3% sobre Lys dig, 1-2% sobre EM</li>
-            </ul>
-
-            <div class="reco-detail">
-              <strong>Ahorro típico:</strong> 2-4% del costo. Cada 1% de "exceso" en proteína cuesta ~$80-120/ton sin aportar ganancia productiva.
-            </div>
-          </div>
-
-          <!-- 3. INGREDIENTES ALTERNATIVOS -->
-          <div class="reco-card">
-            <div class="reco-card-header">
-              <div class="reco-icon reco-icon-3">🌾</div>
-              <div>
-                <div class="reco-card-subtitle">Eje 3</div>
-                <div class="reco-card-title">Uso de ingredientes alternativos</div>
-              </div>
-            </div>
-
-            <ul class="reco-list">
-              <li>Sorgo: sustituye hasta 50% del maíz si está $0.50+/kg más barato</li>
-              <li>DDGS: hasta 8% en crecimiento/finalizador (no en arranque)</li>
-              <li>Pasta de canola: sustituye 5-10% de soya en finalizador</li>
-              <li>Salvado de trigo: 3-8% mejora la salud intestinal y baja costo</li>
-              <li>Harina de carne y hueso: alterna con pasta soya cuando esté $5+/kg más barata</li>
-            </ul>
-
-            <div class="reco-detail">
-              <strong>Ahorro típico:</strong> 3-8% según volatilidad de precios. Un nutricionista que monitorea precios semanales ahorra mucho más que uno que formula con ingredientes fijos.
-            </div>
-          </div>
-
-          <!-- 4. AMINOÁCIDOS INDUSTRIALES -->
-          <div class="reco-card">
-            <div class="reco-card-header">
-              <div class="reco-icon reco-icon-4">💉</div>
-              <div>
-                <div class="reco-card-subtitle">Eje 4</div>
-                <div class="reco-card-title">Uso de aminoácidos industriales</div>
-              </div>
-            </div>
-
-            <ul class="reco-list">
-              <li>DL-Metionina: incluir 0.15-0.30% para reducir pasta de soya 1.5-2%</li>
-              <li>L-Lisina HCl: 0.20-0.40% según etapa (más en iniciador)</li>
-              <li>L-Treonina: 0.05-0.15% cuando hay alta inclusión de DDGS</li>
-              <li>L-Valina: ya disponible en MX, útil en fórmulas de bajo PC</li>
-              <li>L-Triptófano: corrige déficits cuando se usan cereales alternativos</li>
-            </ul>
-
-            <div class="reco-detail">
-              <strong>Ahorro típico:</strong> 5-10% del costo. Los AA sintéticos son más caros por kg pero permiten reducir 2-4% de pasta de soya, que ahorra mucho más de lo que cuestan.
-            </div>
-          </div>
-
-          <!-- 5. ADITIVOS RACIONALES -->
-          <div class="reco-card">
-            <div class="reco-card-header">
-              <div class="reco-icon reco-icon-5">💊</div>
-              <div>
-                <div class="reco-card-subtitle">Eje 5</div>
-                <div class="reco-card-title">Uso racional de aditivos</div>
-              </div>
-            </div>
-
-            <ul class="reco-list">
-              <li>Solo añade aditivos con respuesta documentada en TU contexto</li>
-              <li>Probióticos: útil en arranque y cuando se quitan antibióticos</li>
-              <li>Acidificantes: en climas cálidos y agua de mala calidad</li>
-              <li>Pigmentos (marigold/ají): solo si el mercado paga la yema roja</li>
-              <li>Antioxidantes: obligatorios cuando hay grasa rancia o alto aceite</li>
-            </ul>
-
-            <div class="reco-detail">
-              <strong>Cuidado:</strong> Sumar todos los aditivos del catálogo es la forma más rápida de inflar el costo en 5-8% sin justificación. Cada aditivo debe demostrar ROI.
-            </div>
-          </div>
-
-          <!-- 6. ENZIMAS -->
-          <div class="reco-card">
-            <div class="reco-card-header">
-              <div class="reco-icon reco-icon-6">🧪</div>
-              <div>
-                <div class="reco-card-subtitle">Eje 6</div>
-                <div class="reco-card-title">Uso racional de enzimas</div>
-              </div>
-            </div>
-
-            <ul class="reco-list">
-              <li>Fitasa: liberación de P fítico, reduce 0.10-0.15% fosfato monocálcico</li>
-              <li>Xilanasa: cuando hay trigo, salvado o subproductos fibrosos</li>
-              <li>Amilasa: en pollos jóvenes con poco desarrollo enzimático propio</li>
-              <li>Proteasa: mejora digestibilidad de proteínas vegetales</li>
-              <li>NSPasas multienzimas: cuando la dieta tiene >15% subproductos</li>
-            </ul>
-
-            <div class="reco-detail">
-              <strong>Ahorro típico:</strong> Solo la fitasa ahorra $30-50/ton al permitir reducir fosfato. ROI inmediato cuando el fosfato monocálcico está sobre $18/kg.
-            </div>
-          </div>
-
-        </div>
-
-        <!-- TABLA DE ADITIVOS RECOMENDADOS -->
-        <div class="section-title">📋 Tabla de referencia rápida — aditivos avícolas</div>
-
-        <div style="overflow-x:auto;margin-bottom:var(--space-8);">
-          <table class="aditivos-table">
-            <thead>
-              <tr>
-                <th>Aditivo</th>
-                <th>Inclusión típica</th>
-                <th>Etapa ideal</th>
-                <th>ROI esperado</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Fitasa</strong></td>
-                <td class="num">500-1000 FTU/kg</td>
-                <td>Todas</td>
-                <td>Alto — paga sola</td>
-              </tr>
-              <tr>
-                <td><strong>Xilanasa</strong></td>
-                <td class="num">100-200 g/ton</td>
-                <td>Crecimiento, finalizador</td>
-                <td>Medio si hay trigo/subproductos</td>
-              </tr>
-              <tr>
-                <td><strong>DL-Metionina</strong></td>
-                <td class="num">0.15-0.30%</td>
-                <td>Todas</td>
-                <td>Alto — reduce 1.5-2% pasta soya</td>
-              </tr>
-              <tr>
-                <td><strong>L-Lisina HCl</strong></td>
-                <td class="num">0.20-0.40%</td>
-                <td>Iniciador y crecimiento</td>
-                <td>Alto en arranque</td>
-              </tr>
-              <tr>
-                <td><strong>Probióticos</strong></td>
-                <td class="num">0.05-0.10%</td>
-                <td>0-21 días</td>
-                <td>Variable — depende del manejo</td>
-              </tr>
-              <tr>
-                <td><strong>Coccidiostato</strong></td>
-                <td class="num">0.05%</td>
-                <td>0-35 días (NO retiro)</td>
-                <td>Muy alto — previene pérdidas</td>
-              </tr>
-              <tr>
-                <td><strong>Antioxidantes</strong></td>
-                <td class="num">100-200 g/ton</td>
-                <td>Cuando aceite >3%</td>
-                <td>Alto si grasa es vieja</td>
-              </tr>
-              <tr>
-                <td><strong>Pigmentos amarillos</strong></td>
-                <td class="num">10-30 g/ton</td>
-                <td>Postura, finalizador</td>
-                <td>Solo si mercado lo exige</td>
-              </tr>
-              <tr>
-                <td><strong>Pigmentos rojos (cantaxantina)</strong></td>
-                <td class="num">3-6 g/ton</td>
-                <td>Postura</td>
-                <td>Solo en huevo café/yema rojiza</td>
-              </tr>
-              <tr>
-                <td><strong>Cloruro de colina 60%</strong></td>
-                <td class="num">0.05-0.15%</td>
-                <td>Todas</td>
-                <td>Crítico para hígado</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- DESTACADO -->
-        <div class="destacada">
-          <h3>💡 Regla de oro del nutricionista</h3>
-          <p><strong>"El alimento más caro del mundo es el que el animal no convierte en producto."</strong> — La optimización no es solo bajar el costo por tonelada, sino el costo por kg de carne o por docena de huevos producidos.</p>
-          <p>Ejemplo: una fórmula que cuesta $9,200/ton pero da conversión 1.55 es mejor que una de $8,800/ton con conversión 1.70. Calcula siempre <strong>costo por kg de canal o docena</strong>, no solo costo por tonelada.</p>
-        </div>
-
-        <!-- CHECKLIST DE OPTIMIZACIÓN -->
-        <div class="section-title">✅ Checklist semanal del nutricionista</div>
-
-        <div class="reco-grid">
-          <div class="reco-card">
-            <div class="reco-card-header" style="border-bottom:none;padding-bottom:0;">
-              <div class="reco-icon reco-icon-1">📅</div>
-              <div>
-                <div class="reco-card-subtitle">Lunes</div>
-                <div class="reco-card-title">Actualizar precios</div>
-              </div>
-            </div>
-            <ul class="reco-list" style="margin-top:var(--space-3);">
-              <li>Llamar a 3 proveedores de cereales (maíz, sorgo, soya)</li>
-              <li>Revisar precio del aceite y fosfato</li>
-              <li>Actualizar en FeedMix MX biblioteca de ingredientes</li>
-            </ul>
-          </div>
-
-          <div class="reco-card">
-            <div class="reco-card-header" style="border-bottom:none;padding-bottom:0;">
-              <div class="reco-icon reco-icon-2">📊</div>
-              <div>
-                <div class="reco-card-subtitle">Miércoles</div>
-                <div class="reco-card-title">Reoptimizar lotes activos</div>
-              </div>
-            </div>
-            <ul class="reco-list" style="margin-top:var(--space-3);">
-              <li>Reoptimizar las 3-5 fórmulas más usadas con precios nuevos</li>
-              <li>Comparar costo/ton vs semana anterior</li>
-              <li>Notificar cambios significativos a granjeros</li>
-            </ul>
-          </div>
-
-          <div class="reco-card">
-            <div class="reco-card-header" style="border-bottom:none;padding-bottom:0;">
-              <div class="reco-icon reco-icon-3">📦</div>
-              <div>
-                <div class="reco-card-subtitle">Viernes</div>
-                <div class="reco-card-title">Pedidos y proyección</div>
-              </div>
-            </div>
-            <ul class="reco-list" style="margin-top:var(--space-3);">
-              <li>Calcular tonelaje requerido para próxima semana</li>
-              <li>Coordinar entrega con fábricas</li>
-              <li>Revisar tendencia de precios de granos</li>
-            </ul>
-          </div>
-
-          <div class="reco-card">
-            <div class="reco-card-header" style="border-bottom:none;padding-bottom:0;">
-              <div class="reco-icon reco-icon-6">🏆</div>
-              <div>
-                <div class="reco-card-subtitle">Mensual</div>
-                <div class="reco-card-title">Análisis de desempeño</div>
-              </div>
-            </div>
-            <ul class="reco-list" style="margin-top:var(--space-3);">
-              <li>Conversión alimenticia real vs proyectada</li>
-              <li>Ajuste de fórmula según mortalidad y ganancia</li>
-              <li>Reporte ejecutivo a granjeros (con PDFs FeedMix)</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- CTA final -->
-        <div class="quick-cta">
-          <h3>¿Listo para aplicar estos 6 ejes?</h3>
-          <p>El formulador de FeedMix MX implementa automáticamente estos principios. Solo configura tipo, raza y etapa.</p>
-          <a href="formulador.html" class="btn btn-accent btn-lg">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            Ir al formulador
+        <!-- ============================================
+             NAV de ejes
+             ============================================ -->
+        <div class="ejes-nav">
+          <a href="#eje1" class="ejes-nav-item">
+            <span class="ejes-nav-num">1</span>
+            <span class="ejes-nav-text">Etapas y sexo</span>
           </a>
+          <a href="#eje2" class="ejes-nav-item">
+            <span class="ejes-nav-num">2</span>
+            <span class="ejes-nav-text">Márgenes seguridad</span>
+          </a>
+          <a href="#eje3" class="ejes-nav-item">
+            <span class="ejes-nav-num">3</span>
+            <span class="ejes-nav-text">Ingredientes alt.</span>
+          </a>
+          <a href="#eje4" class="ejes-nav-item">
+            <span class="ejes-nav-num">4</span>
+            <span class="ejes-nav-text">Aminoácidos</span>
+          </a>
+          <a href="#eje5" class="ejes-nav-item">
+            <span class="ejes-nav-num">5</span>
+            <span class="ejes-nav-text">Aditivos</span>
+          </a>
+          <a href="#eje6" class="ejes-nav-item">
+            <span class="ejes-nav-num">6</span>
+            <span class="ejes-nav-text">Enzimas</span>
+          </a>
+        </div>
+
+        <!-- ============================================
+             EJE 1 — FORMULACIÓN POR ETAPAS Y SEXO
+             ============================================ -->
+        <div class="eje-card" id="eje1">
+          <div class="eje-header">
+            <div class="eje-num-badge">1</div>
+            <div>
+              <div class="eje-title">Formulación por etapas y sexo</div>
+              <div class="eje-subtitle">Subdivide el ciclo en 4-5 fases en lugar de 2-3, y separa machos de hembras desde semana 3.</div>
+            </div>
+            <div class="eje-saving">
+              <div class="eje-saving-num">4-6%</div>
+              <div class="eje-saving-label">Ahorro típico</div>
+            </div>
+          </div>
+
+          <div class="eje-body">
+            <div class="eje-puntos">
+              <div class="eje-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Acciones concretas
+              </div>
+              <ul class="eje-puntos-list">
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  Usa <strong>4-5 fases</strong> en pollo de engorda: pre-iniciador, iniciador, crecimiento, finalizador, retiro
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  Separa <strong>machos y hembras desde semana 3</strong> — sus requerimientos divergen significativamente
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  Hembras: menor consumo pero mayor deposición de <strong>grasa abdominal</strong>
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  Machos: necesitan <strong>0.05-0.10% más lisina digestible</strong> para máxima pechuga
+                </li>
+              </ul>
+            </div>
+
+            <div class="eje-ejemplo">
+              <div class="eje-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                Comparativa de costos
+              </div>
+
+              <div class="ejemplo-titulo">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                Lote de 10,000 pollos Cobb 500
+              </div>
+
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Esquema</th>
+                    <th class="right">Costo/ton</th>
+                    <th class="right">Total lote</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>2 fases (tradicional)</td>
+                    <td class="right">$9,650</td>
+                    <td class="right">$144,750</td>
+                  </tr>
+                  <tr>
+                    <td>3 fases</td>
+                    <td class="right">$9,420</td>
+                    <td class="right">$141,300</td>
+                  </tr>
+                  <tr class="highlight">
+                    <td>5 fases + sexado</td>
+                    <td class="right">$9,180</td>
+                    <td class="right">$137,700</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="caso-real">
+                <div class="caso-real-content">
+                  <strong>Granja "El Mirador" (Tehuacán):</strong> Pasó de 2 a 5 fases con sexado en 2025. Ahorro real medido: <strong>$7,050 por lote</strong> de 10,000 aves. ROI inmediato sin inversión adicional.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================
+             EJE 2 — DISMINUIR MÁRGENES DE SEGURIDAD
+             ============================================ -->
+        <div class="eje-card" id="eje2">
+          <div class="eje-header">
+            <div class="eje-num-badge">2</div>
+            <div>
+              <div class="eje-title">Disminuir márgenes de seguridad</div>
+              <div class="eje-subtitle">El nutricionista promedio formula con 5-15% sobre el requerimiento. Reduce ese exceso confiando en valores reales.</div>
+            </div>
+            <div class="eje-saving">
+              <div class="eje-saving-num">2-4%</div>
+              <div class="eje-saving-label">Ahorro típico</div>
+            </div>
+          </div>
+
+          <div class="eje-body">
+            <div class="eje-puntos">
+              <div class="eje-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Acciones concretas
+              </div>
+              <ul class="eje-puntos-list">
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  Confía en los <strong>valores reales</strong> de tus ingredientes (haz NIR si puedes)
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  Trabaja con <strong>aminoácidos digestibles</strong>, no totales — son menos variables
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  Margen recomendado: <strong>2-3% sobre Lys digestible</strong>, 1-2% sobre EM
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  Cada <strong>1% de exceso de PC</strong> cuesta $80-120/ton sin aportar ganancia productiva
+                </li>
+              </ul>
+            </div>
+
+            <div class="eje-ejemplo">
+              <div class="eje-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
+                Margen de seguridad típico
+              </div>
+
+              <div class="ejemplo-titulo">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="6" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Lisina digestible — Iniciador 22% PC
+              </div>
+
+              <div class="bar-viz">
+                <span class="bar-viz-label">Requerido</span>
+                <div class="bar-viz-bar-wrap">
+                  <div class="bar-viz-bar success" style="width: 70%;">1.32%</div>
+                </div>
+                <span class="bar-viz-num">100%</span>
+              </div>
+              <div class="bar-viz">
+                <span class="bar-viz-label">Margen 3%</span>
+                <div class="bar-viz-bar-wrap">
+                  <div class="bar-viz-bar" style="width: 73%;">1.36%</div>
+                </div>
+                <span class="bar-viz-num">+3%</span>
+              </div>
+              <div class="bar-viz">
+                <span class="bar-viz-label">Margen 10%</span>
+                <div class="bar-viz-bar-wrap">
+                  <div class="bar-viz-bar alt" style="width: 80%;">1.45%</div>
+                </div>
+                <span class="bar-viz-num">+10%</span>
+              </div>
+
+              <div class="caso-real">
+                <div class="caso-real-content">
+                  <strong>Diferencia entre margen 3% y 10%:</strong> el productor con 10% gasta $120-180/ton extra sin obtener mejor desempeño productivo. El "exceso de seguridad" se convierte en grasa o se excreta.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================
+             EJE 3 — INGREDIENTES ALTERNATIVOS
+             ============================================ -->
+        <div class="eje-card" id="eje3">
+          <div class="eje-header">
+            <div class="eje-num-badge">3</div>
+            <div>
+              <div class="eje-title">Uso de ingredientes alternativos</div>
+              <div class="eje-subtitle">Sustituye parcialmente maíz y soya con alternativas más baratas según el precio del mercado.</div>
+            </div>
+            <div class="eje-saving">
+              <div class="eje-saving-num">3-8%</div>
+              <div class="eje-saving-label">Ahorro típico</div>
+            </div>
+          </div>
+
+          <div class="eje-body">
+            <div class="eje-puntos">
+              <div class="eje-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Sustituciones inteligentes
+              </div>
+              <ul class="eje-puntos-list">
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>Sorgo:</strong> sustituye hasta 50% del maíz si está $0.50+/kg más barato
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>DDGS:</strong> hasta 8% en crecimiento/finalizador (NO en arranque)
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>Pasta de canola:</strong> sustituye 5-10% de soya en finalizador
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>Salvado de trigo:</strong> 3-8% mejora salud intestinal y baja costo
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>Harina carne y hueso:</strong> alterna con pasta soya cuando esté $5+/kg más barata
+                </li>
+              </ul>
+            </div>
+
+            <div class="eje-ejemplo">
+              <div class="eje-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 16 12 11 16 15 20 11"/></svg>
+                Comparativa precios mercado MX
+              </div>
+
+              <div class="ejemplo-titulo">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                Precio promedio MXN/kg
+              </div>
+
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Ingrediente</th>
+                    <th class="right">$/kg</th>
+                    <th class="right">EM kcal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Maíz amarillo</td><td class="right">$6.50</td><td class="right">3,350</td></tr>
+                  <tr class="highlight"><td>Sorgo</td><td class="right">$6.20</td><td class="right">3,280</td></tr>
+                  <tr><td>Pasta soya 48%</td><td class="right">$14.20</td><td class="right">2,440</td></tr>
+                  <tr class="highlight"><td>Pasta canola</td><td class="right">$11.00</td><td class="right">1,900</td></tr>
+                  <tr class="highlight"><td>DDGS</td><td class="right">$8.80</td><td class="right">2,700</td></tr>
+                  <tr><td>Salvado de trigo</td><td class="right">$4.50</td><td class="right">1,900</td></tr>
+                </tbody>
+              </table>
+
+              <div class="caso-real">
+                <div class="caso-real-content">
+                  <strong>Tip de mercado:</strong> Los nutricionistas que monitorean precios <strong>semanalmente</strong> ahorran 5-8%. Los que formulan con ingredientes fijos pagan el "impuesto de la rigidez".
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================
+             EJE 4 — AMINOÁCIDOS INDUSTRIALES
+             ============================================ -->
+        <div class="eje-card" id="eje4">
+          <div class="eje-header">
+            <div class="eje-num-badge">4</div>
+            <div>
+              <div class="eje-title">Uso de aminoácidos industriales</div>
+              <div class="eje-subtitle">Sustituye parcialmente la pasta de soya con AA sintéticos puros — más caros por kg pero ahorrando soya total.</div>
+            </div>
+            <div class="eje-saving">
+              <div class="eje-saving-num">5-10%</div>
+              <div class="eje-saving-label">Ahorro típico</div>
+            </div>
+          </div>
+
+          <div class="eje-body">
+            <div class="eje-puntos">
+              <div class="eje-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Niveles recomendados
+              </div>
+              <ul class="eje-puntos-list">
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>DL-Metionina:</strong> 0.15-0.30% reduce pasta de soya 1.5-2%
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>L-Lisina HCl:</strong> 0.20-0.40% según etapa (más en iniciador)
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>L-Treonina:</strong> 0.05-0.15% cuando hay alta inclusión de DDGS
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>L-Valina:</strong> ya disponible en MX, útil en fórmulas de bajo PC
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>L-Triptófano:</strong> corrige déficits cuando se usan cereales alternativos
+                </li>
+              </ul>
+            </div>
+
+            <div class="eje-ejemplo">
+              <div class="eje-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                ¿Pasta soya o AA sintético?
+              </div>
+
+              <div class="ejemplo-titulo">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Costo de aportar 1 g de Lisina
+              </div>
+
+              <div class="bar-viz">
+                <span class="bar-viz-label">Pasta soya</span>
+                <div class="bar-viz-bar-wrap">
+                  <div class="bar-viz-bar alt" style="width: 85%;">$0.50</div>
+                </div>
+                <span class="bar-viz-num">100%</span>
+              </div>
+              <div class="bar-viz">
+                <span class="bar-viz-label">L-Lisina</span>
+                <div class="bar-viz-bar-wrap">
+                  <div class="bar-viz-bar success" style="width: 41%;">$0.49</div>
+                </div>
+                <span class="bar-viz-num">-2%</span>
+              </div>
+
+              <p style="font-size: 0.8125rem; color: var(--neutral-600); margin-top: var(--space-3); line-height: 1.5;">
+                <strong>Pero L-Lisina libera espacio</strong> en la fórmula que se rellena con maíz barato. El ahorro real es 5-10%.
+              </p>
+
+              <div class="caso-real">
+                <div class="caso-real-content">
+                  <strong>Ejemplo numérico:</strong> Reducir 2% de pasta soya ($14.20/kg) e incluir 0.4% de L-Lisina ($38/kg) ahorra $260/ton — el espacio liberado se llena con maíz.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================
+             EJE 5 — ADITIVOS RACIONALES
+             ============================================ -->
+        <div class="eje-card" id="eje5">
+          <div class="eje-header">
+            <div class="eje-num-badge">5</div>
+            <div>
+              <div class="eje-title">Uso racional de aditivos</div>
+              <div class="eje-subtitle">Solo añade aditivos con respuesta documentada en TU contexto. Evita el "premix de catálogo".</div>
+            </div>
+            <div class="eje-saving">
+              <div class="eje-saving-num">Variable</div>
+              <div class="eje-saving-label">Según ROI real</div>
+            </div>
+          </div>
+
+          <div class="eje-body">
+            <div class="eje-puntos">
+              <div class="eje-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Cuándo usar cada uno
+              </div>
+              <ul class="eje-puntos-list">
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>Probióticos:</strong> útil en arranque y cuando se quitan antibióticos
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>Acidificantes:</strong> en climas cálidos y agua de mala calidad
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>Pigmentos:</strong> solo si el mercado paga la yema roja/canal amarilla
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>Antioxidantes:</strong> obligatorios cuando hay grasa rancia o alto aceite
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>Coccidiostatos:</strong> obligatorios 0-35 días (NO en retiro)
+                </li>
+              </ul>
+            </div>
+
+            <div class="eje-ejemplo">
+              <div class="eje-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Cuidado: el "premix de catálogo"
+              </div>
+
+              <div class="ejemplo-titulo">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                Aditivos sumados sin evaluar ROI
+              </div>
+
+              <div class="bar-viz">
+                <span class="bar-viz-label">Mínimo</span>
+                <div class="bar-viz-bar-wrap">
+                  <div class="bar-viz-bar success" style="width: 30%;">+$80/ton</div>
+                </div>
+                <span class="bar-viz-num">3 esenciales</span>
+              </div>
+              <div class="bar-viz">
+                <span class="bar-viz-label">Razonable</span>
+                <div class="bar-viz-bar-wrap">
+                  <div class="bar-viz-bar" style="width: 55%;">+$180/ton</div>
+                </div>
+                <span class="bar-viz-num">5-7 evaluados</span>
+              </div>
+              <div class="bar-viz">
+                <span class="bar-viz-label">Excesivo</span>
+                <div class="bar-viz-bar-wrap">
+                  <div class="bar-viz-bar alt" style="width: 95%;">+$520/ton</div>
+                </div>
+                <span class="bar-viz-num">12+ "por si acaso"</span>
+              </div>
+
+              <div class="caso-real">
+                <div class="caso-real-content">
+                  <strong>⚠️ Error común:</strong> Sumar todos los aditivos del catálogo del proveedor infla el costo en <strong>5-8%</strong> sin justificación. <strong>Cada aditivo debe demostrar ROI</strong> con prueba en granja propia.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================
+             EJE 6 — ENZIMAS
+             ============================================ -->
+        <div class="eje-card" id="eje6">
+          <div class="eje-header">
+            <div class="eje-num-badge">6</div>
+            <div>
+              <div class="eje-title">Uso racional de enzimas</div>
+              <div class="eje-subtitle">Enzimas exógenas que liberan nutrientes "atrapados" en el ingrediente, permitiendo formular más barato.</div>
+            </div>
+            <div class="eje-saving">
+              <div class="eje-saving-num">$30-60</div>
+              <div class="eje-saving-label">Ahorro/ton (fitasa)</div>
+            </div>
+          </div>
+
+          <div class="eje-body">
+            <div class="eje-puntos">
+              <div class="eje-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Enzimas más rentables
+              </div>
+              <ul class="eje-puntos-list">
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>Fitasa:</strong> libera P fítico, reduce 0.10-0.15% de fosfato monocálcico
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>Xilanasa:</strong> cuando hay trigo, salvado o subproductos fibrosos
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>Amilasa:</strong> en pollos jóvenes con poco desarrollo enzimático propio
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>Proteasa:</strong> mejora digestibilidad de proteínas vegetales
+                </li>
+                <li>
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <strong>Multienzimas NSP:</strong> cuando la dieta tiene >15% subproductos
+                </li>
+              </ul>
+            </div>
+
+            <div class="eje-ejemplo">
+              <div class="eje-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Caso fitasa: la enzima estrella
+              </div>
+
+              <div class="ejemplo-titulo">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Análisis económico por tonelada
+              </div>
+
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Concepto</th>
+                    <th class="right">Costo/ton</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>+ Fitasa 500 FTU/kg</td><td class="right">+$8.00</td></tr>
+                  <tr><td>− Fosfato monocálcico (0.13%)</td><td class="right">−$24.05</td></tr>
+                  <tr><td>− Pasta soya (mejor uso de PC)</td><td class="right">−$14.00</td></tr>
+                  <tr class="highlight">
+                    <td><strong>Ahorro neto</strong></td>
+                    <td class="right"><strong>−$30.05</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="caso-real">
+                <div class="caso-real-content">
+                  <strong>ROI inmediato:</strong> Solo la fitasa ahorra $30-60/ton al permitir reducir fosfato. <strong>Cuando el fosfato monocálcico está sobre $18/kg, la fitasa paga sola.</strong> Es la enzima con mejor ROI del mercado.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================
+             REGLA DE ORO
+             ============================================ -->
+        <div class="regla-oro">
+          <div class="regla-oro-content">
+            <div class="regla-oro-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15 8.5 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              REGLA DE ORO DEL NUTRICIONISTA
+            </div>
+            <h2>El alimento más caro del mundo es el que el animal no convierte en producto.</h2>
+            <p>La optimización no es solo bajar el costo por tonelada, sino bajar el <strong>costo por kg de carne</strong> o por <strong>docena de huevos producidos</strong>.</p>
+
+            <div class="regla-oro-comparison">
+              <div class="formula-comp">
+                <div class="formula-comp-label">Fórmula A</div>
+                <div class="formula-comp-cost">$8,800/ton</div>
+                <div class="formula-comp-cv">Conversión 1.70</div>
+                <div style="font-size:0.75rem;color:rgba(255,255,255,0.6);margin-top:6px;">$14.96/kg canal</div>
+              </div>
+              <div class="vs-badge">VS</div>
+              <div class="formula-comp winner">
+                <div class="formula-comp-label">Fórmula B</div>
+                <div class="formula-comp-cost">$9,200/ton</div>
+                <div class="formula-comp-cv">Conversión 1.55</div>
+                <div style="font-size:0.75rem;color:var(--accent-light);margin-top:6px;font-weight:700;">$14.26/kg canal ✓</div>
+              </div>
+            </div>
+
+            <p style="margin-top:var(--space-4);">
+              ☝️ La fórmula B cuesta $400 más por tonelada pero produce el kg de canal <strong>$0.70 más barato</strong>. Calcula siempre <strong>costo por kg de canal</strong>, no por tonelada.
+            </p>
+          </div>
+        </div>
+
+        <!-- ============================================
+             CHECKLIST SEMANAL
+             ============================================ -->
+        <div class="checklist-section">
+          <div style="text-align:center;margin-bottom:var(--space-3);">
+            <span style="font-size:0.6875rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--primary);">RUTINA PROFESIONAL</span>
+            <h2 style="font-size:1.875rem;margin-top:var(--space-2);font-weight:800;letter-spacing:-0.02em;">Checklist semanal del nutricionista</h2>
+            <p style="color:var(--neutral-600);max-width:580px;margin:var(--space-3) auto 0;font-size:1rem;">La consistencia en estos hábitos es lo que separa al nutricionista promedio del mejor pagado del mercado.</p>
+          </div>
+
+          <div class="checklist-grid">
+            <div class="checklist-day">
+              <div class="checklist-day-header">
+                <div class="checklist-day-icon checklist-day-1">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div>
+                  <div class="checklist-day-title">Lunes</div>
+                  <div class="checklist-day-name">Actualizar precios</div>
+                </div>
+              </div>
+              <ul>
+                <li>Llamar a 3 proveedores de cereales (maíz, sorgo, soya)</li>
+                <li>Revisar precio del aceite y fosfato</li>
+                <li>Actualizar la biblioteca de ingredientes en FeedMix</li>
+              </ul>
+            </div>
+
+            <div class="checklist-day">
+              <div class="checklist-day-header">
+                <div class="checklist-day-icon checklist-day-2">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+                <div>
+                  <div class="checklist-day-title">Miércoles</div>
+                  <div class="checklist-day-name">Reoptimizar lotes</div>
+                </div>
+              </div>
+              <ul>
+                <li>Reoptimizar las 3-5 fórmulas más usadas</li>
+                <li>Comparar costo/ton vs semana anterior</li>
+                <li>Notificar cambios significativos a granjeros</li>
+              </ul>
+            </div>
+
+            <div class="checklist-day">
+              <div class="checklist-day-header">
+                <div class="checklist-day-icon checklist-day-3">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                </div>
+                <div>
+                  <div class="checklist-day-title">Viernes</div>
+                  <div class="checklist-day-name">Pedidos y proyección</div>
+                </div>
+              </div>
+              <ul>
+                <li>Calcular tonelaje requerido próxima semana</li>
+                <li>Coordinar entrega con fábricas</li>
+                <li>Revisar tendencia precios de granos</li>
+              </ul>
+            </div>
+
+            <div class="checklist-day">
+              <div class="checklist-day-header">
+                <div class="checklist-day-icon checklist-day-4">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15 8.5 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
+                <div>
+                  <div class="checklist-day-title">Mensual</div>
+                  <div class="checklist-day-name">Análisis desempeño</div>
+                </div>
+              </div>
+              <ul>
+                <li>Conversión alimenticia real vs proyectada</li>
+                <li>Ajuste de fórmula según mortalidad y ganancia</li>
+                <li>Reporte ejecutivo a granjeros (con PDFs FeedMix)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================
+             TABLA DE ADITIVOS
+             ============================================ -->
+        <div style="margin-bottom:var(--space-8);">
+          <div style="text-align:center;margin-bottom:var(--space-5);">
+            <span style="font-size:0.6875rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--primary);">REFERENCIA RÁPIDA</span>
+            <h2 style="font-size:1.875rem;margin-top:var(--space-2);font-weight:800;letter-spacing:-0.02em;">Tabla de aditivos avícolas</h2>
+            <p style="color:var(--neutral-600);max-width:580px;margin:var(--space-3) auto 0;font-size:1rem;">Inclusión típica, etapa ideal y ROI esperado de los aditivos más usados en avicultura mexicana.</p>
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table class="aditivos-table">
+              <thead>
+                <tr>
+                  <th>Aditivo</th>
+                  <th>Inclusión</th>
+                  <th>Etapa</th>
+                  <th>ROI</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Fitasa</strong></td>
+                  <td class="num">500-1000 FTU/kg</td>
+                  <td>Todas</td>
+                  <td><span class="roi-badge roi-alto">★★★ Alto — paga sola</span></td>
+                </tr>
+                <tr>
+                  <td><strong>DL-Metionina</strong></td>
+                  <td class="num">0.15-0.30%</td>
+                  <td>Todas</td>
+                  <td><span class="roi-badge roi-alto">★★★ Alto</span></td>
+                </tr>
+                <tr>
+                  <td><strong>L-Lisina HCl</strong></td>
+                  <td class="num">0.20-0.40%</td>
+                  <td>Iniciador y crecimiento</td>
+                  <td><span class="roi-badge roi-alto">★★★ Alto</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Coccidiostato</strong></td>
+                  <td class="num">0.05%</td>
+                  <td>0-35 días (NO retiro)</td>
+                  <td><span class="roi-badge roi-alto">★★★ Crítico</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Cloruro de colina</strong></td>
+                  <td class="num">0.05-0.15%</td>
+                  <td>Todas</td>
+                  <td><span class="roi-badge roi-alto">★★★ Crítico hígado</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Antioxidantes</strong></td>
+                  <td class="num">100-200 g/ton</td>
+                  <td>Cuando aceite >3%</td>
+                  <td><span class="roi-badge roi-medio">★★ Medio</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Xilanasa</strong></td>
+                  <td class="num">100-200 g/ton</td>
+                  <td>Crecimiento, finalizador</td>
+                  <td><span class="roi-badge roi-condicional">★★ Si hay trigo/sub</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Probióticos</strong></td>
+                  <td class="num">0.05-0.10%</td>
+                  <td>0-21 días</td>
+                  <td><span class="roi-badge roi-condicional">★ Variable</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Pigmentos amarillos</strong></td>
+                  <td class="num">10-30 g/ton</td>
+                  <td>Postura, finalizador</td>
+                  <td><span class="roi-badge roi-condicional">★ Solo si paga mercado</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Pigmentos rojos</strong></td>
+                  <td class="num">3-6 g/ton</td>
+                  <td>Postura</td>
+                  <td><span class="roi-badge roi-condicional">★ Mercado premium</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ============================================
+             CTA FINAL
+             ============================================ -->
+        <div class="quick-cta">
+          <h3>¿Necesitas ayuda profesional o un curso?</h3>
+          <p>Capacitación 1:1, asesoría técnica en formulación, o cursos especializados de nutrición avícola. Escríbenos por WhatsApp y te atendemos directo.</p>
+          <div style="display:flex;gap:var(--space-3);justify-content:center;flex-wrap:wrap;">
+            <a href="https://wa.me/5212382514313?text=Hola%2C%20me%20interesa%20saber%20m%C3%A1s%20sobre%20cursos%20o%20asesor%C3%ADa%20de%20formulaci%C3%B3n%20av%C3%ADcola" target="_blank" class="btn btn-accent btn-lg">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.138.563 4.14 1.535 5.874L0 24l6.29-1.508A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.814 9.814 0 01-5.058-1.4l-.361-.214-3.735.896.944-3.653-.235-.374A9.817 9.817 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
+              +52 1 238 251 4313
+            </a>
+            <a href="formulador.html" class="btn btn-ghost btn-lg" style="color:white;border-color:rgba(255,255,255,0.2);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Ir al formulador
+            </a>
+          </div>
         </div>
 
       </div>
     </div>
   </div>
 
-  <script src="assets/firebase-config.js?v=5"></script>
+  <script src="assets/firebase-config.js?v=6"></script>
   <script type="module">
-    import "./assets/shared.js?v=5";
+    import "./assets/shared.js?v=6";
     await window.fmAuthGuard({ requireAuth: true });
   </script>
 
