@@ -259,6 +259,15 @@
             Recalcula con precios actualizados
           </li>
         </ul>
+
+        <div id="demoHint" class="hidden" style="margin-top:var(--space-8);background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.35);border-radius:var(--radius);padding:var(--space-4);">
+          <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--accent-light);margin-bottom:var(--space-2);">🟡 Modo demo</div>
+          <div style="color:white;font-size:0.875rem;line-height:1.5;">
+            Prueba el sistema con la cuenta demo:<br>
+            📧 <code style="background:rgba(0,0,0,0.2);padding:2px 8px;border-radius:4px;">demo@feedmix.mx</code><br>
+            🔑 <code style="background:rgba(0,0,0,0.2);padding:2px 8px;border-radius:4px;">demo123</code>
+          </div>
+        </div>
       </div>
 
       <div class="auth-visual-footer">
@@ -324,6 +333,18 @@
     import "./assets/shared.js";
 
     await window.fmAuthGuard({ requireAuth: false, redirectIfAuth: "panel.html" });
+
+    // Mostrar hint demo si estamos en modo demo
+    if (window.FM_IS_DEMO) {
+      document.getElementById("demoHint").classList.remove("hidden");
+      // Pre-llenar campos al hacer click en el hint
+      document.getElementById("demoHint").style.cursor = "pointer";
+      document.getElementById("demoHint").addEventListener("click", () => {
+        document.getElementById("email").value = "demo@feedmix.mx";
+        document.getElementById("password").value = "demo123";
+        window.fmToast("Credenciales demo precargadas — pulsa Iniciar sesión", "info");
+      });
+    }
 
     const { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } = window.fmFirebase;
     const auth = window.fmAuth;
