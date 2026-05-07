@@ -9,11 +9,49 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="assets/shared.css">
+  <link rel="stylesheet" href="assets/shared.css?v=5">
 
   <style>
+    .toolbar {
+      display: flex;
+      gap: var(--space-4);
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-6);
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      max-width: 360px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.625rem 0.875rem 0.625rem 2.5rem;
+      border: 1.5px solid var(--neutral-200);
+      border-radius: var(--radius);
+      background: white;
+      font-size: 0.9375rem;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: var(--shadow-focus);
+    }
+
+    .search-box svg {
+      position: absolute;
+      left: 0.875rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--neutral-400);
+    }
+
     .filters {
-      display: flex; gap: var(--space-3); flex-wrap: wrap;
+      display: flex; gap: var(--space-2); flex-wrap: wrap;
       margin-bottom: var(--space-6);
     }
 
@@ -22,11 +60,14 @@
       background: white;
       border: 1.5px solid var(--neutral-200);
       border-radius: var(--radius-full);
-      font-size: 0.875rem;
-      font-weight: 500;
+      font-size: 0.8125rem;
+      font-weight: 600;
       color: var(--neutral-700);
       cursor: pointer;
       transition: all var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .filter-chip:hover { border-color: var(--neutral-300); }
@@ -36,14 +77,89 @@
       border-color: var(--primary);
     }
 
+    .filter-chip-count {
+      background: rgba(0,0,0,0.08);
+      color: inherit;
+      padding: 1px 6px;
+      border-radius: 8px;
+      font-size: 0.6875rem;
+      font-weight: 700;
+    }
+
+    .filter-chip.active .filter-chip-count {
+      background: rgba(255,255,255,0.25);
+    }
+
+    /* Stats arriba */
+    .hist-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+
+    @media (max-width: 768px) {
+      .hist-stats { grid-template-columns: 1fr 1fr; }
+    }
+
+    .hist-stat {
+      background: white;
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+    }
+
+    .hist-stat-label {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--neutral-500);
+      margin-bottom: 4px;
+    }
+
+    .hist-stat-value {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--neutral-900);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    /* Grid de fórmulas */
+    .formula-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-5);
+    }
+
+    @media (max-width: 968px) { .formula-grid { grid-template-columns: 1fr; } }
+
     .formula-card {
       background: white;
       border: 1px solid var(--neutral-200);
       border-radius: var(--radius-lg);
       padding: var(--space-5);
       transition: all var(--transition);
-      cursor: pointer;
+      position: relative;
+      overflow: hidden;
     }
+
+    .formula-card::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--primary);
+    }
+
+    .formula-card.tipo-engorda::before { background: #F59E0B; }
+    .formula-card.tipo-ponedora::before { background: #FCD34D; }
+    .formula-card.tipo-reproductora::before { background: #DC2626; }
+    .formula-card.tipo-pavo::before { background: #7C2D12; }
+    .formula-card.tipo-doble_proposito::before { background: #84CC16; }
+    .formula-card.tipo-generico::before { background: #64748B; }
 
     .formula-card:hover {
       border-color: var(--primary-light);
@@ -51,36 +167,53 @@
       transform: translateY(-2px);
     }
 
-    .formula-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-4);
-    }
-
-    @media (max-width: 768px) { .formula-grid { grid-template-columns: 1fr; } }
-
     .formula-card-header {
-      display: flex; justify-content: space-between; align-items: flex-start;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
       margin-bottom: var(--space-4);
+      gap: var(--space-3);
     }
 
-    .formula-card-title {
-      font-size: 1rem;
+    .formula-card-cliente {
+      font-size: 1.0625rem;
       font-weight: 700;
       color: var(--neutral-900);
       margin-bottom: 4px;
+      line-height: 1.3;
     }
 
     .formula-card-meta {
       font-size: 0.8125rem;
       color: var(--neutral-500);
+      line-height: 1.4;
     }
+
+    .formula-card-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    .tag-engorda { background: #FEF3C7; color: #92400E; }
+    .tag-ponedora { background: #FEF9C3; color: #854D0E; }
+    .tag-reproductora { background: #FEE2E2; color: #991B1B; }
+    .tag-pavo { background: #FED7AA; color: #7C2D12; }
+    .tag-doble_proposito { background: #ECFCCB; color: #3F6212; }
+    .tag-generico { background: #F1F5F9; color: #475569; }
 
     .formula-card-body {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: var(--space-3);
-      padding: var(--space-3) 0;
+      padding: var(--space-4) 0;
       border-top: 1px solid var(--neutral-100);
       border-bottom: 1px solid var(--neutral-100);
       margin-bottom: var(--space-4);
@@ -91,7 +224,7 @@
     }
 
     .formula-stat-label {
-      font-size: 0.6875rem;
+      font-size: 0.625rem;
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
@@ -106,11 +239,166 @@
       color: var(--neutral-900);
     }
 
+    .formula-stat-value.cost {
+      color: var(--primary);
+      font-size: 1rem;
+    }
+
     .formula-card-footer {
       display: flex; gap: var(--space-2);
     }
 
-    .formula-card-footer .btn { flex: 1; }
+    .formula-card-footer .btn { flex: 1; padding: 0.5rem; font-size: 0.8125rem; }
+
+    .btn-icon-only {
+      width: 36px;
+      height: 36px;
+      flex: 0 0 auto !important;
+      padding: 0 !important;
+      border: 1.5px solid var(--neutral-200);
+      background: white;
+      color: var(--neutral-600);
+      border-radius: var(--radius);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .btn-icon-only:hover {
+      background: var(--neutral-50);
+      border-color: var(--neutral-300);
+    }
+
+    .btn-icon-only.danger:hover {
+      background: var(--danger-light);
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: var(--space-16) var(--space-8);
+      background: white;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--neutral-200);
+    }
+
+    .empty-state-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto var(--space-5);
+      background: var(--primary-50);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--primary);
+    }
+
+    /* Modal de detalle */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 52, 87, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-4);
+    }
+
+    .modal-backdrop.active { display: flex; }
+
+    .modal {
+      background: white;
+      border-radius: var(--radius-xl);
+      max-width: 720px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes modalIn {
+      from { transform: translateY(20px) scale(0.96); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: var(--space-6);
+      border-bottom: 1px solid var(--neutral-200);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .modal-header h3 {
+      color: white;
+      font-size: 1.375rem;
+      margin-bottom: 4px;
+    }
+
+    .modal-header p {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.875rem;
+    }
+
+    .modal-close {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      color: white;
+      display: grid; place-items: center;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+
+    .modal-close:hover { background: rgba(255,255,255,0.25); }
+
+    .modal-body { padding: var(--space-6); }
+
+    .modal-section { margin-bottom: var(--space-6); }
+    .modal-section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--neutral-500);
+      margin-bottom: var(--space-3);
+    }
+
+    .modal-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    .modal-table th {
+      background: var(--neutral-50);
+      padding: 0.625rem 0.875rem;
+      text-align: left;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      color: var(--neutral-600);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--neutral-200);
+    }
+
+    .modal-table td {
+      padding: 0.625rem 0.875rem;
+      border-bottom: 1px solid var(--neutral-100);
+    }
+
+    .modal-table .num {
+      text-align: right;
+      font-family: var(--font-mono);
+    }
   </style>
 </head>
 <body>
@@ -134,6 +422,7 @@
         <li><a href="formulador.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>Formulador</a></li>
         <li><a href="ingredientes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Ingredientes</a></li>
         <li><a href="historial.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Historial</a></li>
+        <li><a href="recomendaciones.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1M3.34 7l.7.7M20.66 7l-.7.7M21 14h-1M4 14H3M16 17a4 4 0 0 0-8 0v3h8v-3z"/></svg>Recomendaciones</a></li>
       </ul>
     </aside>
 
@@ -152,51 +441,379 @@
 
       <div class="app-content">
 
-        <!-- Filtros -->
-        <div class="filters">
-          <button class="filter-chip active" data-filter="todas">Todas</button>
-          <button class="filter-chip" data-filter="engorda">Pollo de engorda</button>
-          <button class="filter-chip" data-filter="postura">Ponedoras</button>
-          <button class="filter-chip" data-filter="reproductora">Reproductoras</button>
-          <button class="filter-chip" data-filter="recientes">Esta semana</button>
-        </div>
+        <!-- Stats -->
+        <div class="hist-stats" id="histStats"></div>
 
-        <!-- Empty state inicial -->
-        <div class="card-elevated text-center" style="padding: var(--space-16) var(--space-8);" id="emptyState">
-          <div style="width:80px;height:80px;margin:0 auto var(--space-5);background:var(--primary-50);border-radius:50%;display:grid;place-items:center;color:var(--primary);">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
-            </svg>
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div class="search-box">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="searchInput" placeholder="Buscar por cliente, raza...">
           </div>
-          <h3 style="font-size:1.25rem;margin-bottom:var(--space-3);">Aún no tienes fórmulas guardadas</h3>
-          <p style="color:var(--neutral-600);max-width:440px;margin:0 auto var(--space-6);line-height:1.6;">
-            Cuando guardes tu primera fórmula desde el formulador, aparecerá aquí. Podrás recalcularla con precios actualizados en cualquier momento.
-          </p>
-          <a href="formulador.html" class="btn btn-primary btn-lg">Crear mi primera fórmula</a>
         </div>
 
-        <!-- Grid de fórmulas (oculto cuando vacío) -->
-        <div class="formula-grid hidden" id="formulaGrid"></div>
+        <!-- Filtros -->
+        <div class="filters" id="filtersBar"></div>
+
+        <!-- Lista -->
+        <div id="listContainer"></div>
 
       </div>
     </div>
   </div>
 
-  <script src="assets/firebase-config.js"></script>
+  <!-- Modal de detalle -->
+  <div class="modal-backdrop" id="modalDetalle">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h3 id="modalTitle">Fórmula</h3>
+          <p id="modalSubtitle"></p>
+        </div>
+        <button class="modal-close" id="modalClose">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <script src="assets/firebase-config.js?v=5"></script>
+  <script src="assets/avicola-data.js?v=5"></script>
   <script type="module">
-    import "./assets/shared.js";
+    import "./assets/shared.js?v=5";
     await window.fmAuthGuard({ requireAuth: true });
 
-    // En v2: cargar fórmulas reales desde Firestore colección `formulas` filtradas por userId
-    // Por ahora mostramos empty state — el guardado se implementa cuando glpk.js esté integrado
+    const A = window.FM_AVICOLA;
+    let formulas = [];
+    let filtroTipo = "todas";
+    let busqueda = "";
 
-    document.querySelectorAll(".filter-chip").forEach(chip => {
-      chip.addEventListener("click", () => {
-        document.querySelectorAll(".filter-chip").forEach(c => c.classList.remove("active"));
-        chip.classList.add("active");
+    // ============================================
+    // CARGAR FÓRMULAS
+    // ============================================
+    async function cargarFormulas() {
+      const user = window.fmAuth.currentUser;
+      if (!user) return;
+
+      try {
+        const colRef = window.fmFirebase.collection(window.fmDb, "formulas");
+        const q = window.fmFirebase.query(colRef, window.fmFirebase.where("userId", "==", user.uid));
+        const snap = await window.fmFirebase.getDocs(q);
+
+        formulas = [];
+        snap.forEach(d => {
+          formulas.push({ id: d.id, ...d.data() });
+        });
+
+        // Ordenar por fecha descendente
+        formulas.sort((a, b) => {
+          const da = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+          const db = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+          return db - da;
+        });
+
+        render();
+      } catch (e) {
+        console.error("Error cargando fórmulas:", e);
+        window.fmToast("Error al cargar el historial", "danger");
+      }
+    }
+
+    // ============================================
+    // RENDER STATS
+    // ============================================
+    function renderStats() {
+      const total = formulas.length;
+      const totalCosto = formulas.reduce((s, f) => s + (f.costoLote || 0), 0);
+      const totalTon = formulas.reduce((s, f) => s + (f.tons || 0), 0);
+      const promedioTon = total > 0 ? totalCosto / Math.max(totalTon, 1) : 0;
+
+      document.getElementById("histStats").innerHTML = `
+        <div class="hist-stat">
+          <div class="hist-stat-label">Total fórmulas</div>
+          <div class="hist-stat-value">${total}</div>
+        </div>
+        <div class="hist-stat">
+          <div class="hist-stat-label">Toneladas formuladas</div>
+          <div class="hist-stat-value">${totalTon.toFixed(1)}</div>
+        </div>
+        <div class="hist-stat">
+          <div class="hist-stat-label">Costo total acumulado</div>
+          <div class="hist-stat-value">${window.fmCurrency(totalCosto).replace(".00","")}</div>
+        </div>
+        <div class="hist-stat">
+          <div class="hist-stat-label">Costo promedio / ton</div>
+          <div class="hist-stat-value">${window.fmCurrency(promedioTon).replace(".00","")}</div>
+        </div>
+      `;
+    }
+
+    // ============================================
+    // RENDER FILTROS
+    // ============================================
+    function renderFiltros() {
+      const tipos = ["todas", ...new Set(formulas.map(f => f.tipo).filter(Boolean))];
+      const labels = {
+        todas: "Todas",
+        engorda: "Pollo de engorda",
+        ponedora: "Ponedora",
+        reproductora: "Reproductora",
+        pavo: "Pavo",
+        doble_proposito: "Doble propósito",
+        generico: "Genérico"
+      };
+
+      const counts = { todas: formulas.length };
+      formulas.forEach(f => { counts[f.tipo] = (counts[f.tipo] || 0) + 1; });
+
+      document.getElementById("filtersBar").innerHTML = tipos.map(t => `
+        <button class="filter-chip ${t === filtroTipo ? 'active' : ''}" data-filter="${t}">
+          ${labels[t] || t}
+          <span class="filter-chip-count">${counts[t] || 0}</span>
+        </button>
+      `).join("");
+
+      document.querySelectorAll(".filter-chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+          filtroTipo = chip.dataset.filter;
+          render();
+        });
       });
+    }
+
+    // ============================================
+    // RENDER LISTA
+    // ============================================
+    function render() {
+      renderStats();
+      renderFiltros();
+      renderLista();
+    }
+
+    function renderLista() {
+      const container = document.getElementById("listContainer");
+      let lista = formulas;
+
+      // Filtrar por tipo
+      if (filtroTipo !== "todas") {
+        lista = lista.filter(f => f.tipo === filtroTipo);
+      }
+
+      // Filtrar por búsqueda
+      if (busqueda) {
+        const b = busqueda.toLowerCase();
+        lista = lista.filter(f =>
+          (f.cliente || "").toLowerCase().includes(b) ||
+          (f.razaNombre || "").toLowerCase().includes(b) ||
+          (f.etapaNombre || "").toLowerCase().includes(b)
+        );
+      }
+
+      if (lista.length === 0 && formulas.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+            <h3 style="font-size:1.25rem;margin-bottom:var(--space-3);">Aún no tienes fórmulas guardadas</h3>
+            <p style="color:var(--neutral-600);max-width:440px;margin:0 auto var(--space-6);line-height:1.6;">
+              Cuando guardes tu primera fórmula desde el formulador, aparecerá aquí. Podrás recalcularla con precios actualizados en cualquier momento.
+            </p>
+            <a href="formulador.html" class="btn btn-primary btn-lg">Crear mi primera fórmula</a>
+          </div>
+        `;
+        return;
+      }
+
+      if (lista.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div style="font-size:3rem;margin-bottom:var(--space-3);">🔍</div>
+            <p style="color:var(--neutral-600);">No se encontraron fórmulas con ese filtro</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `<div class="formula-grid">${
+        lista.map(f => `
+          <div class="formula-card tipo-${f.tipo || 'generico'}" data-id="${f.id}">
+            <div class="formula-card-header">
+              <div>
+                <div class="formula-card-cliente">${f.cliente || 'Sin cliente'}</div>
+                <div class="formula-card-meta">
+                  ${f.razaNombre || '—'} · ${f.etapaNombre || '—'}<br>
+                  <small>${window.fmDate(f.createdAt)}</small>
+                </div>
+                <span class="formula-card-tag tag-${f.tipo || 'generico'}">${f.tipoNombre || f.tipo || ''}</span>
+              </div>
+            </div>
+
+            <div class="formula-card-body">
+              <div class="formula-stat">
+                <div class="formula-stat-label">Costo / ton</div>
+                <div class="formula-stat-value cost">${window.fmCurrency(f.costoTon || 0).replace(".00","")}</div>
+              </div>
+              <div class="formula-stat">
+                <div class="formula-stat-label">Volumen</div>
+                <div class="formula-stat-value">${f.volumen} ${f.unidad}</div>
+              </div>
+              <div class="formula-stat">
+                <div class="formula-stat-label">Total lote</div>
+                <div class="formula-stat-value">${window.fmCurrency(f.costoLote || 0).replace(".00","")}</div>
+              </div>
+            </div>
+
+            <div class="formula-card-footer">
+              <button class="btn btn-outline btn-sm" data-action="ver">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                Ver detalle
+              </button>
+              <button class="btn btn-ghost btn-sm" data-action="duplicar">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Duplicar
+              </button>
+              <button class="btn-icon-only danger" data-action="eliminar" title="Eliminar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+              </button>
+            </div>
+          </div>
+        `).join("")
+      }</div>`;
+
+      // Eventos
+      container.querySelectorAll(".formula-card").forEach(card => {
+        const id = card.dataset.id;
+        card.querySelector('[data-action="ver"]').addEventListener("click", () => verDetalle(id));
+        card.querySelector('[data-action="duplicar"]').addEventListener("click", () => duplicar(id));
+        card.querySelector('[data-action="eliminar"]').addEventListener("click", () => eliminar(id));
+      });
+    }
+
+    // ============================================
+    // ACCIONES
+    // ============================================
+    function verDetalle(id) {
+      const f = formulas.find(x => x.id === id);
+      if (!f) return;
+
+      document.getElementById("modalTitle").textContent = f.cliente || "Sin cliente";
+      document.getElementById("modalSubtitle").textContent =
+        `${f.razaNombre} · ${f.etapaNombre} · ${f.volumen} ${f.unidad} · ${window.fmDate(f.createdAt)}`;
+
+      const formulaRows = (f.formula || []).map(fi => `
+        <tr>
+          <td><strong>${fi.name}</strong></td>
+          <td class="num">${fi.pct.toFixed(2)}%</td>
+          <td class="num">${(fi.pct * 10).toFixed(1)} kg/ton</td>
+          <td class="num">${window.fmCurrency(fi.precio).replace(".00","")}</td>
+        </tr>
+      `).join("");
+
+      const perfilRows = f.perfil ? `
+        <tr><td>EM (kcal/kg)</td><td class="num"><strong>${Math.round(f.perfil.em)}</strong></td><td class="num text-muted">req ${f.requerimientos?.em || '—'}</td></tr>
+        <tr><td>Proteína Cruda</td><td class="num"><strong>${f.perfil.pc.toFixed(1)}%</strong></td><td class="num text-muted">req ${f.requerimientos?.pc || '—'}%</td></tr>
+        <tr><td>Lisina total</td><td class="num"><strong>${f.perfil.lys.toFixed(2)}%</strong></td><td class="num text-muted">req ${f.requerimientos?.lys || '—'}%</td></tr>
+        <tr><td>Metionina</td><td class="num"><strong>${f.perfil.met.toFixed(2)}%</strong></td><td class="num text-muted">req ${f.requerimientos?.met || '—'}%</td></tr>
+        <tr><td>Calcio</td><td class="num"><strong>${f.perfil.ca.toFixed(2)}%</strong></td><td class="num text-muted">req ${f.requerimientos?.ca || '—'}%</td></tr>
+        <tr><td>Fósforo disp.</td><td class="num"><strong>${f.perfil.p.toFixed(2)}%</strong></td><td class="num text-muted">req ${f.requerimientos?.p || '—'}%</td></tr>
+      ` : '';
+
+      document.getElementById("modalBody").innerHTML = `
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-6);">
+          <div style="background:var(--primary);color:white;border-radius:var(--radius);padding:var(--space-4);text-align:center;">
+            <div style="font-size:0.6875rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:4px;">Costo por tonelada</div>
+            <div style="font-size:1.75rem;font-weight:800;font-family:var(--font-display);letter-spacing:-0.02em;">${window.fmCurrency(f.costoTon || 0).replace(".00","")}</div>
+          </div>
+          <div style="background:var(--accent);color:#78350F;border-radius:var(--radius);padding:var(--space-4);text-align:center;">
+            <div style="font-size:0.6875rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;opacity:0.7;margin-bottom:4px;">Total del lote</div>
+            <div style="font-size:1.75rem;font-weight:800;font-family:var(--font-display);letter-spacing:-0.02em;">${window.fmCurrency(f.costoLote || 0).replace(".00","")}</div>
+          </div>
+        </div>
+
+        <div class="modal-section">
+          <div class="modal-section-title">📦 Composición</div>
+          <table class="modal-table">
+            <thead><tr><th>Ingrediente</th><th class="num">%</th><th class="num">kg/ton</th><th class="num">Precio</th></tr></thead>
+            <tbody>${formulaRows}</tbody>
+          </table>
+        </div>
+
+        ${perfilRows ? `
+          <div class="modal-section">
+            <div class="modal-section-title">🧬 Perfil nutricional</div>
+            <table class="modal-table">
+              <thead><tr><th>Nutriente</th><th class="num">Resultado</th><th class="num">Requerido</th></tr></thead>
+              <tbody>${perfilRows}</tbody>
+            </table>
+          </div>
+        ` : ''}
+
+        <div style="display:flex;gap:var(--space-3);">
+          <button class="btn btn-primary btn-block" id="modalDuplicar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Duplicar y reoptimizar
+          </button>
+        </div>
+      `;
+
+      document.getElementById("modalDuplicar").addEventListener("click", () => duplicar(id));
+      document.getElementById("modalDetalle").classList.add("active");
+    }
+
+    function duplicar(id) {
+      const f = formulas.find(x => x.id === id);
+      if (!f) return;
+
+      // Guardar contexto en sessionStorage para que el formulador lo recoja
+      sessionStorage.setItem("fm_duplicar", JSON.stringify({
+        cliente: f.cliente + " (copia)",
+        razaId: f.razaId,
+        etapaId: f.etapaId,
+        volumen: f.volumen,
+        unidad: f.unidad
+      }));
+
+      window.fmToast("Cargando fórmula en el formulador...", "info");
+      setTimeout(() => { window.location.href = "formulador.html?duplicar=1"; }, 600);
+    }
+
+    async function eliminar(id) {
+      const f = formulas.find(x => x.id === id);
+      if (!f) return;
+
+      if (!confirm(`¿Eliminar la fórmula de "${f.cliente}"? Esta acción no se puede deshacer.`)) return;
+
+      try {
+        const ref = window.fmFirebase.doc(window.fmDb, "formulas", id);
+        await window.fmFirebase.deleteDoc(ref);
+        formulas = formulas.filter(x => x.id !== id);
+        render();
+        window.fmToast("Fórmula eliminada", "info");
+      } catch (e) {
+        console.error(e);
+        window.fmToast("Error al eliminar", "danger");
+      }
+    }
+
+    document.getElementById("searchInput").addEventListener("input", (e) => {
+      busqueda = e.target.value;
+      renderLista();
     });
+
+    document.getElementById("modalClose").addEventListener("click", () => {
+      document.getElementById("modalDetalle").classList.remove("active");
+    });
+    document.getElementById("modalDetalle").addEventListener("click", (e) => {
+      if (e.target.id === "modalDetalle") e.target.classList.remove("active");
+    });
+
+    // Init
+    cargarFormulas();
   </script>
 
 </body>

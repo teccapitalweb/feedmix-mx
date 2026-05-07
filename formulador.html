@@ -9,11 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="assets/shared.css">
-
-  <!-- jsPDF para generación de PDFs profesionales (cargado localmente) -->
-  <script src="assets/vendor/jspdf.umd.min.js"></script>
-  <script src="assets/vendor/jspdf.plugin.autotable.min.js"></script>
+  <link rel="stylesheet" href="assets/shared.css?v=4">
 
   <style>
     .formulador-layout {
@@ -527,6 +523,7 @@
         <li><a href="formulador.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>Formulador</a></li>
         <li><a href="ingredientes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Ingredientes</a></li>
         <li><a href="historial.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Historial</a></li>
+        <li><a href="recomendaciones.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1M3.34 7l.7.7M20.66 7l-.7.7M21 14h-1M4 14H3M16 17a4 4 0 0 0-8 0v3h8v-3z"/></svg>Recomendaciones</a></li>
       </ul>
     </aside>
 
@@ -712,10 +709,10 @@
     </div>
   </div>
 
-  <script src="assets/firebase-config.js"></script>
-  <script src="assets/avicola-data.js"></script>
+  <script src="assets/firebase-config.js?v=4"></script>
+  <script src="assets/avicola-data.js?v=4"></script>
   <script type="module">
-    import "./assets/shared.js";
+    import "./assets/shared.js?v=4";
     await window.fmAuthGuard({ requireAuth: true });
 
     const A = window.FM_AVICOLA;
@@ -1214,9 +1211,90 @@
       window.fmToast("Fórmula optimizada exitosamente", "success");
     });
 
-    document.getElementById("btnPdf").addEventListener("click", () => {
-      generarPDF();
+    document.getElementById("btnPdf").addEventListener("click", async () => {
+      const btn = document.getElementById("btnPdf");
+      const originalHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner" style="border-color:rgba(0,0,0,.3);border-top-color:#000;"></span> Cargando librería PDF...';
+
+      try {
+        const ok = await cargarJsPDF();
+        if (!ok) {
+          window.fmToast("No se pudo cargar la librería PDF. Revisa tu conexión a internet o desactiva bloqueadores.", "danger");
+          return;
+        }
+        btn.innerHTML = '<span class="spinner" style="border-color:rgba(0,0,0,.3);border-top-color:#000;"></span> Generando PDF...';
+        await new Promise(r => setTimeout(r, 100));
+        generarPDF();
+      } catch (e) {
+        console.error("Error generando PDF:", e);
+        window.fmToast("Error al generar el PDF: " + e.message, "danger");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+      }
     });
+
+    // ============================================
+    // CARGADOR DINÁMICO DE jsPDF (a prueba de fallos)
+    // Intenta: local → unpkg → jsdelivr → cdnjs
+    // ============================================
+    function cargarScript(url) {
+      return new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = url;
+        s.onload = () => resolve(url);
+        s.onerror = () => reject(new Error("Falló: " + url));
+        document.head.appendChild(s);
+      });
+    }
+
+    async function cargarJsPDF() {
+      // Si ya está cargado, listo
+      if (window.jspdf && window.jspdf.jsPDF) return true;
+
+      const fuentes = [
+        // Primero intenta local (si Jorge subió la carpeta vendor)
+        {
+          pdf: "assets/vendor/jspdf.umd.min.js",
+          autotable: "assets/vendor/jspdf.plugin.autotable.min.js"
+        },
+        // Fallback 1: unpkg (muy estable)
+        {
+          pdf: "https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js",
+          autotable: "https://unpkg.com/jspdf-autotable@3.8.0/dist/jspdf.plugin.autotable.min.js"
+        },
+        // Fallback 2: jsdelivr
+        {
+          pdf: "https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js",
+          autotable: "https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.0/dist/jspdf.plugin.autotable.min.js"
+        },
+        // Fallback 3: cdnjs
+        {
+          pdf: "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
+          autotable: "https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.0/jspdf.plugin.autotable.min.js"
+        }
+      ];
+
+      for (const fuente of fuentes) {
+        try {
+          await cargarScript(fuente.pdf);
+          if (!window.jspdf || !window.jspdf.jsPDF) continue;
+          await cargarScript(fuente.autotable);
+          // Verificar que autoTable esté disponible
+          const test = new window.jspdf.jsPDF();
+          if (typeof test.autoTable === "function") {
+            console.log("✅ jsPDF cargado desde:", fuente.pdf);
+            return true;
+          }
+        } catch (e) {
+          console.warn("⚠️ Falló:", fuente.pdf, "—", e.message);
+          continue;
+        }
+      }
+
+      return false;
+    }
 
     // ============================================
     // GENERADOR DE PDF PROFESIONAL
@@ -1602,13 +1680,123 @@
       window.fmToast("PDF generado y descargado", "success");
     }
 
-    document.getElementById("btnSave").addEventListener("click", () => {
-      window.fmToast("Guardado de fórmulas disponible en próxima versión", "info");
+    document.getElementById("btnSave").addEventListener("click", async () => {
+      if (!state.formula) {
+        window.fmToast("Primero optimiza una fórmula antes de guardar", "warning");
+        return;
+      }
+
+      const cliente = document.getElementById("cliente").value.trim();
+      if (!cliente) {
+        window.fmToast("Captura el nombre del cliente / referencia", "warning");
+        document.getElementById("cliente").focus();
+        return;
+      }
+
+      const btn = document.getElementById("btnSave");
+      const originalHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner" style="border-color:rgba(0,0,0,.3);border-top-color:#000;"></span> Guardando...';
+
+      try {
+        const raza = A.getRaza(state.razaId);
+        const etapa = A.getEtapa(state.razaId, state.etapaId);
+        const volumen = parseFloat(document.getElementById("volumen").value) || 1;
+        const unidad = document.getElementById("unidad").value;
+        const tons = unidad === "ton" ? volumen : volumen / 1000;
+
+        // Recalcular perfil + costo finales
+        let perfil = { em: 0, pc: 0, ca: 0, p: 0, lys: 0, met: 0 };
+        let costoTon = 0;
+        state.formula.forEach(f => {
+          const ing = f.ing;
+          const factor = f.pct / 100;
+          perfil.em += factor * (ing.em || 0);
+          perfil.pc += factor * (ing.pc || 0);
+          perfil.ca += factor * (ing.ca || 0);
+          perfil.p += factor * (ing.p || 0);
+          perfil.lys += factor * (ing.lys || 0);
+          perfil.met += factor * (ing.met || 0);
+          costoTon += factor * 1000 * ing.precio;
+        });
+
+        const user = window.fmAuth.currentUser;
+        const formulaData = {
+          userId: user?.uid || "demo",
+          cliente: cliente,
+          razaId: state.razaId,
+          razaNombre: raza.nombre,
+          tipo: raza.tipo,
+          tipoNombre: A.TIPOS[raza.tipo].nombre,
+          etapaId: state.etapaId,
+          etapaNombre: etapa.nombre,
+          etapaRango: etapa.rango,
+          volumen: volumen,
+          unidad: unidad,
+          tons: tons,
+          costoTon: costoTon,
+          costoLote: costoTon * tons,
+          formula: state.formula.map(f => ({
+            id: f.id,
+            name: f.name,
+            pct: f.pct,
+            precio: f.ing.precio,
+            cat: f.ing.cat
+          })),
+          perfil: perfil,
+          requerimientos: A.getRequerimientos(state.razaId, state.etapaId),
+          createdAt: window.fmFirebase.serverTimestamp()
+        };
+
+        const colRef = window.fmFirebase.collection(window.fmDb, "formulas");
+        const docRef = await window.fmFirebase.addDoc(colRef, formulaData);
+
+        // Incrementar contador del nutricionista
+        if (user && window.fmProfile) {
+          try {
+            const profileRef = window.fmFirebase.doc(window.fmDb, "nutricionistas", user.uid);
+            await window.fmFirebase.updateDoc(profileRef, {
+              formulasCount: (window.fmProfile.formulasCount || 0) + 1
+            });
+            window.fmProfile.formulasCount = (window.fmProfile.formulasCount || 0) + 1;
+          } catch(e) { console.warn("No se pudo actualizar contador:", e); }
+        }
+
+        window.fmToast(`Fórmula guardada: ${cliente} (${etapa.nombre})`, "success");
+      } catch (e) {
+        console.error("Error guardando:", e);
+        window.fmToast("Error al guardar la fórmula", "danger");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+      }
     });
 
     // ============================================
     // INIT
     // ============================================
+
+    // ¿Viene de duplicar desde historial?
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("duplicar") === "1") {
+      const data = JSON.parse(sessionStorage.getItem("fm_duplicar") || "null");
+      if (data) {
+        const raza = A.getRaza(data.razaId);
+        if (raza) {
+          state.tipo = raza.tipo;
+          state.razaId = data.razaId;
+          state.etapaId = data.etapaId;
+        }
+        sessionStorage.removeItem("fm_duplicar");
+        setTimeout(() => {
+          document.getElementById("cliente").value = data.cliente || "";
+          document.getElementById("volumen").value = data.volumen || 1000;
+          document.getElementById("unidad").value = data.unidad || "ton";
+          window.fmToast("Fórmula cargada — ajusta precios y reoptimiza", "info");
+        }, 100);
+      }
+    }
+
     renderTipos();
     renderRazas();
     renderEtapas();
