@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulador — FeedMix MX</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/shared.css">
+
+  <style>
+    .formulador-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr 380px;
+      gap: var(--space-5);
+      align-items: start;
+    }
+
+    @media (max-width: 1280px) {
+      .formulador-layout { grid-template-columns: 1fr; }
+    }
+
+    .formulador-card {
+      background: white;
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .formulador-card-header {
+      padding: var(--space-5);
+      border-bottom: 1px solid var(--neutral-200);
+      background: var(--neutral-50);
+    }
+
+    .formulador-card-header h3 {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: var(--neutral-900);
+      margin-bottom: 4px;
+    }
+
+    .formulador-card-header p {
+      font-size: 0.8125rem;
+      color: var(--neutral-500);
+      margin: 0;
+    }
+
+    .formulador-card-body { padding: var(--space-5); }
+
+    /* SETUP card */
+    .setup-step {
+      margin-bottom: var(--space-5);
+      padding-bottom: var(--space-5);
+      border-bottom: 1px dashed var(--neutral-200);
+    }
+
+    .setup-step:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .setup-step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px; height: 22px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-right: var(--space-2);
+    }
+
+    /* Ingredientes table */
+    .ingredients-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .ingredients-table th {
+      background: var(--neutral-50);
+      padding: 0.625rem 0.875rem;
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--neutral-600);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--neutral-200);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .ingredients-table th.num,
+    .ingredients-table td.num {
+      text-align: right;
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+    }
+
+    .ingredients-table td {
+      padding: 0.5rem 0.875rem;
+      border-bottom: 1px solid var(--neutral-100);
+      font-size: 0.875rem;
+      color: var(--neutral-800);
+    }
+
+    .ingredients-table tr:last-child td { border-bottom: none; }
+
+    .ingredients-table tr.disabled td {
+      opacity: 0.4;
+    }
+
+    .ingredients-table .ing-name {
+      display: flex; align-items: center; gap: var(--space-2);
+      font-weight: 600;
+    }
+
+    .ing-checkbox {
+      width: 18px; height: 18px;
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+
+    .ing-input {
+      width: 100%;
+      padding: 0.375rem 0.5rem;
+      border: 1px solid var(--neutral-200);
+      border-radius: 6px;
+      font-size: 0.8125rem;
+      font-family: var(--font-mono);
+      text-align: right;
+      background: white;
+    }
+
+    .ing-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(46,107,168,0.1);
+    }
+
+    .table-scroll {
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    /* Search */
+    .search-wrapper {
+      position: relative;
+      padding: var(--space-3) var(--space-5);
+      border-bottom: 1px solid var(--neutral-200);
+      background: white;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: calc(var(--space-5) + 0.625rem);
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--neutral-400);
+    }
+
+    /* Results card */
+    .result-summary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: var(--space-6);
+      text-align: center;
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-5);
+    }
+
+    .result-summary-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: var(--space-2);
+    }
+
+    .result-summary-value {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    .result-summary-sub {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.8);
+      margin-top: var(--space-2);
+    }
+
+    .result-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.625rem 0;
+      border-bottom: 1px dashed var(--neutral-100);
+      font-size: 0.875rem;
+    }
+
+    .result-row:last-child { border-bottom: none; }
+
+    .result-row strong {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--neutral-900);
+    }
+
+    .result-row.met strong { color: var(--success); }
+    .result-row.unmet strong { color: var(--danger); }
+
+    .result-empty {
+      padding: var(--space-8) var(--space-5);
+      text-align: center;
+      color: var(--neutral-500);
+    }
+
+    .result-empty-icon {
+      width: 56px; height: 56px;
+      margin: 0 auto var(--space-4);
+      background: var(--neutral-100);
+      border-radius: 50%;
+      display: grid; place-items: center;
+      color: var(--neutral-400);
+    }
+
+    /* Sticky CTA */
+    .formulador-sticky-cta {
+      position: sticky;
+      bottom: var(--space-4);
+      margin-top: var(--space-4);
+      z-index: 10;
+    }
+
+    /* Etapa selector */
+    .etapa-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2);
+      margin-top: var(--space-3);
+    }
+
+    .etapa-card {
+      padding: var(--space-3);
+      border: 1.5px solid var(--neutral-200);
+      border-radius: var(--radius);
+      background: white;
+      cursor: pointer;
+      text-align: center;
+      transition: all var(--transition);
+    }
+
+    .etapa-card:hover { border-color: var(--primary-light); }
+
+    .etapa-card.active {
+      border-color: var(--primary);
+      background: var(--primary-50);
+    }
+
+    .etapa-card strong {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--neutral-900);
+      margin-bottom: 2px;
+    }
+
+    .etapa-card small {
+      font-size: 0.6875rem;
+      color: var(--neutral-500);
+    }
+
+    .etapa-card.active strong { color: var(--primary); }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <!-- SIDEBAR -->
+    <aside class="app-sidebar">
+      <a href="index.html" class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v4"/><path d="M5.5 5.5l2.8 2.8"/><path d="M18.5 5.5l-2.8 2.8"/>
+            <path d="M12 8a6 6 0 0 1 6 6c0 4-3 8-6 8s-6-4-6-8a6 6 0 0 1 6-6z"/>
+            <circle cx="12" cy="14" r="1.5" fill="currentColor"/>
+          </svg>
+        </span>
+        <span class="brand-name">FeedMix MX<small>Avicultura</small></span>
+      </a>
+
+      <ul class="sidebar-nav">
+        <li><a href="panel.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Panel
+        </a></li>
+        <li><a href="formulador.html" class="active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          Formulador
+        </a></li>
+        <li><a href="ingredientes.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+          Ingredientes
+        </a></li>
+        <li><a href="historial.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Historial
+        </a></li>
+      </ul>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="app-main">
+
+      <div class="app-topbar">
+        <div>
+          <h2 style="font-size:1.25rem;font-weight:700;">Nuevo formulado</h2>
+          <div style="font-size:0.875rem;color:var(--neutral-500);">Programación lineal de mínimo costo</div>
+        </div>
+        <div style="display:flex;gap:var(--space-3);">
+          <button class="btn btn-ghost btn-sm" id="btnSave">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Guardar
+          </button>
+          <button class="btn btn-primary btn-sm" id="btnOptimize">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Optimizar
+          </button>
+        </div>
+      </div>
+
+      <div class="app-content" style="max-width:1500px;">
+
+        <div class="formulador-layout">
+
+          <!-- COLUMNA 1: SETUP -->
+          <div class="formulador-card">
+            <div class="formulador-card-header">
+              <h3>Configuración del lote</h3>
+              <p>Define cliente, etapa y volumen</p>
+            </div>
+            <div class="formulador-card-body">
+
+              <div class="setup-step">
+                <label class="form-label"><span class="setup-step-num">1</span>Cliente / referencia</label>
+                <input type="text" class="form-input" id="cliente" placeholder="Granja San Miguel — lote 8">
+              </div>
+
+              <div class="setup-step">
+                <label class="form-label"><span class="setup-step-num">2</span>Especie y etapa</label>
+                <select class="form-select" id="especie">
+                  <option value="engorda">Pollo de engorda</option>
+                  <option value="postura">Gallina ponedora</option>
+                  <option value="reproductora">Reproductora pesada</option>
+                </select>
+
+                <div class="etapa-grid" id="etapaGrid">
+                  <!-- Generado dinámicamente -->
+                </div>
+              </div>
+
+              <div class="setup-step">
+                <label class="form-label"><span class="setup-step-num">3</span>Estirpe genética</label>
+                <select class="form-select" id="estirpe">
+                  <option value="cobb500">Cobb 500</option>
+                  <option value="ross308">Ross 308</option>
+                  <option value="hyline-w36">Hy-Line W-36</option>
+                  <option value="hyline-brown">Hy-Line Brown</option>
+                  <option value="generico">Genérico (NRC)</option>
+                </select>
+              </div>
+
+              <div class="setup-step">
+                <label class="form-label"><span class="setup-step-num">4</span>Volumen del lote</label>
+                <div style="display:flex;gap:var(--space-2);">
+                  <input type="number" class="form-input" id="volumen" value="1000" min="50">
+                  <select class="form-select" id="unidad" style="width:auto;">
+                    <option value="kg">kg</option>
+                    <option value="ton" selected>ton</option>
+                  </select>
+                </div>
+                <div class="form-hint">El reporte muestra resultados por tonelada y por lote completo.</div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- COLUMNA 2: INGREDIENTES -->
+          <div class="formulador-card">
+            <div class="formulador-card-header" style="display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <h3>Ingredientes disponibles</h3>
+                <p>Activa los que tienes en bodega y ajusta precios</p>
+              </div>
+              <span class="badge badge-primary" id="ingActiveCount">0 activos</span>
+            </div>
+
+            <div class="search-wrapper">
+              <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" class="search-input" id="searchIng" placeholder="Buscar ingrediente...">
+            </div>
+
+            <div class="table-scroll">
+              <table class="ingredients-table">
+                <thead>
+                  <tr>
+                    <th style="width:32px;"></th>
+                    <th>Ingrediente</th>
+                    <th class="num" title="Energía Metabolizable">EM</th>
+                    <th class="num" title="Proteína Cruda">PC %</th>
+                    <th class="num">Precio $/kg</th>
+                    <th class="num">Mín %</th>
+                    <th class="num">Máx %</th>
+                  </tr>
+                </thead>
+                <tbody id="ingTbody">
+                  <!-- Generado dinámicamente -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- COLUMNA 3: RESULTADOS -->
+          <div class="formulador-card">
+            <div class="formulador-card-header">
+              <h3>Resultado óptimo</h3>
+              <p>Mínimo costo cumpliendo requerimientos</p>
+            </div>
+            <div class="formulador-card-body" id="resultBody">
+
+              <div class="result-empty" id="resultEmpty">
+                <div class="result-empty-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                  </svg>
+                </div>
+                <p style="font-weight:600;color:var(--neutral-700);margin-bottom:var(--space-2);">Listo para optimizar</p>
+                <p style="font-size:0.875rem;line-height:1.55;">Configura el lote, activa ingredientes y presiona <strong>Optimizar</strong> para calcular la fórmula de mínimo costo.</p>
+              </div>
+
+              <!-- Resultado real (oculto inicialmente) -->
+              <div id="resultOk" class="hidden">
+
+                <div class="result-summary">
+                  <div class="result-summary-label">Costo por tonelada</div>
+                  <div class="result-summary-value" id="resCost">$0</div>
+                  <div class="result-summary-sub" id="resCostLote">— por lote</div>
+                </div>
+
+                <h4 style="font-size:0.875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--neutral-500);margin-bottom:var(--space-3);">Fórmula</h4>
+                <div id="resFormula"></div>
+
+                <h4 style="font-size:0.875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--neutral-500);margin:var(--space-5) 0 var(--space-3);">Perfil nutricional</h4>
+                <div id="resPerfil"></div>
+
+                <button class="btn btn-accent btn-block mt-6" id="btnPdf">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                  Descargar PDF
+                </button>
+
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/firebase-config.js"></script>
+  <script type="module">
+    import "./assets/shared.js";
+
+    await window.fmAuthGuard({ requireAuth: true });
+
+    // ============================================
+    // DATOS BASE (placeholder — en v2 vienen de Firestore)
+    // ============================================
+
+    const ETAPAS = {
+      engorda: [
+        { id: "iniciador", label: "Iniciador", sub: "0–10 días" },
+        { id: "crecimiento", label: "Crecimiento", sub: "11–24 días" },
+        { id: "finalizador", label: "Finalizador", sub: "25–42 días" },
+        { id: "retiro", label: "Retiro", sub: "43+ días" }
+      ],
+      postura: [
+        { id: "prepostura", label: "Prepostura", sub: "16–18 sem" },
+        { id: "fase1", label: "Fase 1", sub: "18–45 sem" },
+        { id: "fase2", label: "Fase 2", sub: "46–65 sem" },
+        { id: "fase3", label: "Fase 3", sub: "66+ sem" }
+      ],
+      reproductora: [
+        { id: "ini-rep", label: "Iniciador", sub: "0–6 sem" },
+        { id: "des-rep", label: "Desarrollo", sub: "7–22 sem" },
+        { id: "pre-rep", label: "Prepostura", sub: "23–25 sem" },
+        { id: "post-rep", label: "Postura", sub: "26+ sem" }
+      ]
+    };
+
+    // 12 ingredientes representativos para MVP visual
+    // (la biblioteca completa de 40+ se carga desde Firestore en v2)
+    const INGREDIENTES = [
+      { id: "maiz",     name: "Maíz amarillo",       em: 3350, pc: 8.5,  precio: 6.50,  min: 30, max: 65 },
+      { id: "sorgo",    name: "Sorgo",               em: 3280, pc: 9.0,  precio: 6.20,  min: 0,  max: 40 },
+      { id: "soya48",   name: "Pasta de soya 48%",   em: 2440, pc: 47.5, precio: 14.20, min: 0,  max: 40 },
+      { id: "soya44",   name: "Pasta de soya 44%",   em: 2350, pc: 44.0, precio: 13.50, min: 0,  max: 40 },
+      { id: "harpez",   name: "Harina de pescado",   em: 3000, pc: 60.0, precio: 28.00, min: 0,  max: 5  },
+      { id: "ddgs",     name: "DDGS",                em: 2700, pc: 27.0, precio: 8.80,  min: 0,  max: 8  },
+      { id: "salv",     name: "Salvado de trigo",    em: 1900, pc: 16.0, precio: 4.50,  min: 0,  max: 10 },
+      { id: "aceite",   name: "Aceite de soya",      em: 8800, pc: 0,    precio: 32.00, min: 0,  max: 6  },
+      { id: "carb",     name: "Carbonato de calcio", em: 0,    pc: 0,    precio: 0.90,  min: 0,  max: 10 },
+      { id: "fosf",     name: "Fosfato monocálcico", em: 0,    pc: 0,    precio: 18.50, min: 0,  max: 3  },
+      { id: "sal",      name: "Sal",                 em: 0,    pc: 0,    precio: 1.80,  min: 0,  max: 1  },
+      { id: "metio",    name: "DL-Metionina",        em: 5000, pc: 58.0, precio: 88.00, min: 0,  max: 0.4},
+      { id: "lisina",   name: "L-Lisina HCl",        em: 4200, pc: 78.0, precio: 38.00, min: 0,  max: 0.5},
+      { id: "premix",   name: "Premezcla vit/min",   em: 0,    pc: 0,    precio: 24.00, min: 0.3,max: 0.5}
+    ];
+
+    // ============================================
+    // STATE
+    // ============================================
+
+    let state = {
+      especie: "engorda",
+      etapa: "iniciador",
+      ingredientes: INGREDIENTES.map(i => ({ ...i, active: ["maiz","soya48","aceite","carb","fosf","sal","metio","premix"].includes(i.id) }))
+    };
+
+    // ============================================
+    // RENDER ETAPAS
+    // ============================================
+
+    function renderEtapas() {
+      const grid = document.getElementById("etapaGrid");
+      const etapas = ETAPAS[state.especie];
+      grid.innerHTML = etapas.map(e => `
+        <div class="etapa-card ${e.id === state.etapa ? 'active' : ''}" data-etapa="${e.id}">
+          <strong>${e.label}</strong>
+          <small>${e.sub}</small>
+        </div>
+      `).join("");
+
+      grid.querySelectorAll(".etapa-card").forEach(el => {
+        el.addEventListener("click", () => {
+          state.etapa = el.dataset.etapa;
+          renderEtapas();
+        });
+      });
+    }
+
+    document.getElementById("especie").addEventListener("change", (e) => {
+      state.especie = e.target.value;
+      state.etapa = ETAPAS[state.especie][0].id;
+      renderEtapas();
+    });
+
+    renderEtapas();
+
+    // ============================================
+    // RENDER INGREDIENTES
+    // ============================================
+
+    function renderIngredientes(filter = "") {
+      const tbody = document.getElementById("ingTbody");
+      const f = filter.toLowerCase();
+      tbody.innerHTML = state.ingredientes
+        .filter(i => i.name.toLowerCase().includes(f))
+        .map((i, idx) => `
+          <tr class="${i.active ? '' : 'disabled'}" data-id="${i.id}">
+            <td><input type="checkbox" class="ing-checkbox" ${i.active ? 'checked' : ''} data-action="toggle"></td>
+            <td><div class="ing-name">${i.name}</div></td>
+            <td class="num">${i.em || '—'}</td>
+            <td class="num">${i.pc || '—'}</td>
+            <td class="num">
+              <input type="number" step="0.01" class="ing-input" data-action="precio" value="${i.precio}">
+            </td>
+            <td class="num">
+              <input type="number" step="0.1" class="ing-input" data-action="min" value="${i.min}">
+            </td>
+            <td class="num">
+              <input type="number" step="0.1" class="ing-input" data-action="max" value="${i.max}">
+            </td>
+          </tr>
+        `).join("");
+
+      // Eventos
+      tbody.querySelectorAll("tr").forEach(tr => {
+        const id = tr.dataset.id;
+        const ing = state.ingredientes.find(i => i.id === id);
+
+        tr.querySelector('[data-action="toggle"]').addEventListener("change", (e) => {
+          ing.active = e.target.checked;
+          renderIngredientes(document.getElementById("searchIng").value);
+          updateActiveCount();
+        });
+
+        ["precio", "min", "max"].forEach(field => {
+          tr.querySelector(`[data-action="${field}"]`).addEventListener("input", (e) => {
+            ing[field] = parseFloat(e.target.value) || 0;
+          });
+        });
+      });
+
+      updateActiveCount();
+    }
+
+    function updateActiveCount() {
+      const n = state.ingredientes.filter(i => i.active).length;
+      document.getElementById("ingActiveCount").textContent = `${n} activo${n === 1 ? '' : 's'}`;
+    }
+
+    document.getElementById("searchIng").addEventListener("input", (e) => {
+      renderIngredientes(e.target.value);
+    });
+
+    renderIngredientes();
+
+    // ============================================
+    // OPTIMIZAR (placeholder — glpk.js viene en próximo drop)
+    // ============================================
+
+    document.getElementById("btnOptimize").addEventListener("click", async () => {
+      const activos = state.ingredientes.filter(i => i.active);
+      if (activos.length < 4) {
+        window.fmToast("Activa al menos 4 ingredientes para optimizar", "warning");
+        return;
+      }
+
+      // TODO v2: integrar glpk.js para programación lineal real
+      // Por ahora mostramos un resultado mock representativo
+      window.fmToast("Optimizando fórmula...", "info");
+
+      await new Promise(r => setTimeout(r, 1200));
+
+      // Mock: distribución plausible para iniciador
+      const formula = [
+        { id: "maiz",   name: "Maíz amarillo",       pct: 58.4 },
+        { id: "soya48", name: "Pasta de soya 48%",   pct: 32.1 },
+        { id: "aceite", name: "Aceite de soya",      pct: 4.8  },
+        { id: "carb",   name: "Carbonato de calcio", pct: 1.2  },
+        { id: "fosf",   name: "Fosfato monocálcico", pct: 1.6  },
+        { id: "sal",    name: "Sal",                 pct: 0.4  },
+        { id: "metio",  name: "DL-Metionina",        pct: 0.28 },
+        { id: "premix", name: "Premezcla vit/min",   pct: 0.4  }
+      ];
+
+      // Calcular costo
+      let costoTon = 0;
+      let perfilEM = 0, perfilPC = 0;
+      formula.forEach(f => {
+        const ing = state.ingredientes.find(i => i.id === f.id);
+        if (ing) {
+          costoTon += (f.pct / 100) * 1000 * ing.precio; // kg en ton × precio/kg
+          perfilEM += (f.pct / 100) * ing.em;
+          perfilPC += (f.pct / 100) * ing.pc;
+        }
+      });
+
+      const volumen = parseFloat(document.getElementById("volumen").value) || 1;
+      const unidad = document.getElementById("unidad").value;
+      const tons = unidad === "ton" ? volumen : volumen / 1000;
+      const costoLote = costoTon * tons;
+
+      // Render resultado
+      document.getElementById("resultEmpty").classList.add("hidden");
+      document.getElementById("resultOk").classList.remove("hidden");
+
+      document.getElementById("resCost").textContent = window.fmCurrency(costoTon).replace(".00", "");
+      document.getElementById("resCostLote").textContent = `${window.fmCurrency(costoLote).replace(".00","")} por ${tons} ton`;
+
+      document.getElementById("resFormula").innerHTML = formula.map(f => `
+        <div class="result-row">
+          <span style="color:var(--neutral-700);">${f.name}</span>
+          <strong>${f.pct.toFixed(2)}%</strong>
+        </div>
+      `).join("");
+
+      document.getElementById("resPerfil").innerHTML = `
+        <div class="result-row met">
+          <span>EM (kcal/kg)</span><strong>${Math.round(perfilEM)} ✓</strong>
+        </div>
+        <div class="result-row met">
+          <span>Proteína Cruda</span><strong>${perfilPC.toFixed(1)}% ✓</strong>
+        </div>
+        <div class="result-row met">
+          <span>Lisina dig.</span><strong>1.28% ✓</strong>
+        </div>
+        <div class="result-row met">
+          <span>Met + Cys</span><strong>0.95% ✓</strong>
+        </div>
+        <div class="result-row met">
+          <span>Calcio</span><strong>0.92% ✓</strong>
+        </div>
+        <div class="result-row met">
+          <span>Fósforo disp.</span><strong>0.46% ✓</strong>
+        </div>
+      `;
+
+      window.fmToast("Fórmula optimizada exitosamente", "success");
+    });
+
+    document.getElementById("btnPdf").addEventListener("click", () => {
+      window.fmToast("Generación de PDF disponible en próxima versión", "info");
+    });
+
+    document.getElementById("btnSave").addEventListener("click", () => {
+      window.fmToast("Guardado de fórmulas disponible en próxima versión", "info");
+    });
+  </script>
+
+</body>
+</html>

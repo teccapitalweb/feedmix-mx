@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ingredientes — FeedMix MX</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/shared.css">
+
+  <style>
+    .toolbar {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: var(--space-4); flex-wrap: wrap;
+      margin-bottom: var(--space-6);
+    }
+
+    .toolbar-search {
+      position: relative;
+      flex: 1;
+      max-width: 360px;
+    }
+
+    .toolbar-search input {
+      width: 100%;
+      padding: 0.625rem 0.875rem 0.625rem 2.5rem;
+      border: 1.5px solid var(--neutral-200);
+      border-radius: var(--radius);
+      background: white;
+      font-size: 0.9375rem;
+    }
+
+    .toolbar-search input:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: var(--shadow-focus);
+    }
+
+    .toolbar-search svg {
+      position: absolute;
+      left: 0.875rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--neutral-400);
+    }
+
+    .ing-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    .ing-table th {
+      background: var(--neutral-50);
+      padding: 0.875rem 1rem;
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--neutral-600);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--neutral-200);
+    }
+
+    .ing-table th.num,
+    .ing-table td.num {
+      text-align: right;
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+    }
+
+    .ing-table td {
+      padding: 0.875rem 1rem;
+      border-bottom: 1px solid var(--neutral-100);
+      font-size: 0.9375rem;
+      color: var(--neutral-800);
+    }
+
+    .ing-table tr:last-child td { border-bottom: none; }
+    .ing-table tr:hover td { background: var(--neutral-50); }
+
+    .ing-table .ing-name {
+      font-weight: 600;
+      color: var(--neutral-900);
+    }
+
+    .ing-table .ing-cat {
+      font-size: 0.75rem;
+      color: var(--neutral-500);
+      margin-top: 2px;
+    }
+
+    .ing-price-input {
+      width: 90px;
+      padding: 0.375rem 0.5rem;
+      border: 1px solid var(--neutral-200);
+      border-radius: 6px;
+      font-size: 0.8125rem;
+      font-family: var(--font-mono);
+      text-align: right;
+      background: white;
+    }
+
+    .ing-price-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(46,107,168,0.1);
+    }
+
+    .ing-actions {
+      display: flex; gap: var(--space-2); justify-content: flex-end;
+    }
+
+    .ing-actions button {
+      width: 32px; height: 32px;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--neutral-500);
+      display: grid; place-items: center;
+      transition: all var(--transition);
+      cursor: pointer;
+    }
+
+    .ing-actions button:hover {
+      background: var(--neutral-100);
+      color: var(--neutral-800);
+    }
+
+    .ing-actions button.danger:hover {
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+
+    .source-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+    }
+
+    .source-badge.precargado { background: var(--primary-50); color: var(--primary); }
+    .source-badge.propio { background: #FEF3C7; color: #92400E; }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 52, 87, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-4);
+    }
+
+    .modal-backdrop.active { display: flex; }
+
+    .modal {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      max-width: 540px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes modalIn {
+      from { transform: translateY(20px) scale(0.96); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: var(--space-6);
+    }
+
+    .modal-header h3 { font-size: 1.375rem; }
+
+    .modal-close {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--neutral-100);
+      color: var(--neutral-600);
+      display: grid; place-items: center;
+      cursor: pointer;
+    }
+
+    .modal-close:hover { background: var(--neutral-200); }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <aside class="app-sidebar">
+      <a href="index.html" class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v4"/><path d="M5.5 5.5l2.8 2.8"/><path d="M18.5 5.5l-2.8 2.8"/>
+            <path d="M12 8a6 6 0 0 1 6 6c0 4-3 8-6 8s-6-4-6-8a6 6 0 0 1 6-6z"/>
+            <circle cx="12" cy="14" r="1.5" fill="currentColor"/>
+          </svg>
+        </span>
+        <span class="brand-name">FeedMix MX<small>Avicultura</small></span>
+      </a>
+
+      <ul class="sidebar-nav">
+        <li><a href="panel.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Panel</a></li>
+        <li><a href="formulador.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>Formulador</a></li>
+        <li><a href="ingredientes.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Ingredientes</a></li>
+        <li><a href="historial.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Historial</a></li>
+      </ul>
+    </aside>
+
+    <div class="app-main">
+
+      <div class="app-topbar">
+        <div>
+          <h2 style="font-size:1.25rem;font-weight:700;">Biblioteca de ingredientes</h2>
+          <div style="font-size:0.875rem;color:var(--neutral-500);">Edita precios, agrega tus propios insumos</div>
+        </div>
+        <button class="btn btn-primary btn-sm" id="btnAdd">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nuevo ingrediente
+        </button>
+      </div>
+
+      <div class="app-content">
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div class="toolbar-search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="searchInput" placeholder="Buscar ingrediente...">
+          </div>
+          <div style="display:flex;gap:var(--space-3);align-items:center;">
+            <span class="badge badge-neutral" id="totalCount">0 ingredientes</span>
+            <button class="btn btn-ghost btn-sm" id="btnReset">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+              Restaurar precios
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabla -->
+        <div class="card-elevated" style="padding:0;overflow:hidden;">
+          <div style="overflow-x:auto;">
+            <table class="ing-table">
+              <thead>
+                <tr>
+                  <th>Ingrediente</th>
+                  <th>Origen</th>
+                  <th class="num" title="Energía Metabolizable kcal/kg">EM</th>
+                  <th class="num">PC %</th>
+                  <th class="num">Ca %</th>
+                  <th class="num">P disp %</th>
+                  <th class="num">Lys dig %</th>
+                  <th class="num">Precio MXN/kg</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="alert alert-info mt-6">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <div>
+            <strong>Tip:</strong> Los precios se actualizan en tiempo real. La próxima vez que optimices una fórmula, FeedMix usará automáticamente los precios actuales. Si necesitas precios SNIIM en vivo, contáctanos para activar la integración.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal nuevo ingrediente -->
+  <div class="modal-backdrop" id="modal">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h3 id="modalTitle">Nuevo ingrediente</h3>
+          <p style="color:var(--neutral-500);font-size:0.875rem;margin-top:4px;">Agrega un insumo personalizado a tu biblioteca</p>
+        </div>
+        <button class="modal-close" id="modalClose">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form id="modalForm">
+        <div class="form-group">
+          <label class="form-label">Nombre del ingrediente</label>
+          <input type="text" class="form-input" id="mName" placeholder="Ej: Harina de coco" required>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);">
+          <div class="form-group">
+            <label class="form-label">EM (kcal/kg)</label>
+            <input type="number" class="form-input" id="mEm" placeholder="3200" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Proteína Cruda %</label>
+            <input type="number" step="0.1" class="form-input" id="mPc" placeholder="22.0" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Calcio %</label>
+            <input type="number" step="0.01" class="form-input" id="mCa" placeholder="0.05">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fósforo disp. %</label>
+            <input type="number" step="0.01" class="form-input" id="mP" placeholder="0.20">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Lisina dig. %</label>
+            <input type="number" step="0.01" class="form-input" id="mLys" placeholder="0.8">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Precio MXN/kg</label>
+            <input type="number" step="0.01" class="form-input" id="mPrice" placeholder="8.50" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg mt-4">Guardar ingrediente</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="assets/firebase-config.js"></script>
+  <script type="module">
+    import "./assets/shared.js";
+    await window.fmAuthGuard({ requireAuth: true });
+
+    // Biblioteca precargada (40+ en producción; aquí muestreo representativo)
+    const PRECARGADOS = [
+      { id: "maiz",     name: "Maíz amarillo",          cat: "Cereal",       em: 3350, pc: 8.5,  ca: 0.02, p: 0.08, lys: 0.20, precio: 6.50 },
+      { id: "sorgo",    name: "Sorgo",                  cat: "Cereal",       em: 3280, pc: 9.0,  ca: 0.03, p: 0.09, lys: 0.18, precio: 6.20 },
+      { id: "trigo",    name: "Trigo grano",            cat: "Cereal",       em: 3120, pc: 12.5, ca: 0.05, p: 0.13, lys: 0.30, precio: 7.80 },
+      { id: "cebada",   name: "Cebada",                 cat: "Cereal",       em: 2700, pc: 11.0, ca: 0.05, p: 0.15, lys: 0.39, precio: 6.00 },
+      { id: "soya48",   name: "Pasta de soya 48%",      cat: "Proteína",     em: 2440, pc: 47.5, ca: 0.32, p: 0.32, lys: 2.85, precio: 14.20 },
+      { id: "soya44",   name: "Pasta de soya 44%",      cat: "Proteína",     em: 2350, pc: 44.0, ca: 0.29, p: 0.30, lys: 2.62, precio: 13.50 },
+      { id: "harpez",   name: "Harina de pescado",      cat: "Proteína",     em: 3000, pc: 60.0, ca: 4.50, p: 2.80, lys: 4.80, precio: 28.00 },
+      { id: "harcarn",  name: "Harina de carne y hueso",cat: "Proteína",     em: 2700, pc: 50.0, ca: 9.20, p: 4.50, lys: 2.60, precio: 16.00 },
+      { id: "harcanola",name: "Pasta de canola",        cat: "Proteína",     em: 1900, pc: 36.0, ca: 0.62, p: 0.50, lys: 2.05, precio: 11.00 },
+      { id: "ddgs",     name: "DDGS",                   cat: "Subproducto",  em: 2700, pc: 27.0, ca: 0.10, p: 0.40, lys: 0.78, precio: 8.80 },
+      { id: "salv",     name: "Salvado de trigo",       cat: "Subproducto",  em: 1900, pc: 16.0, ca: 0.13, p: 0.32, lys: 0.55, precio: 4.50 },
+      { id: "aceite",   name: "Aceite de soya",         cat: "Energético",   em: 8800, pc: 0,    ca: 0,    p: 0,    lys: 0,    precio: 32.00 },
+      { id: "sebo",     name: "Sebo bovino",            cat: "Energético",   em: 7700, pc: 0,    ca: 0,    p: 0,    lys: 0,    precio: 22.00 },
+      { id: "carb",     name: "Carbonato de calcio",    cat: "Mineral",      em: 0,    pc: 0,    ca: 38.0, p: 0,    lys: 0,    precio: 0.90 },
+      { id: "fosf",     name: "Fosfato monocálcico",    cat: "Mineral",      em: 0,    pc: 0,    ca: 16.0, p: 21.0, lys: 0,    precio: 18.50 },
+      { id: "fosbi",    name: "Fosfato bicálcico",      cat: "Mineral",      em: 0,    pc: 0,    ca: 22.0, p: 18.5, lys: 0,    precio: 17.00 },
+      { id: "sal",      name: "Sal común",              cat: "Mineral",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    precio: 1.80 },
+      { id: "metio",    name: "DL-Metionina",           cat: "Aminoácido",   em: 5000, pc: 58.0, ca: 0,    p: 0,    lys: 0,    precio: 88.00 },
+      { id: "lisina",   name: "L-Lisina HCl",           cat: "Aminoácido",   em: 4200, pc: 78.0, ca: 0,    p: 0,    lys: 78.4, precio: 38.00 },
+      { id: "treo",     name: "L-Treonina",             cat: "Aminoácido",   em: 3700, pc: 73.0, ca: 0,    p: 0,    lys: 0,    precio: 62.00 },
+      { id: "premix",   name: "Premezcla vit/min",      cat: "Aditivo",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    precio: 24.00 },
+      { id: "fitasa",   name: "Fitasa",                 cat: "Aditivo",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    precio: 180.00 },
+      { id: "colina",   name: "Cloruro de colina 60%",  cat: "Aditivo",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    precio: 28.00 }
+    ];
+
+    let ingredientes = JSON.parse(localStorage.getItem("fm_ing")) || PRECARGADOS.map(i => ({ ...i, source: "precargado" }));
+
+    function save() {
+      localStorage.setItem("fm_ing", JSON.stringify(ingredientes));
+    }
+
+    function render(filter = "") {
+      const f = filter.toLowerCase();
+      const list = ingredientes.filter(i => i.name.toLowerCase().includes(f) || i.cat.toLowerCase().includes(f));
+      document.getElementById("totalCount").textContent = `${list.length} de ${ingredientes.length} ingredientes`;
+
+      document.getElementById("tbody").innerHTML = list.map(i => `
+        <tr data-id="${i.id}">
+          <td>
+            <div class="ing-name">${i.name}</div>
+            <div class="ing-cat">${i.cat}</div>
+          </td>
+          <td>
+            <span class="source-badge ${i.source === 'propio' ? 'propio' : 'precargado'}">
+              ${i.source === 'propio' ? '✓ Tuyo' : 'Precargado'}
+            </span>
+          </td>
+          <td class="num">${i.em || '—'}</td>
+          <td class="num">${i.pc.toFixed(1)}</td>
+          <td class="num">${i.ca.toFixed(2)}</td>
+          <td class="num">${i.p.toFixed(2)}</td>
+          <td class="num">${i.lys.toFixed(2)}</td>
+          <td class="num">
+            <input type="number" step="0.01" class="ing-price-input" value="${i.precio.toFixed(2)}" data-action="price">
+          </td>
+          <td>
+            <div class="ing-actions">
+              ${i.source === 'propio' ? `
+                <button class="danger" data-action="delete" title="Eliminar">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+                </button>
+              ` : ''}
+            </div>
+          </td>
+        </tr>
+      `).join("");
+
+      // Eventos
+      document.querySelectorAll("#tbody tr").forEach(tr => {
+        const id = tr.dataset.id;
+        tr.querySelector('[data-action="price"]')?.addEventListener("change", (e) => {
+          const ing = ingredientes.find(x => x.id === id);
+          ing.precio = parseFloat(e.target.value) || 0;
+          save();
+          window.fmToast(`Precio de ${ing.name} actualizado`, "success");
+        });
+
+        tr.querySelector('[data-action="delete"]')?.addEventListener("click", () => {
+          const ing = ingredientes.find(x => x.id === id);
+          if (confirm(`¿Eliminar "${ing.name}" de tu biblioteca?`)) {
+            ingredientes = ingredientes.filter(x => x.id !== id);
+            save();
+            render(document.getElementById("searchInput").value);
+            window.fmToast("Ingrediente eliminado", "info");
+          }
+        });
+      });
+    }
+
+    document.getElementById("searchInput").addEventListener("input", (e) => render(e.target.value));
+
+    document.getElementById("btnReset").addEventListener("click", () => {
+      if (confirm("¿Restaurar todos los precios a valores por defecto? Esto no afecta los ingredientes que agregaste.")) {
+        ingredientes = ingredientes.map(i => {
+          if (i.source === 'propio') return i;
+          const orig = PRECARGADOS.find(x => x.id === i.id);
+          return orig ? { ...orig, source: "precargado" } : i;
+        });
+        save();
+        render();
+        window.fmToast("Precios restaurados a valores por defecto", "success");
+      }
+    });
+
+    // Modal
+    const modal = document.getElementById("modal");
+    document.getElementById("btnAdd").addEventListener("click", () => modal.classList.add("active"));
+    document.getElementById("modalClose").addEventListener("click", () => modal.classList.remove("active"));
+    modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.remove("active"); });
+
+    document.getElementById("modalForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const newIng = {
+        id: "custom_" + Date.now(),
+        name: document.getElementById("mName").value.trim(),
+        cat: "Personalizado",
+        em: parseFloat(document.getElementById("mEm").value) || 0,
+        pc: parseFloat(document.getElementById("mPc").value) || 0,
+        ca: parseFloat(document.getElementById("mCa").value) || 0,
+        p: parseFloat(document.getElementById("mP").value) || 0,
+        lys: parseFloat(document.getElementById("mLys").value) || 0,
+        precio: parseFloat(document.getElementById("mPrice").value) || 0,
+        source: "propio"
+      };
+      ingredientes.unshift(newIng);
+      save();
+      modal.classList.remove("active");
+      e.target.reset();
+      render();
+      window.fmToast(`"${newIng.name}" agregado a tu biblioteca`, "success");
+    });
+
+    render();
+  </script>
+
+</body>
+</html>
