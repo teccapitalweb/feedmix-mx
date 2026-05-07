@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi perfil — FeedMix MX</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/favicon.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/shared.css?v=7">
+
+  <style>
+    .perfil-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: var(--space-6);
+      align-items: start;
+    }
+
+    @media (max-width: 968px) { .perfil-grid { grid-template-columns: 1fr; } }
+
+    .perfil-side {
+      background: white;
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      text-align: center;
+    }
+
+    .perfil-avatar-big {
+      width: 120px; height: 120px;
+      margin: 0 auto var(--space-4);
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      display: grid; place-items: center;
+      font-size: 2.5rem;
+      font-weight: 800;
+      font-family: var(--font-display);
+      box-shadow: 0 8px 24px rgba(27,77,124,0.25);
+    }
+
+    .perfil-name {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--neutral-900);
+      margin-bottom: 4px;
+    }
+
+    .perfil-role {
+      font-size: 0.875rem;
+      color: var(--neutral-500);
+      margin-bottom: var(--space-4);
+    }
+
+    .perfil-plan-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+      border: 1px solid #F59E0B;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #78350F;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .perfil-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+      margin-top: var(--space-5);
+      padding-top: var(--space-5);
+      border-top: 1px solid var(--neutral-100);
+    }
+
+    .perfil-stat {
+      text-align: center;
+    }
+
+    .perfil-stat-num {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1;
+    }
+
+    .perfil-stat-label {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      color: var(--neutral-500);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .perfil-form {
+      background: white;
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+    }
+
+    .perfil-form h3 {
+      font-size: 1.125rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .perfil-form > p {
+      font-size: 0.875rem;
+      color: var(--neutral-500);
+      margin-bottom: var(--space-5);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+    }
+
+    @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <aside class="app-sidebar">
+      <a href="index.html" class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v4"/><path d="M5.5 5.5l2.8 2.8"/><path d="M18.5 5.5l-2.8 2.8"/>
+            <path d="M12 8a6 6 0 0 1 6 6c0 4-3 8-6 8s-6-4-6-8a6 6 0 0 1 6-6z"/>
+            <circle cx="12" cy="14" r="1.5" fill="currentColor"/>
+          </svg>
+        </span>
+        <span class="brand-name">FeedMix MX<small>Avicultura</small></span>
+      </a>
+
+      <ul class="sidebar-nav">
+        <li><a href="panel.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Panel</a></li>
+        <li><a href="formulador.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>Formulador</a></li>
+        <li><a href="ingredientes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Ingredientes</a></li>
+        <li><a href="historial.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Historial</a></li>
+        <li><a href="recomendaciones.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1M3.34 7l.7.7M20.66 7l-.7.7M21 14h-1M4 14H3M16 17a4 4 0 0 0-8 0v3h8v-3z"/></svg>Recomendaciones</a></li>
+      </ul>
+
+      <div class="sidebar-section-title">Configuración</div>
+      <ul class="sidebar-nav">
+        <li><a href="perfil.html" class="active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Mi perfil
+        </a></li>
+        <li><a href="suscripcion.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Suscripción
+        </a></li>
+        <li><a href="https://wa.me/5212382514313?text=Hola%2C%20necesito%20ayuda%20o%20informaci%C3%B3n%20sobre%20cursos" target="_blank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Soporte / Cursos
+        </a></li>
+      </ul>
+    </aside>
+
+    <div class="app-main">
+
+      <div class="app-topbar">
+        <div>
+          <h2 style="font-size:1.25rem;font-weight:700;">Mi perfil</h2>
+          <div style="font-size:0.875rem;color:var(--neutral-500);">Edita tu información profesional</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="btnLogout">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Cerrar sesión
+        </button>
+      </div>
+
+      <div class="app-content">
+        <div class="perfil-grid">
+
+          <!-- Side: Avatar y stats -->
+          <div class="perfil-side">
+            <div class="perfil-avatar-big" id="avatarBig">?</div>
+            <div class="perfil-name" id="perfilName">Cargando...</div>
+            <div class="perfil-role" id="perfilRole">—</div>
+            <span class="perfil-plan-badge" id="perfilPlan">⭐ Plan Pro · Trial</span>
+
+            <div class="perfil-stats">
+              <div class="perfil-stat">
+                <div class="perfil-stat-num" id="statFormulas">0</div>
+                <div class="perfil-stat-label">Fórmulas</div>
+              </div>
+              <div class="perfil-stat">
+                <div class="perfil-stat-num" id="statDays">14</div>
+                <div class="perfil-stat-label">Días trial</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form -->
+          <div class="perfil-form">
+            <h3>Información profesional</h3>
+            <p>Estos datos aparecen en los PDFs que entregas a tus clientes.</p>
+
+            <form id="perfilForm">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Nombre</label>
+                  <input type="text" class="form-input" id="firstName" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Apellido</label>
+                  <input type="text" class="form-input" id="lastName" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Email <span class="text-muted">(no editable)</span></label>
+                <input type="email" class="form-input" id="email" disabled style="background:var(--neutral-50);">
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Profesión / Cédula</label>
+                  <input type="text" class="form-input" id="profession" placeholder="Ej: MVZ, Ing. Agrónomo">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Teléfono</label>
+                  <input type="tel" class="form-input" id="phone" placeholder="+52 ...">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Despacho / Empresa</label>
+                <input type="text" class="form-input" id="company" placeholder="Ej: Nutrición Avícola del Bajío">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Estado / Ciudad</label>
+                <input type="text" class="form-input" id="location" placeholder="Ej: Tehuacán, Puebla">
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-lg" id="btnSave">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                <span id="btnSaveText">Guardar cambios</span>
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/firebase-config.js?v=7"></script>
+  <script type="module">
+    import "./assets/shared.js?v=7";
+    const user = await window.fmAuthGuard({ requireAuth: true });
+
+    const profile = window.fmProfile || {};
+
+    // Cargar datos
+    document.getElementById("firstName").value = profile.firstName || "";
+    document.getElementById("lastName").value = profile.lastName || "";
+    document.getElementById("email").value = user.email || "";
+    document.getElementById("profession").value = profile.profession || "";
+    document.getElementById("phone").value = profile.phone || "";
+    document.getElementById("company").value = profile.company || "";
+    document.getElementById("location").value = profile.location || "";
+
+    // Avatar
+    const initials = ((profile.firstName?.[0] || '') + (profile.lastName?.[0] || user.email[0])).toUpperCase();
+    document.getElementById("avatarBig").textContent = initials;
+
+    // Header
+    document.getElementById("perfilName").textContent =
+      `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || user.email;
+    document.getElementById("perfilRole").textContent = profile.profession || "Nutricionista";
+
+    // Plan
+    const planLabel = profile.plan === "despacho" ? "Plan Despacho" : "Plan Pro";
+    const planStatus = profile.status === "trial" ? "· Trial" : "";
+    document.getElementById("perfilPlan").innerHTML = `⭐ ${planLabel} ${planStatus}`;
+
+    // Stats
+    document.getElementById("statFormulas").textContent = profile.formulasCount || 0;
+
+    // Días trial
+    if (profile.trialEnd) {
+      const end = profile.trialEnd.toDate ? profile.trialEnd.toDate() : new Date(profile.trialEnd);
+      const days = Math.max(0, Math.ceil((end - new Date()) / (1000 * 60 * 60 * 24)));
+      document.getElementById("statDays").textContent = days;
+    }
+
+    // Guardar cambios
+    document.getElementById("perfilForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("btnSave");
+      const txt = document.getElementById("btnSaveText");
+      btn.disabled = true;
+      txt.innerHTML = '<span class="spinner" style="border-color:rgba(255,255,255,.3);border-top-color:white;"></span> Guardando...';
+
+      try {
+        const ref = window.fmFirebase.doc(window.fmDb, "nutricionistas", user.uid);
+        const update = {
+          firstName: document.getElementById("firstName").value.trim(),
+          lastName: document.getElementById("lastName").value.trim(),
+          profession: document.getElementById("profession").value.trim(),
+          phone: document.getElementById("phone").value.trim(),
+          company: document.getElementById("company").value.trim(),
+          location: document.getElementById("location").value.trim()
+        };
+        await window.fmFirebase.updateDoc(ref, update);
+        Object.assign(window.fmProfile, update);
+
+        // Actualizar header
+        document.getElementById("perfilName").textContent = `${update.firstName} ${update.lastName}`.trim();
+        document.getElementById("perfilRole").textContent = update.profession || "Nutricionista";
+        const newInitials = ((update.firstName?.[0] || '') + (update.lastName?.[0] || user.email[0])).toUpperCase();
+        document.getElementById("avatarBig").textContent = newInitials;
+
+        window.fmToast("Perfil actualizado", "success");
+      } catch (e) {
+        console.error(e);
+        window.fmToast("Error al guardar", "danger");
+      } finally {
+        btn.disabled = false;
+        txt.textContent = "Guardar cambios";
+      }
+    });
+
+    // Logout
+    document.getElementById("btnLogout").addEventListener("click", () => {
+      if (confirm("¿Cerrar sesión?")) window.fmLogout();
+    });
+  </script>
+
+</body>
+</html>

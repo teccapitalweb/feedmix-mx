@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Formulador — FeedMix MX</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/favicon.svg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,6 +14,85 @@
   <link rel="stylesheet" href="assets/shared.css?v=4">
 
   <style>
+    /* ============================================
+       VOLUMEN — toggle kg/ton mejorado
+       ============================================ */
+    .volumen-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .volumen-input-group {
+      display: flex;
+      gap: var(--space-2);
+      align-items: stretch;
+    }
+
+    .volumen-input {
+      flex: 1;
+      font-size: 1.125rem !important;
+      font-weight: 700 !important;
+      font-family: var(--font-mono) !important;
+      text-align: right !important;
+      padding-right: 1rem !important;
+    }
+
+    .unidad-toggle {
+      display: flex;
+      background: var(--neutral-100);
+      border-radius: var(--radius);
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .unidad-btn {
+      padding: 0.5rem 1rem;
+      background: transparent;
+      border: none;
+      border-radius: 7px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.875rem;
+      color: var(--neutral-500);
+      cursor: pointer;
+      transition: all var(--transition);
+      min-width: 50px;
+    }
+
+    .unidad-btn:hover {
+      color: var(--neutral-800);
+    }
+
+    .unidad-btn.active {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 2px 4px rgba(15, 52, 87, 0.08);
+    }
+
+    .volumen-preview {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.625rem 0.875rem;
+      background: linear-gradient(135deg, var(--primary-50) 0%, white 100%);
+      border: 1px solid var(--primary-100);
+      border-radius: var(--radius);
+      font-size: 0.8125rem;
+      color: var(--neutral-700);
+    }
+
+    .volumen-preview svg {
+      flex-shrink: 0;
+      color: var(--primary);
+    }
+
+    .volumen-preview strong {
+      color: var(--primary-dark);
+      font-weight: 800;
+      font-family: var(--font-mono);
+    }
+
     /* ============================================
        LAYOUT PRINCIPAL
        ============================================ */
@@ -786,12 +867,19 @@
 
               <div class="setup-step">
                 <div class="step-label"><span class="step-num">5</span> Volumen del lote</div>
-                <div style="display:flex;gap:var(--space-2);">
-                  <input type="number" class="form-input" id="volumen" value="1000" min="50">
-                  <select class="form-select" id="unidad" style="width:auto;">
-                    <option value="kg">kg</option>
-                    <option value="ton" selected>ton</option>
-                  </select>
+                <div class="volumen-wrapper">
+                  <div class="volumen-input-group">
+                    <input type="number" class="form-input volumen-input" id="volumen" value="1000" min="1">
+                    <div class="unidad-toggle">
+                      <button type="button" class="unidad-btn" data-unidad="kg">kg</button>
+                      <button type="button" class="unidad-btn active" data-unidad="ton">ton</button>
+                    </div>
+                  </div>
+                  <input type="hidden" id="unidad" value="ton">
+                  <div class="volumen-preview" id="volumenPreview">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                    <span><strong>1,000,000 kg</strong> = 1,000 toneladas</span>
+                  </div>
                 </div>
               </div>
 
@@ -1991,6 +2079,41 @@
     // INIT
     // ============================================
 
+    // Toggle kg/ton + preview dinámico
+    function actualizarVolumenPreview() {
+      const volumen = parseFloat(document.getElementById("volumen").value) || 0;
+      const unidad = document.getElementById("unidad").value;
+      const preview = document.getElementById("volumenPreview");
+
+      const formato = (n) => n.toLocaleString("es-MX", { maximumFractionDigits: 2 });
+
+      if (unidad === "ton") {
+        const kg = volumen * 1000;
+        preview.innerHTML = `
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          <span><strong>${formato(volumen)} ton</strong> = ${formato(kg)} kg de alimento</span>
+        `;
+      } else {
+        const ton = volumen / 1000;
+        preview.innerHTML = `
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          <span><strong>${formato(volumen)} kg</strong> = ${formato(ton)} ton de alimento</span>
+        `;
+      }
+    }
+
+    // Toggle de unidad
+    document.querySelectorAll(".unidad-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".unidad-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById("unidad").value = btn.dataset.unidad;
+        actualizarVolumenPreview();
+      });
+    });
+
+    document.getElementById("volumen").addEventListener("input", actualizarVolumenPreview);
+
     // ¿Viene de duplicar desde historial?
     const params = new URLSearchParams(window.location.search);
     if (params.get("duplicar") === "1") {
@@ -2007,6 +2130,11 @@
           document.getElementById("cliente").value = data.cliente || "";
           document.getElementById("volumen").value = data.volumen || 1000;
           document.getElementById("unidad").value = data.unidad || "ton";
+          // Sincronizar toggle visual
+          document.querySelectorAll(".unidad-btn").forEach(b => {
+            b.classList.toggle("active", b.dataset.unidad === (data.unidad || "ton"));
+          });
+          actualizarVolumenPreview();
           window.fmToast("Fórmula cargada — ajusta precios y reoptimiza", "info");
         }, 100);
       }
@@ -2019,6 +2147,7 @@
     renderTips();
     renderIngredientes();
     actualizarValidaciones();
+    actualizarVolumenPreview();
   </script>
 
 </body>

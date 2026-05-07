@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suscripción — FeedMix MX</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/favicon.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/shared.css?v=7">
+
+  <style>
+    .plan-actual {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      margin-bottom: var(--space-6);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .plan-actual::before {
+      content: "";
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(245,158,11,0.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .plan-actual-content {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: var(--space-5);
+      align-items: center;
+    }
+
+    @media (max-width: 600px) {
+      .plan-actual-content { grid-template-columns: 1fr; }
+    }
+
+    .plan-actual-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: var(--radius-full);
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      margin-bottom: var(--space-3);
+    }
+
+    .plan-actual h2 {
+      color: white;
+      font-size: 2rem;
+      margin-bottom: var(--space-2);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .plan-actual p {
+      color: rgba(255,255,255,0.85);
+      font-size: 1rem;
+      margin-bottom: var(--space-4);
+    }
+
+    .plan-actual-stats {
+      display: flex;
+      gap: var(--space-6);
+      padding-top: var(--space-4);
+      border-top: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .plan-actual-stat strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--accent-light);
+    }
+
+    .plan-actual-stat span {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .plan-actual-cta {
+      text-align: center;
+    }
+
+    .planes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-5);
+      margin-bottom: var(--space-6);
+    }
+
+    @media (max-width: 768px) { .planes-grid { grid-template-columns: 1fr; } }
+
+    .plan-card {
+      background: white;
+      border: 2px solid var(--neutral-200);
+      border-radius: var(--radius-xl);
+      padding: var(--space-7);
+      position: relative;
+      transition: all var(--transition);
+    }
+
+    .plan-card:hover {
+      border-color: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .plan-card.featured {
+      border-color: var(--primary);
+      background: linear-gradient(180deg, white 0%, var(--primary-50) 100%);
+    }
+
+    .plan-card.featured::before {
+      content: "Más popular";
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: var(--neutral-900);
+      padding: 4px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 12px rgba(245,158,11,0.3);
+    }
+
+    .plan-card.current::after {
+      content: "✓ Tu plan actual";
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--success);
+      color: white;
+      padding: 4px 10px;
+      border-radius: var(--radius);
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .plan-name {
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: var(--space-2);
+    }
+
+    .plan-tagline {
+      font-size: 1rem;
+      color: var(--neutral-600);
+      margin-bottom: var(--space-4);
+    }
+
+    .plan-price {
+      display: flex; align-items: baseline; gap: 8px;
+      margin-bottom: var(--space-5);
+    }
+
+    .plan-price strong {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--neutral-900);
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    .plan-price-currency {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--neutral-500);
+    }
+
+    .plan-price-period {
+      font-size: 0.9375rem;
+      color: var(--neutral-500);
+    }
+
+    .plan-features {
+      list-style: none;
+      padding: 0;
+      margin: var(--space-5) 0;
+      padding-top: var(--space-5);
+      border-top: 1px solid var(--neutral-100);
+    }
+
+    .plan-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: 8px 0;
+      font-size: 0.9375rem;
+      color: var(--neutral-700);
+    }
+
+    .plan-features li svg {
+      flex-shrink: 0;
+      width: 20px; height: 20px;
+      color: var(--success);
+      margin-top: 2px;
+    }
+
+    .info-card {
+      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+      border: 1px solid #F59E0B;
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      display: flex;
+      gap: var(--space-4);
+      align-items: flex-start;
+    }
+
+    .info-card-icon {
+      flex-shrink: 0;
+      width: 44px; height: 44px;
+      background: white;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      color: #92400E;
+    }
+
+    .info-card-content strong {
+      display: block;
+      color: #78350F;
+      font-weight: 800;
+      margin-bottom: 4px;
+      font-size: 0.9375rem;
+    }
+
+    .info-card-content p {
+      color: #92400E;
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <aside class="app-sidebar">
+      <a href="index.html" class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v4"/><path d="M5.5 5.5l2.8 2.8"/><path d="M18.5 5.5l-2.8 2.8"/>
+            <path d="M12 8a6 6 0 0 1 6 6c0 4-3 8-6 8s-6-4-6-8a6 6 0 0 1 6-6z"/>
+            <circle cx="12" cy="14" r="1.5" fill="currentColor"/>
+          </svg>
+        </span>
+        <span class="brand-name">FeedMix MX<small>Avicultura</small></span>
+      </a>
+
+      <ul class="sidebar-nav">
+        <li><a href="panel.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Panel</a></li>
+        <li><a href="formulador.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>Formulador</a></li>
+        <li><a href="ingredientes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Ingredientes</a></li>
+        <li><a href="historial.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Historial</a></li>
+        <li><a href="recomendaciones.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1M3.34 7l.7.7M20.66 7l-.7.7M21 14h-1M4 14H3M16 17a4 4 0 0 0-8 0v3h8v-3z"/></svg>Recomendaciones</a></li>
+      </ul>
+
+      <div class="sidebar-section-title">Configuración</div>
+      <ul class="sidebar-nav">
+        <li><a href="perfil.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Mi perfil
+        </a></li>
+        <li><a href="suscripcion.html" class="active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Suscripción
+        </a></li>
+        <li><a href="https://wa.me/5212382514313?text=Hola%2C%20necesito%20ayuda%20o%20informaci%C3%B3n%20sobre%20cursos" target="_blank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Soporte / Cursos
+        </a></li>
+      </ul>
+    </aside>
+
+    <div class="app-main">
+
+      <div class="app-topbar">
+        <div>
+          <h2 style="font-size:1.25rem;font-weight:700;">Suscripción</h2>
+          <div style="font-size:0.875rem;color:var(--neutral-500);">Gestiona tu plan FeedMix MX</div>
+        </div>
+      </div>
+
+      <div class="app-content">
+
+        <!-- Plan actual -->
+        <div class="plan-actual">
+          <div class="plan-actual-content">
+            <div>
+              <span class="plan-actual-eyebrow">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3"/></svg>
+                Tu plan actual
+              </span>
+              <h2 id="planActualNombre">Plan Pro · Trial</h2>
+              <p id="planActualDesc">Prueba gratuita de 14 días — Acceso completo a todas las funciones.</p>
+              <div class="plan-actual-stats">
+                <div class="plan-actual-stat">
+                  <strong id="diasRestantes">14</strong>
+                  <span>Días restantes</span>
+                </div>
+                <div class="plan-actual-stat">
+                  <strong id="formulasUsadas">0</strong>
+                  <span>Fórmulas creadas</span>
+                </div>
+                <div class="plan-actual-stat">
+                  <strong>∞</strong>
+                  <span>Fórmulas/mes</span>
+                </div>
+              </div>
+            </div>
+            <div class="plan-actual-cta">
+              <a href="https://wa.me/5212382514313?text=Hola%2C%20quiero%20activar%20mi%20suscripci%C3%B3n%20a%20FeedMix%20MX" target="_blank" class="btn btn-accent btn-lg">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.138.563 4.14 1.535 5.874L0 24l6.29-1.508A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.814 9.814 0 01-5.058-1.4l-.361-.214-3.735.896.944-3.653-.235-.374A9.817 9.817 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
+                Activar suscripción
+              </a>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.7);margin-top:8px;">por WhatsApp</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comparativa de planes -->
+        <h3 style="font-size:1.25rem;font-weight:800;margin-bottom:var(--space-2);">Planes disponibles</h3>
+        <p style="color:var(--neutral-600);margin-bottom:var(--space-5);">Elige el plan que mejor se adapte a tu práctica profesional.</p>
+
+        <div class="planes-grid">
+          <div class="plan-card current" id="planPro">
+            <div class="plan-name">Pro</div>
+            <div class="plan-tagline">Para nutricionistas independientes</div>
+            <div class="plan-price">
+              <span class="plan-price-currency">USD</span>
+              <strong>$500</strong>
+              <span class="plan-price-period">/ año</span>
+            </div>
+            <a href="https://wa.me/5212382514313?text=Quiero%20activar%20Plan%20Pro%20de%20FeedMix%20MX%20%28%24500%20USD%2Fa%C3%B1o%29" target="_blank" class="btn btn-outline btn-block">
+              Mantener plan Pro
+            </a>
+            <ul class="plan-features">
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> 1 usuario nutricionista</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Fórmulas ilimitadas</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Catálogo completo (25 ingredientes)</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Todas las razas y etapas</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> PDFs profesionales</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Soporte por email</li>
+            </ul>
+          </div>
+
+          <div class="plan-card featured" id="planDespacho">
+            <div class="plan-name">Despacho</div>
+            <div class="plan-tagline">Para consultorías y empresas</div>
+            <div class="plan-price">
+              <span class="plan-price-currency">USD</span>
+              <strong>$1,500</strong>
+              <span class="plan-price-period">/ año</span>
+            </div>
+            <a href="https://wa.me/5212382514313?text=Quiero%20cambiar%20a%20Plan%20Despacho%20de%20FeedMix%20MX%20%28%241%2C500%20USD%2Fa%C3%B1o%29" target="_blank" class="btn btn-primary btn-block">
+              Cambiar a Despacho
+            </a>
+            <ul class="plan-features">
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Hasta 5 usuarios</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Todo lo del plan Pro</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> <strong>Marca blanca en PDFs</strong></li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Cartera de clientes compartida</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Soporte prioritario WhatsApp</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Capacitación inicial 1:1</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Info de pago -->
+        <div class="info-card">
+          <div class="info-card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div class="info-card-content">
+            <strong>¿Cómo se activa la suscripción?</strong>
+            <p>Por ahora la suscripción se procesa <strong>directamente por WhatsApp</strong> con un asesor. Te ayudamos con:</p>
+            <ul style="margin-top:8px;list-style:none;padding:0;">
+              <li>• Activación inmediata del plan</li>
+              <li>• Pago por transferencia o tarjeta (Stripe)</li>
+              <li>• Factura para deducción de impuestos</li>
+              <li>• Capacitación inicial sin costo extra (Plan Despacho)</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/firebase-config.js?v=7"></script>
+  <script type="module">
+    import "./assets/shared.js?v=7";
+    const user = await window.fmAuthGuard({ requireAuth: true });
+    const profile = window.fmProfile || {};
+
+    // Plan actual
+    const planActual = profile.plan || "pro";
+    const isDespacho = planActual === "despacho";
+    const isTrial = profile.status === "trial";
+
+    document.getElementById("planActualNombre").textContent =
+      `Plan ${isDespacho ? "Despacho" : "Pro"}${isTrial ? " · Trial" : ""}`;
+
+    if (!isTrial) {
+      document.getElementById("planActualDesc").textContent =
+        isDespacho ? "Suscripción activa — Plan Despacho con hasta 5 usuarios." : "Suscripción activa — Plan Pro individual.";
+    }
+
+    // Días trial
+    if (profile.trialEnd) {
+      const end = profile.trialEnd.toDate ? profile.trialEnd.toDate() : new Date(profile.trialEnd);
+      const days = Math.max(0, Math.ceil((end - new Date()) / (1000 * 60 * 60 * 24)));
+      document.getElementById("diasRestantes").textContent = days;
+    }
+
+    // Fórmulas creadas
+    document.getElementById("formulasUsadas").textContent = profile.formulasCount || 0;
+
+    // Marcar plan actual como "current"
+    document.getElementById("planPro").classList.toggle("current", !isDespacho);
+    document.getElementById("planDespacho").classList.toggle("current", isDespacho);
+
+    // Si está en Despacho, ajustar texto
+    if (isDespacho) {
+      document.querySelector("#planPro .btn").textContent = "Cambiar a Pro";
+      document.querySelector("#planDespacho .btn").textContent = "Mantener plan Despacho";
+    }
+  </script>
+
+</body>
+</html>

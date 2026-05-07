@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ingredientes — FeedMix MX</title>
+  <title>Catálogo de ingredientes — FeedMix MX</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/favicon.svg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="assets/shared.css?v=5">
+  <link rel="stylesheet" href="assets/shared.css?v=7">
 
   <style>
     .toolbar {
@@ -47,6 +49,168 @@
       color: var(--neutral-400);
     }
 
+    /* GUÍA DE PRIMERA VEZ */
+    .tour-banner {
+      background: linear-gradient(135deg, #1B4D7C 0%, #0F3457 100%);
+      color: white;
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      margin-bottom: var(--space-6);
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: var(--space-4);
+      align-items: center;
+    }
+
+    .tour-banner::before {
+      content: "";
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(245,158,11,0.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .tour-banner-content { position: relative; z-index: 1; }
+
+    .tour-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 158, 11, 0.18);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: var(--radius-full);
+      padding: 4px 12px;
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      margin-bottom: var(--space-3);
+    }
+
+    .tour-banner h2 {
+      color: white;
+      font-size: 1.375rem;
+      margin-bottom: var(--space-2);
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .tour-banner p {
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      max-width: 600px;
+    }
+
+    .tour-banner-actions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 768px) {
+      .tour-banner { grid-template-columns: 1fr; }
+      .tour-banner-actions { flex-direction: row; }
+    }
+
+    .btn-tour-primary {
+      background: var(--accent);
+      color: var(--neutral-900);
+      padding: 0.75rem 1.25rem;
+      border-radius: var(--radius);
+      font-weight: 700;
+      font-size: 0.875rem;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn-tour-primary:hover {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-tour-secondary {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      font-size: 0.8125rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .btn-tour-secondary:hover {
+      background: rgba(255,255,255,0.15);
+    }
+
+    /* TARJETAS DE GUÍA */
+    .guia-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+
+    @media (max-width: 968px) { .guia-grid { grid-template-columns: 1fr; } }
+
+    .guia-card {
+      background: white;
+      border: 2px solid var(--primary-100);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .guia-card-num {
+      position: absolute;
+      top: -10px; right: 16px;
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border-radius: 8px;
+      display: grid; place-items: center;
+      font-weight: 800;
+      font-size: 0.875rem;
+      box-shadow: 0 4px 8px rgba(27,77,124,0.25);
+    }
+
+    .guia-card-icon {
+      width: 44px; height: 44px;
+      background: var(--primary-50);
+      border-radius: var(--radius);
+      display: grid; place-items: center;
+      margin-bottom: var(--space-3);
+      color: var(--primary);
+    }
+
+    .guia-card h4 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--neutral-900);
+      margin-bottom: var(--space-2);
+    }
+
+    .guia-card p {
+      font-size: 0.875rem;
+      color: var(--neutral-600);
+      line-height: 1.5;
+    }
+
+    /* TABLA */
     .ing-table {
       width: 100%;
       border-collapse: collapse;
@@ -73,10 +237,11 @@
     }
 
     .ing-table td {
-      padding: 0.875rem 1rem;
+      padding: 0.625rem 1rem;
       border-bottom: 1px solid var(--neutral-100);
       font-size: 0.9375rem;
       color: var(--neutral-800);
+      vertical-align: middle;
     }
 
     .ing-table tr:last-child td { border-bottom: none; }
@@ -93,8 +258,8 @@
       margin-top: 2px;
     }
 
-    .ing-price-input {
-      width: 90px;
+    .editable-input {
+      width: 80px;
       padding: 0.375rem 0.5rem;
       border: 1px solid var(--neutral-200);
       border-radius: 6px;
@@ -102,12 +267,20 @@
       font-family: var(--font-mono);
       text-align: right;
       background: white;
+      transition: all var(--transition);
     }
 
-    .ing-price-input:focus {
+    .editable-input:focus {
       outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(46,107,168,0.1);
+      box-shadow: 0 0 0 3px rgba(27,77,124,0.1);
+      background: #FFFBEB;
+    }
+
+    .editable-input.precio {
+      width: 90px;
+      font-weight: 700;
+      color: var(--primary-dark);
     }
 
     .ing-actions {
@@ -122,11 +295,12 @@
       display: grid; place-items: center;
       transition: all var(--transition);
       cursor: pointer;
+      border: none;
     }
 
     .ing-actions button:hover {
-      background: var(--neutral-100);
-      color: var(--neutral-800);
+      background: var(--primary-50);
+      color: var(--primary);
     }
 
     .ing-actions button.danger:hover {
@@ -148,7 +322,7 @@
     .source-badge.precargado { background: var(--primary-50); color: var(--primary); }
     .source-badge.propio { background: #FEF3C7; color: #92400E; }
 
-    /* Modal */
+    /* MODAL */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -167,7 +341,7 @@
       background: white;
       border-radius: var(--radius-xl);
       padding: var(--space-8);
-      max-width: 540px;
+      max-width: 580px;
       width: 100%;
       max-height: 90vh;
       overflow-y: auto;
@@ -185,7 +359,7 @@
       margin-bottom: var(--space-6);
     }
 
-    .modal-header h3 { font-size: 1.375rem; }
+    .modal-header h3 { font-size: 1.375rem; font-weight: 800; }
 
     .modal-close {
       width: 36px; height: 36px;
@@ -194,9 +368,146 @@
       color: var(--neutral-600);
       display: grid; place-items: center;
       cursor: pointer;
+      border: none;
     }
 
     .modal-close:hover { background: var(--neutral-200); }
+
+    /* GUÍA OVERLAY (tour) */
+    .tour-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 52, 87, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 9998;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-6);
+      animation: fadeIn .3s ease;
+    }
+
+    .tour-overlay.active { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .tour-modal {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      max-width: 640px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    .tour-progress {
+      display: flex;
+      gap: 6px;
+      margin-bottom: var(--space-6);
+    }
+
+    .tour-progress-dot {
+      flex: 1;
+      height: 4px;
+      background: var(--neutral-200);
+      border-radius: 2px;
+      transition: all var(--transition);
+    }
+
+    .tour-progress-dot.active {
+      background: var(--primary);
+    }
+
+    .tour-step-icon {
+      width: 64px; height: 64px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      border-radius: var(--radius-lg);
+      display: grid; place-items: center;
+      margin-bottom: var(--space-4);
+      color: white;
+      box-shadow: 0 8px 20px rgba(27, 77, 124, 0.25);
+    }
+
+    .tour-step-icon svg { width: 32px; height: 32px; stroke-width: 1.6; }
+
+    .tour-modal h3 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--neutral-900);
+      margin-bottom: var(--space-3);
+      letter-spacing: -0.02em;
+    }
+
+    .tour-modal p {
+      font-size: 1rem;
+      color: var(--neutral-600);
+      line-height: 1.6;
+      margin-bottom: var(--space-4);
+    }
+
+    .tour-modal ul {
+      list-style: none;
+      padding: 0;
+      margin-bottom: var(--space-5);
+    }
+
+    .tour-modal ul li {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-3) 0;
+      border-bottom: 1px dashed var(--neutral-100);
+      font-size: 0.9375rem;
+      color: var(--neutral-700);
+      line-height: 1.5;
+    }
+
+    .tour-modal ul li:last-child { border-bottom: none; }
+
+    .tour-modal ul li::before {
+      content: "✓";
+      color: var(--success);
+      font-weight: 800;
+      font-size: 1.125rem;
+      flex-shrink: 0;
+    }
+
+    .tour-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-3);
+      padding-top: var(--space-5);
+      border-top: 1px solid var(--neutral-100);
+    }
+
+    .tour-step-counter {
+      font-size: 0.8125rem;
+      color: var(--neutral-500);
+      font-weight: 600;
+    }
+
+    .tour-tip-box {
+      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+      margin: var(--space-4) 0;
+      font-size: 0.875rem;
+      color: #78350F;
+      line-height: 1.5;
+    }
+
+    .tour-tip-box strong {
+      color: #451A03;
+      font-weight: 800;
+    }
   </style>
 </head>
 <body>
@@ -222,24 +533,95 @@
         <li><a href="historial.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Historial</a></li>
         <li><a href="recomendaciones.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1M3.34 7l.7.7M20.66 7l-.7.7M21 14h-1M4 14H3M16 17a4 4 0 0 0-8 0v3h8v-3z"/></svg>Recomendaciones</a></li>
       </ul>
+
+      <div class="sidebar-section-title">Configuración</div>
+      <ul class="sidebar-nav">
+        <li><a href="perfil.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Mi perfil
+        </a></li>
+        <li><a href="suscripcion.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Suscripción
+        </a></li>
+        <li><a href="https://wa.me/5212382514313?text=Hola%2C%20necesito%20ayuda%20o%20informaci%C3%B3n%20sobre%20cursos" target="_blank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Soporte / Cursos
+        </a></li>
+      </ul>
     </aside>
 
     <div class="app-main">
 
       <div class="app-topbar">
         <div>
-          <h2 style="font-size:1.25rem;font-weight:700;">Biblioteca de ingredientes</h2>
-          <div style="font-size:0.875rem;color:var(--neutral-500);">Edita precios, agrega tus propios insumos</div>
+          <h2 style="font-size:1.25rem;font-weight:700;">Catálogo de ingredientes</h2>
+          <div style="font-size:0.875rem;color:var(--neutral-500);">25 ingredientes precargados editables · Agrega los tuyos</div>
         </div>
-        <button class="btn btn-primary btn-sm" id="btnAdd">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Nuevo ingrediente
-        </button>
+        <div style="display:flex;gap:var(--space-3);">
+          <button class="btn btn-ghost btn-sm" id="btnTour">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            ¿Cómo funciona?
+          </button>
+          <button class="btn btn-primary btn-sm" id="btnAdd">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Nuevo ingrediente
+          </button>
+        </div>
       </div>
 
       <div class="app-content">
 
-        <!-- Toolbar -->
+        <!-- BANNER GUÍA (solo primera vez) -->
+        <div class="tour-banner" id="tourBanner" style="display:none;">
+          <div class="tour-banner-content">
+            <span class="tour-eyebrow">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3"/></svg>
+              Primera vez aquí
+            </span>
+            <h2>Bienvenido al catálogo de ingredientes</h2>
+            <p>Aquí están los 25 ingredientes más usados en avicultura mexicana, ya precargados con sus valores nutricionales. <strong>Solo necesitas actualizar los precios cada semana</strong>. También puedes agregar tus propios insumos.</p>
+          </div>
+          <div class="tour-banner-actions">
+            <button class="btn-tour-primary" id="btnStartTour">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Tour de 30 segundos
+            </button>
+            <button class="btn-tour-secondary" id="btnSkipTour">Saltar guía</button>
+          </div>
+        </div>
+
+        <!-- 3 CARDS DE GUÍA RÁPIDA -->
+        <div class="guia-grid" id="guiaGrid" style="display:none;">
+          <div class="guia-card">
+            <div class="guia-card-num">1</div>
+            <div class="guia-card-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <h4>Edita los precios</h4>
+            <p>Solo da click en el precio y escribe el valor actual. Los datos nutricionales (EM, PC, Ca, P) ya están precargados según NRC.</p>
+          </div>
+
+          <div class="guia-card">
+            <div class="guia-card-num">2</div>
+            <div class="guia-card-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <h4>Agrega los tuyos</h4>
+            <p>Si tienes un ingrediente local que no está en la lista (ej. harina de coco, maíz amarillo de tu región), créalo desde "Nuevo ingrediente".</p>
+          </div>
+
+          <div class="guia-card">
+            <div class="guia-card-num">3</div>
+            <div class="guia-card-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <h4>Pasa al formulador</h4>
+            <p>Una vez con precios actualizados, ve al <strong>Formulador</strong>, elige raza y etapa, y el sistema optimiza la mezcla más barata cumpliendo NRC.</p>
+          </div>
+        </div>
+
+        <!-- TOOLBAR -->
         <div class="toolbar">
           <div class="toolbar-search">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -249,12 +631,12 @@
             <span class="badge badge-neutral" id="totalCount">0 ingredientes</span>
             <button class="btn btn-ghost btn-sm" id="btnReset">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-              Restaurar precios
+              Restaurar valores
             </button>
           </div>
         </div>
 
-        <!-- Tabla -->
+        <!-- TABLA -->
         <div class="card-elevated" style="padding:0;overflow:hidden;">
           <div style="overflow-x:auto;">
             <table class="ing-table">
@@ -279,7 +661,7 @@
         <div class="alert alert-info mt-6">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
           <div>
-            <strong>Tip:</strong> Los precios se actualizan en tiempo real. La próxima vez que optimices una fórmula, FeedMix usará automáticamente los precios actuales. Si necesitas precios SNIIM en vivo, contáctanos para activar la integración.
+            <strong>💡 Tip pro:</strong> Todos los campos son editables. Da click en cualquier valor (EM, PC, Ca, P, Lys, Precio) y modifícalo si tienes un análisis NIR de tu ingrediente. Los datos por defecto vienen de tablas NRC y de proveedores mexicanos.
           </div>
         </div>
 
@@ -287,13 +669,13 @@
     </div>
   </div>
 
-  <!-- Modal nuevo ingrediente -->
+  <!-- MODAL: Nuevo ingrediente -->
   <div class="modal-backdrop" id="modal">
     <div class="modal">
       <div class="modal-header">
         <div>
           <h3 id="modalTitle">Nuevo ingrediente</h3>
-          <p style="color:var(--neutral-500);font-size:0.875rem;margin-top:4px;">Agrega un insumo personalizado a tu biblioteca</p>
+          <p style="color:var(--neutral-500);font-size:0.875rem;margin-top:4px;">Agrega un insumo personalizado a tu catálogo</p>
         </div>
         <button class="modal-close" id="modalClose">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -338,12 +720,21 @@
     </div>
   </div>
 
-  <script src="assets/firebase-config.js?v=5"></script>
+  <!-- TOUR OVERLAY -->
+  <div class="tour-overlay" id="tourOverlay">
+    <div class="tour-modal" id="tourModal">
+      <!-- contenido inyectado por JS -->
+    </div>
+  </div>
+
+  <script src="assets/firebase-config.js?v=7"></script>
   <script type="module">
-    import "./assets/shared.js?v=5";
+    import "./assets/shared.js?v=7";
     await window.fmAuthGuard({ requireAuth: true });
 
-    // Biblioteca precargada (40+ en producción; aquí muestreo representativo)
+    // ============================================
+    // BIBLIOTECA PRECARGADA (catálogo NRC + México)
+    // ============================================
     const PRECARGADOS = [
       { id: "maiz",     name: "Maíz amarillo",          cat: "Cereal",       em: 3350, pc: 8.5,  ca: 0.02, p: 0.08, lys: 0.20, precio: 6.50 },
       { id: "sorgo",    name: "Sorgo",                  cat: "Cereal",       em: 3280, pc: 9.0,  ca: 0.03, p: 0.09, lys: 0.18, precio: 6.20 },
@@ -376,6 +767,9 @@
       localStorage.setItem("fm_ing", JSON.stringify(ingredientes));
     }
 
+    // ============================================
+    // RENDER TABLA
+    // ============================================
     function render(filter = "") {
       const f = filter.toLowerCase();
       const list = ingredientes.filter(i => i.name.toLowerCase().includes(f) || i.cat.toLowerCase().includes(f));
@@ -392,13 +786,23 @@
               ${i.source === 'propio' ? '✓ Tuyo' : 'Precargado'}
             </span>
           </td>
-          <td class="num">${i.em || '—'}</td>
-          <td class="num">${i.pc.toFixed(1)}</td>
-          <td class="num">${i.ca.toFixed(2)}</td>
-          <td class="num">${i.p.toFixed(2)}</td>
-          <td class="num">${i.lys.toFixed(2)}</td>
           <td class="num">
-            <input type="number" step="0.01" class="ing-price-input" value="${i.precio.toFixed(2)}" data-action="price">
+            <input type="number" class="editable-input" value="${i.em}" data-action="em" data-orig="${i.em}" min="0">
+          </td>
+          <td class="num">
+            <input type="number" step="0.1" class="editable-input" value="${i.pc.toFixed(1)}" data-action="pc" min="0">
+          </td>
+          <td class="num">
+            <input type="number" step="0.01" class="editable-input" value="${i.ca.toFixed(2)}" data-action="ca" min="0">
+          </td>
+          <td class="num">
+            <input type="number" step="0.01" class="editable-input" value="${i.p.toFixed(2)}" data-action="p" min="0">
+          </td>
+          <td class="num">
+            <input type="number" step="0.01" class="editable-input" value="${i.lys.toFixed(2)}" data-action="lys" min="0">
+          </td>
+          <td class="num">
+            <input type="number" step="0.01" class="editable-input precio" value="${i.precio.toFixed(2)}" data-action="precio" min="0">
           </td>
           <td>
             <div class="ing-actions">
@@ -412,19 +816,27 @@
         </tr>
       `).join("");
 
-      // Eventos
+      // EVENTOS — todos los campos editables
       document.querySelectorAll("#tbody tr").forEach(tr => {
         const id = tr.dataset.id;
-        tr.querySelector('[data-action="price"]')?.addEventListener("change", (e) => {
-          const ing = ingredientes.find(x => x.id === id);
-          ing.precio = parseFloat(e.target.value) || 0;
-          save();
-          window.fmToast(`Precio de ${ing.name} actualizado`, "success");
+        const ing = ingredientes.find(x => x.id === id);
+
+        ["em", "pc", "ca", "p", "lys", "precio"].forEach(field => {
+          const input = tr.querySelector(`[data-action="${field}"]`);
+          if (!input) return;
+          input.addEventListener("change", (e) => {
+            const newVal = parseFloat(e.target.value) || 0;
+            ing[field] = newVal;
+            save();
+            const fieldNames = {
+              em: "EM", pc: "PC", ca: "Ca", p: "P disp", lys: "Lys dig", precio: "Precio"
+            };
+            window.fmToast(`${fieldNames[field]} de "${ing.name}" actualizado`, "success");
+          });
         });
 
         tr.querySelector('[data-action="delete"]')?.addEventListener("click", () => {
-          const ing = ingredientes.find(x => x.id === id);
-          if (confirm(`¿Eliminar "${ing.name}" de tu biblioteca?`)) {
+          if (confirm(`¿Eliminar "${ing.name}" de tu catálogo?`)) {
             ingredientes = ingredientes.filter(x => x.id !== id);
             save();
             render(document.getElementById("searchInput").value);
@@ -437,7 +849,7 @@
     document.getElementById("searchInput").addEventListener("input", (e) => render(e.target.value));
 
     document.getElementById("btnReset").addEventListener("click", () => {
-      if (confirm("¿Restaurar todos los precios a valores por defecto? Esto no afecta los ingredientes que agregaste.")) {
+      if (confirm("¿Restaurar todos los ingredientes precargados a sus valores NRC originales? Los ingredientes que tú agregaste se conservan.")) {
         ingredientes = ingredientes.map(i => {
           if (i.source === 'propio') return i;
           const orig = PRECARGADOS.find(x => x.id === i.id);
@@ -445,11 +857,13 @@
         });
         save();
         render();
-        window.fmToast("Precios restaurados a valores por defecto", "success");
+        window.fmToast("Valores restaurados a NRC", "success");
       }
     });
 
-    // Modal
+    // ============================================
+    // MODAL NUEVO INGREDIENTE
+    // ============================================
     const modal = document.getElementById("modal");
     document.getElementById("btnAdd").addEventListener("click", () => modal.classList.add("active"));
     document.getElementById("modalClose").addEventListener("click", () => modal.classList.remove("active"));
@@ -474,10 +888,142 @@
       modal.classList.remove("active");
       e.target.reset();
       render();
-      window.fmToast(`"${newIng.name}" agregado a tu biblioteca`, "success");
+      window.fmToast(`"${newIng.name}" agregado a tu catálogo`, "success");
     });
 
+    // ============================================
+    // TOUR DE PRIMERA VEZ
+    // ============================================
+    const TOUR_KEY = "fm_tour_ingredientes_visto";
+    const TOUR_STEPS = [
+      {
+        icon: '<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>',
+        title: "¿Qué es el catálogo?",
+        body: "Es tu lista de ingredientes disponibles para formular. Aquí guardas <strong>los precios actualizados</strong> de cada insumo (maíz, soya, aceite, etc.) y los valores nutricionales.",
+        list: [
+          "Vienen 25 ingredientes precargados con valores NRC",
+          "Puedes editar TODOS los valores (no solo el precio)",
+          "Puedes agregar tus propios insumos locales",
+          "El formulador usa este catálogo para optimizar mezclas"
+        ],
+        tip: "Si apenas empiezas, deja los valores nutricionales como están — son estándar NRC. Solo actualiza los precios."
+      },
+      {
+        icon: '<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
+        title: "Cómo editar precios",
+        body: "Da click directo sobre cualquier valor en la columna <strong>Precio MXN/kg</strong> y escribe el nuevo precio. El sistema lo guarda automáticamente.",
+        list: [
+          "Click en la celda de precio → escribir → Enter",
+          "Se guarda solo, no necesitas botón de guardar",
+          "Aparece toast verde de confirmación",
+          "El formulador toma el precio nuevo al instante"
+        ],
+        tip: "Actualiza precios cada lunes. Es la diferencia entre el nutricionista promedio y el mejor pagado del mercado."
+      },
+      {
+        icon: '<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+        title: "Agregar tus ingredientes",
+        body: "¿Tienes un insumo local que no está en la lista? Click en el botón azul <strong>+ Nuevo ingrediente</strong> y captura sus valores nutricionales.",
+        list: [
+          "Útil para harinas locales (coco, hueso, sangre)",
+          "Subproductos regionales (cacahuate, nopal)",
+          "Análisis NIR de tu propio maíz/soya",
+          "Quedan marcados con badge ámbar 'Tuyo'"
+        ],
+        tip: "Si haces análisis NIR de tus ingredientes, sube los valores reales — formularás más exacto y ahorrarás más."
+      },
+      {
+        icon: '<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+        title: "Ahora a formular",
+        body: "Con tus precios actualizados, ve al <strong>Formulador</strong>, elige raza y etapa, y el sistema calculará automáticamente la mezcla más barata que cumpla los requerimientos NRC.",
+        list: [
+          "Tipo de producción (engorda, postura, pavo, etc.)",
+          "Raza (Cobb 500, Hy-Line W-36, Nicholas, etc.)",
+          "Etapa (preiniciador, crecimiento, postura fase 1)",
+          "Volumen del lote (1000 kg o 1000 ton)"
+        ],
+        tip: "El formulador genera PDF profesional con tu marca para entregar al granjero. Eso es lo que cobras como nutricionista."
+      }
+    ];
+
+    let tourStep = 0;
+
+    function renderTour() {
+      const step = TOUR_STEPS[tourStep];
+      const dots = TOUR_STEPS.map((_, i) =>
+        `<div class="tour-progress-dot ${i <= tourStep ? 'active' : ''}"></div>`
+      ).join("");
+
+      document.getElementById("tourModal").innerHTML = `
+        <div class="tour-progress">${dots}</div>
+        <div class="tour-step-icon">${step.icon}</div>
+        <h3>${step.title}</h3>
+        <p>${step.body}</p>
+        <ul>${step.list.map(item => `<li>${item}</li>`).join("")}</ul>
+        ${step.tip ? `<div class="tour-tip-box"><strong>💡 Tip:</strong> ${step.tip}</div>` : ''}
+        <div class="tour-actions">
+          <span class="tour-step-counter">Paso ${tourStep + 1} de ${TOUR_STEPS.length}</span>
+          <div style="display:flex;gap:var(--space-2);">
+            ${tourStep > 0 ? '<button class="btn btn-ghost btn-sm" id="tourPrev">← Anterior</button>' : ''}
+            <button class="btn btn-primary btn-sm" id="tourNext">
+              ${tourStep === TOUR_STEPS.length - 1 ? '¡Empezar!' : 'Siguiente →'}
+            </button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("tourNext").addEventListener("click", () => {
+        if (tourStep === TOUR_STEPS.length - 1) {
+          cerrarTour();
+        } else {
+          tourStep++;
+          renderTour();
+        }
+      });
+
+      document.getElementById("tourPrev")?.addEventListener("click", () => {
+        tourStep--;
+        renderTour();
+      });
+    }
+
+    function abrirTour() {
+      tourStep = 0;
+      document.getElementById("tourOverlay").classList.add("active");
+      renderTour();
+    }
+
+    function cerrarTour() {
+      document.getElementById("tourOverlay").classList.remove("active");
+      localStorage.setItem(TOUR_KEY, "1");
+      document.getElementById("tourBanner").style.display = "none";
+      document.getElementById("guiaGrid").style.display = "none";
+      window.fmToast("¡Listo! Si necesitas la guía otra vez, click en '¿Cómo funciona?'", "success");
+    }
+
+    document.getElementById("btnTour").addEventListener("click", abrirTour);
+    document.getElementById("btnStartTour").addEventListener("click", abrirTour);
+    document.getElementById("btnSkipTour").addEventListener("click", cerrarTour);
+
+    // Click fuera para cerrar
+    document.getElementById("tourOverlay").addEventListener("click", (e) => {
+      if (e.target.id === "tourOverlay") cerrarTour();
+    });
+
+    // ============================================
+    // INIT
+    // ============================================
     render();
+
+    // Mostrar banner solo si es primera vez
+    if (!localStorage.getItem(TOUR_KEY)) {
+      document.getElementById("tourBanner").style.display = "grid";
+      document.getElementById("guiaGrid").style.display = "grid";
+      // Auto-abrir tour después de 800ms si nunca lo ha visto
+      setTimeout(() => {
+        if (!localStorage.getItem(TOUR_KEY)) abrirTour();
+      }, 800);
+    }
   </script>
 
 </body>
