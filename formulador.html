@@ -680,20 +680,203 @@
     /* ============================================
        LAYOUT PRINCIPAL
        ============================================ */
-    .formulador-layout {
+    .btn-mostrar-todas {
+      margin-left: auto;
+      background: transparent;
+      border: 1px solid var(--neutral-200);
+      color: var(--neutral-600);
+      font-size: 0.6875rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .btn-mostrar-todas:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-50);
+    }
+
+    .btn-mostrar-todas.active {
+      background: var(--accent);
+      color: var(--neutral-900);
+      border-color: var(--accent);
+    }
+
+    .step-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* ============================================
+       SISTEMA DE PESTAÑAS PRINCIPALES (Configurar / Ingredientes / Resultado)
+       Estilo SimpleMix — wizard secuencial
+       ============================================ */
+    .formulador-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 6px;
+      background: white;
+      border: 1.5px solid var(--neutral-200);
+      border-radius: 12px;
+      margin-bottom: var(--space-5);
+      box-shadow: 0 1px 3px rgba(15, 52, 87, 0.04);
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .formulador-tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 18px;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      color: var(--neutral-500);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      position: relative;
+      font-family: inherit;
+    }
+
+    .formulador-tab-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--neutral-200);
+      color: var(--neutral-500);
       display: grid;
-      grid-template-columns: 360px 1fr 400px;
-      gap: var(--space-6);
-      align-items: start;
+      place-items: center;
+      font-family: var(--font-display);
+      font-size: 0.8125rem;
+      font-weight: 800;
+      transition: all var(--transition);
+      flex-shrink: 0;
     }
 
-    @media (max-width: 1366px) {
-      .formulador-layout { grid-template-columns: 340px 1fr; }
-      .col-resultado { grid-column: 1 / -1; }
+    .formulador-tab:hover {
+      color: var(--neutral-900);
+      background: var(--neutral-50);
     }
 
-    @media (max-width: 968px) {
-      .formulador-layout { grid-template-columns: 1fr; gap: var(--space-4); }
+    .formulador-tab.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 10px rgba(27, 77, 124, 0.25);
+    }
+
+    .formulador-tab.active .formulador-tab-num {
+      background: var(--accent);
+      color: var(--neutral-900);
+    }
+
+    .formulador-tab.completed .formulador-tab-num {
+      background: var(--success);
+      color: white;
+    }
+
+    .formulador-tab.completed::after {
+      content: "✓";
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      font-size: 12px;
+      color: var(--success);
+      font-weight: 800;
+    }
+
+    @media (max-width: 700px) {
+      .formulador-tab span:not(.formulador-tab-num) { display: none; }
+      .formulador-tab { padding: 12px; flex: 0 0 auto; }
+    }
+
+    /* Contenido de cada tab principal */
+    .formulador-panel {
+      display: none;
+      animation: panelFadeIn 0.3s ease;
+    }
+
+    .formulador-panel.active {
+      display: block;
+    }
+
+    @keyframes panelFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Layout de cada panel: max-width centrado */
+    .panel-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Botones de navegación entre pasos */
+    .panel-nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: var(--space-6);
+      padding-top: var(--space-5);
+      border-top: 1px solid var(--neutral-100);
+    }
+
+    .panel-nav .btn {
+      min-width: 140px;
+    }
+
+    /* Resumen del lote en topbar del formulador */
+    .lote-summary-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: 10px 16px;
+      background: linear-gradient(135deg, var(--primary-50) 0%, white 100%);
+      border: 1.5px solid var(--primary-100);
+      border-radius: 10px;
+      margin-bottom: var(--space-4);
+      flex-wrap: wrap;
+    }
+
+    .lote-summary-item {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .lote-summary-item label {
+      font-size: 0.625rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--neutral-500);
+    }
+
+    .lote-summary-item strong {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .lote-summary-divider {
+      width: 1px;
+      height: 24px;
+      background: var(--primary-100);
+    }
+
+    /* Layout legacy mantenido para compat con secciones internas */
+    .formulador-layout {
+      display: block;
     }
 
     /* ============================================
@@ -1420,11 +1603,51 @@
         <!-- Banner sugerencia de núcleo (aparece dinámicamente) -->
         <div id="nucleoSugerencia" class="nucleo-banner" style="display:none;"></div>
 
+        <!-- Resumen del lote (siempre visible) -->
+        <div class="lote-summary-bar" id="loteSummary" style="display:none;">
+          <div class="lote-summary-item">
+            <label>Cliente</label>
+            <strong id="sumCliente">—</strong>
+          </div>
+          <div class="lote-summary-divider"></div>
+          <div class="lote-summary-item">
+            <label>Raza · Etapa</label>
+            <strong id="sumRazaEtapa">—</strong>
+          </div>
+          <div class="lote-summary-divider"></div>
+          <div class="lote-summary-item">
+            <label>Volumen</label>
+            <strong id="sumVolumen">—</strong>
+          </div>
+          <div class="lote-summary-item" style="margin-left:auto;">
+            <label>Ingredientes activos</label>
+            <strong id="sumIngredientes">—</strong>
+          </div>
+        </div>
+
+        <!-- TABS PRINCIPALES -->
+        <div class="formulador-tabs" role="tablist">
+          <button type="button" class="formulador-tab active" data-panel="configurar" role="tab">
+            <span class="formulador-tab-num">1</span>
+            <span>Configurar</span>
+          </button>
+          <button type="button" class="formulador-tab" data-panel="ingredientes" role="tab">
+            <span class="formulador-tab-num">2</span>
+            <span>Ingredientes</span>
+          </button>
+          <button type="button" class="formulador-tab" data-panel="resultado" role="tab">
+            <span class="formulador-tab-num">3</span>
+            <span>Resultado</span>
+          </button>
+        </div>
+
         <div class="formulador-layout">
 
           <!-- ============================================
-               COLUMNA 1: SETUP
+               PANEL 1: CONFIGURAR (Setup)
                ============================================ -->
+          <div class="formulador-panel active" data-panel-content="configurar">
+          <div class="panel-container">
           <div class="fm-card">
             <div class="fm-card-header">
               <h3>1. Configuración del lote</h3>
@@ -1437,24 +1660,26 @@
                 <input type="text" class="form-input" id="cliente" placeholder="Granja San Miguel — lote 8">
               </div>
 
-              <div class="setup-step">
+              <div class="setup-step" id="stepTipoProduccion">
                 <div class="step-label"><span class="step-num">2</span> Tipo de producción</div>
                 <div class="tipo-grid" id="tipoGrid"></div>
               </div>
 
               <div class="setup-step">
-                <div class="step-label"><span class="step-num">3</span> Raza / línea genética</div>
+                <div class="step-label"><span class="step-num" id="stepNumRaza">3</span> Raza / línea genética
+                  <button type="button" id="btnToggleRazas" class="btn-mostrar-todas" style="display:none;">Mostrar todas</button>
+                </div>
                 <select class="form-select" id="razaSelect"></select>
                 <div class="raza-info" id="razaInfo"></div>
               </div>
 
               <div class="setup-step">
-                <div class="step-label"><span class="step-num">4</span> Etapa</div>
+                <div class="step-label"><span class="step-num" id="stepNumEtapa">4</span> Etapa</div>
                 <div class="etapa-grid" id="etapaGrid"></div>
               </div>
 
               <div class="setup-step">
-                <div class="step-label"><span class="step-num">5</span> Volumen del lote</div>
+                <div class="step-label"><span class="step-num" id="stepNumVolumen">5</span> Volumen del lote</div>
                 <div class="volumen-wrapper">
                   <div class="volumen-input-group">
                     <input type="number" class="form-input volumen-input" id="volumen" value="1000" min="1">
@@ -1480,8 +1705,20 @@
           </div>
 
           <!-- ============================================
-               COLUMNA 2: INGREDIENTES
+               PANEL 2: INGREDIENTES
                ============================================ -->
+          </div>
+            <div class="panel-nav">
+              <span></span>
+              <button type="button" class="btn btn-primary btn-lg" id="btnGoIngredientes">
+                Siguiente: Ingredientes →
+              </button>
+            </div>
+          </div>
+          </div>
+
+          <div class="formulador-panel" data-panel-content="ingredientes">
+          <div class="panel-container">
           <div class="fm-card">
             <div class="fm-card-header" style="display:flex;justify-content:space-between;align-items:center;">
               <div>
@@ -1515,8 +1752,22 @@
           </div>
 
           <!-- ============================================
-               COLUMNA 3: SUGERENCIAS + RESULTADO
+               PANEL 3: RESULTADO
                ============================================ -->
+          </div>
+            <div class="panel-nav">
+              <button type="button" class="btn btn-ghost btn-lg" id="btnBackConfigurar">
+                ← Volver a Configurar
+              </button>
+              <button type="button" class="btn btn-primary btn-lg" id="btnGoResultado">
+                Siguiente: Optimizar →
+              </button>
+            </div>
+          </div>
+          </div>
+
+          <div class="formulador-panel" data-panel-content="resultado">
+          <div class="panel-container">
           <div class="col-resultado" style="display:flex;flex-direction:column;gap:var(--space-5);">
 
             <!-- Sugerencias del experto (siempre visibles) -->
@@ -1760,6 +2011,15 @@
 
           </div>
 
+            <div class="panel-nav">
+              <button type="button" class="btn btn-ghost btn-lg" id="btnBackIngredientes">
+                ← Volver a Ingredientes
+              </button>
+              <span></span>
+            </div>
+          </div>
+          </div>
+
         </div>
 
       </div>
@@ -1769,7 +2029,7 @@
   <script src="assets/firebase-config.js?v=9"></script>
   <script src="assets/avicola-data.js?v=9"></script>
   <script src="assets/nucleos-data.js?v=9"></script>
-  <script src="assets/species-system.js?v=10"></script>
+  <script src="assets/species-system.js?v=11"></script>
   <script type="module">
     import "./assets/shared.js?v=9";
     await window.fmAuthGuard({ requireAuth: true });
@@ -3014,6 +3274,95 @@
       }
     }
 
+    // ============================================
+    // FILTRADO POR ESPECIE — oculta paso "Tipo" + filtra razas/etapas
+    // ============================================
+    let mostrarTodasRazas = false; // estado del toggle "mostrar todas"
+
+    function aplicarFiltradoPorEspecie() {
+      if (typeof window.FM_SPECIES === "undefined") return;
+      const especie = window.FM_SPECIES.getActiva();
+      if (!especie || especie.id === "varias") return; // sin filtro
+
+      // Ocultar paso "Tipo de producción"
+      const stepTipo = document.getElementById("stepTipoProduccion");
+      if (stepTipo) stepTipo.style.display = "none";
+
+      // Renumerar pasos (3→2, 4→3, 5→4)
+      const numRaza = document.getElementById("stepNumRaza");
+      const numEtapa = document.getElementById("stepNumEtapa");
+      const numVolumen = document.getElementById("stepNumVolumen");
+      if (numRaza) numRaza.textContent = "2";
+      if (numEtapa) numEtapa.textContent = "3";
+      if (numVolumen) numVolumen.textContent = "4";
+
+      // Mostrar botón toggle "Mostrar todas" en raza
+      const btnToggle = document.getElementById("btnToggleRazas");
+      if (btnToggle) btnToggle.style.display = "inline-block";
+    }
+
+    // Toggle mostrar todas las razas
+    document.getElementById("btnToggleRazas")?.addEventListener("click", function() {
+      mostrarTodasRazas = !mostrarTodasRazas;
+      this.classList.toggle("active", mostrarTodasRazas);
+      this.textContent = mostrarTodasRazas ? "✓ Mostrando todas" : "Mostrar todas";
+      renderRazas();
+    });
+
+    // Hookear filtrado en renderRazas (override la función original con filtro)
+    const _renderRazasOriginal = renderRazas;
+    renderRazas = function() {
+      _renderRazasOriginal();
+
+      // Aplicar filtro si hay especie y no se pidió mostrar todas
+      if (typeof window.FM_SPECIES === "undefined") return;
+      const especie = window.FM_SPECIES.getActiva();
+      if (!especie || especie.id === "varias" || mostrarTodasRazas) return;
+
+      const select = document.getElementById("razaSelect");
+      if (!select) return;
+
+      // Filtrar opciones: dejar solo las que coinciden con razasPreferidas
+      [...select.options].forEach(opt => {
+        if (opt.value && !especie.razasPreferidas.includes(opt.value)) {
+          opt.remove();
+        }
+      });
+
+      // Si la raza actual no está en preferidas, seleccionar la primera disponible
+      if (especie.razasPreferidas.length > 0 && !especie.razasPreferidas.includes(state.razaId)) {
+        const primera = [...select.options].find(o => o.value);
+        if (primera) {
+          select.value = primera.value;
+          state.razaId = primera.value;
+        }
+      }
+    };
+
+    // Hookear filtrado en renderEtapas
+    const _renderEtapasOriginal = renderEtapas;
+    renderEtapas = function() {
+      _renderEtapasOriginal();
+
+      if (typeof window.FM_SPECIES === "undefined") return;
+      const especie = window.FM_SPECIES.getActiva();
+      if (!especie || especie.id === "varias" || mostrarTodasRazas) return;
+
+      // Filtrar chips de etapas
+      const grid = document.getElementById("etapaGrid");
+      if (!grid) return;
+
+      [...grid.querySelectorAll("[data-etapa]")].forEach(chip => {
+        const etapaId = chip.dataset.etapa;
+        if (especie.etapasTipicas.length > 0 && !especie.etapasTipicas.includes(etapaId)) {
+          chip.style.display = "none";
+        }
+      });
+    };
+
+    // Aplicar filtrado al cargar
+    aplicarFiltradoPorEspecie();
+
     renderTipos();
     renderRazas();
     renderEtapas();
@@ -3022,6 +3371,99 @@
     renderIngredientes();
     actualizarValidaciones();
     actualizarVolumenPreview();
+  </script>
+
+  <!-- Tabs principales del formulador (Configurar / Ingredientes / Resultado) -->
+  <script>
+    (function() {
+      const tabs = document.querySelectorAll(".formulador-tab");
+      const panels = document.querySelectorAll(".formulador-panel");
+
+      function activarPanel(panelName) {
+        tabs.forEach(t => t.classList.toggle("active", t.dataset.panel === panelName));
+        panels.forEach(p => p.classList.toggle("active", p.dataset.panelContent === panelName));
+        // Scroll suave al inicio
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        // Actualizar resumen
+        actualizarResumenLote();
+      }
+
+      tabs.forEach(tab => {
+        tab.addEventListener("click", () => activarPanel(tab.dataset.panel));
+      });
+
+      // Botones de navegación entre paneles
+      document.getElementById("btnGoIngredientes")?.addEventListener("click", () => {
+        // Marcar configurar como completado
+        document.querySelector('[data-panel="configurar"]')?.classList.add("completed");
+        activarPanel("ingredientes");
+      });
+
+      document.getElementById("btnBackConfigurar")?.addEventListener("click", () => {
+        activarPanel("configurar");
+      });
+
+      document.getElementById("btnGoResultado")?.addEventListener("click", () => {
+        document.querySelector('[data-panel="ingredientes"]')?.classList.add("completed");
+        activarPanel("resultado");
+        // Auto-trigger optimizar si no hay fórmula
+        if (!window.state || !window.state.formula) {
+          setTimeout(() => document.getElementById("btnOptimize")?.click(), 200);
+        }
+      });
+
+      document.getElementById("btnBackIngredientes")?.addEventListener("click", () => {
+        activarPanel("ingredientes");
+      });
+
+      // ============================================
+      // RESUMEN DE LOTE (siempre visible)
+      // ============================================
+      function actualizarResumenLote() {
+        const summary = document.getElementById("loteSummary");
+        if (!summary) return;
+
+        const cliente = document.getElementById("cliente")?.value?.trim() || "Sin definir";
+        const razaSelect = document.getElementById("razaSelect");
+        const razaText = razaSelect && razaSelect.selectedIndex >= 0
+          ? razaSelect.options[razaSelect.selectedIndex].text
+          : "—";
+        const etapaActiva = document.querySelector(".etapa-chip.active");
+        const etapaText = etapaActiva?.querySelector(".etapa-name")?.textContent
+          || etapaActiva?.textContent?.trim()
+          || "—";
+        const volumen = document.getElementById("volumen")?.value || "0";
+        const unidad = document.getElementById("unidad")?.value || "ton";
+        const ingActivos = document.querySelectorAll('.ing-row input[type="checkbox"]:checked').length;
+
+        document.getElementById("sumCliente").textContent = cliente.length > 25 ? cliente.substring(0, 25) + "..." : cliente;
+        document.getElementById("sumRazaEtapa").textContent = `${razaText} · ${etapaText}`;
+        document.getElementById("sumVolumen").textContent = `${volumen} ${unidad}`;
+        document.getElementById("sumIngredientes").textContent = `${ingActivos} activos`;
+
+        summary.style.display = "flex";
+      }
+
+      // Actualizar resumen al cambiar inputs clave (incluyendo etapa)
+      ["cliente", "razaSelect", "volumen", "unidad"].forEach(id => {
+        document.getElementById(id)?.addEventListener("input", actualizarResumenLote);
+        document.getElementById(id)?.addEventListener("change", actualizarResumenLote);
+      });
+
+      // Hook al click en chips de etapa
+      document.addEventListener("click", e => {
+        if (e.target.closest(".etapa-chip")) {
+          setTimeout(actualizarResumenLote, 100);
+        }
+        if (e.target.closest('.ing-row input[type="checkbox"]')) {
+          setTimeout(actualizarResumenLote, 100);
+        }
+      });
+
+      // Al cargar (con delay para que renders se completen)
+      setTimeout(actualizarResumenLote, 800);
+      setTimeout(actualizarResumenLote, 1500);
+    })();
   </script>
 
   <!-- Sistema de pestañas + lógica feature -->
@@ -3524,7 +3966,7 @@
     })();
   </script>
 
-  <script src="assets/guide-system.js?v=10"></script>
+  <script src="assets/guide-system.js?v=11"></script>
 
 </body>
 </html>
