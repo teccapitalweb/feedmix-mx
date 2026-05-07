@@ -15,6 +15,547 @@
 
   <style>
     /* ============================================
+       BOTONES DE ACCIÓN POST-OPTIMIZACIÓN
+       ============================================ */
+    .action-buttons-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-2);
+      margin-top: var(--space-5);
+    }
+
+    @media (min-width: 1200px) {
+      .action-buttons-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .btn-action {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: var(--space-3) var(--space-2);
+      background: white;
+      border: 1.5px solid var(--neutral-200);
+      border-radius: var(--radius);
+      color: var(--neutral-700);
+      font-weight: 600;
+      font-size: 0.8125rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      text-align: center;
+      min-height: 80px;
+    }
+
+    .btn-action svg {
+      transition: all var(--transition);
+    }
+
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(15, 52, 87, 0.1);
+    }
+
+    .btn-action-sacos {
+      border-color: #C7D2FE;
+      background: linear-gradient(180deg, white 0%, #EEF2FF 100%);
+      color: #4338CA;
+    }
+    .btn-action-sacos:hover {
+      border-color: #6366F1;
+      background: #EEF2FF;
+    }
+
+    .btn-action-receta {
+      border-color: #FED7AA;
+      background: linear-gradient(180deg, white 0%, #FFF7ED 100%);
+      color: #C2410C;
+    }
+    .btn-action-receta:hover {
+      border-color: #F97316;
+      background: #FFF7ED;
+    }
+
+    .btn-action-comparar {
+      border-color: #BBF7D0;
+      background: linear-gradient(180deg, white 0%, #F0FDF4 100%);
+      color: #15803D;
+    }
+    .btn-action-comparar:hover {
+      border-color: #22C55E;
+      background: #F0FDF4;
+    }
+
+    .btn-action-pdf {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+      color: white;
+      grid-column: 1 / -1;
+      flex-direction: row;
+      min-height: auto;
+      padding: 0.875rem;
+      font-size: 0.9375rem;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+    }
+    .btn-action-pdf:hover {
+      background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+      box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35);
+    }
+    .btn-action-pdf span { font-weight: 700; }
+
+    /* ============================================
+       MODAL UNIVERSAL FEATURES
+       ============================================ */
+    .feat-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 52, 87, 0.55);
+      backdrop-filter: blur(6px);
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-4);
+      animation: fadeIn 0.2s ease;
+    }
+
+    .feat-modal-backdrop.active { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .feat-modal {
+      background: white;
+      border-radius: var(--radius-xl);
+      max-width: 720px;
+      width: 100%;
+      max-height: 92vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 50px rgba(15, 52, 87, 0.4);
+      animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes modalIn {
+      from { transform: translateY(20px) scale(0.96); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .feat-modal-header {
+      padding: var(--space-6);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feat-modal-header::before {
+      content: "";
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 250px; height: 250px;
+      background: radial-gradient(circle, rgba(245,158,11,0.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .feat-modal-header > * { position: relative; }
+
+    .feat-modal-header h3 {
+      color: white;
+      font-size: 1.375rem;
+      margin-bottom: 4px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .feat-modal-header p {
+      color: rgba(255,255,255,0.85);
+      font-size: 0.875rem;
+      margin: 0;
+    }
+
+    .feat-modal-close {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      color: white;
+      display: grid; place-items: center;
+      cursor: pointer;
+      border: none;
+      flex-shrink: 0;
+      transition: background var(--transition);
+    }
+    .feat-modal-close:hover { background: rgba(255,255,255,0.25); }
+
+    .feat-modal-body { padding: var(--space-6); }
+
+    .feat-instructions {
+      background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+      border-left: 3px solid var(--primary);
+      border-radius: var(--radius);
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-5);
+      font-size: 0.875rem;
+      line-height: 1.5;
+      color: #1E3A8A;
+    }
+
+    .feat-instructions strong {
+      color: #1E40AF;
+      font-weight: 800;
+    }
+
+    /* ============================================
+       SACOS
+       ============================================ */
+    .sacos-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: var(--space-5);
+    }
+
+    .sacos-table th {
+      background: var(--neutral-50);
+      padding: 0.75rem 0.875rem;
+      text-align: left;
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--neutral-600);
+      border-bottom: 2px solid var(--neutral-200);
+    }
+    .sacos-table th.right { text-align: right; }
+
+    .sacos-table td {
+      padding: 0.75rem 0.875rem;
+      border-bottom: 1px solid var(--neutral-100);
+      font-size: 0.9375rem;
+    }
+    .sacos-table td.right {
+      text-align: right;
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+    .sacos-table tr:last-child td { border-bottom: none; }
+    .sacos-table tr.total td {
+      background: var(--primary-50);
+      font-weight: 800;
+      color: var(--primary-dark);
+      border-top: 2px solid var(--primary);
+    }
+
+    .sacos-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+      margin-bottom: var(--space-5);
+    }
+    @media (max-width: 600px) { .sacos-info { grid-template-columns: 1fr; } }
+
+    .sacos-info-card {
+      background: var(--neutral-50);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+    }
+
+    .sacos-info-card label {
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--neutral-500);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .sacos-info-card input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1.5px solid var(--neutral-200);
+      border-radius: var(--radius);
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      text-align: right;
+      background: white;
+    }
+
+    .sacos-info-card input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(27,77,124,0.1);
+    }
+
+    /* ============================================
+       RECETA OPERADOR
+       ============================================ */
+    .receta-step {
+      display: flex;
+      gap: var(--space-4);
+      padding: var(--space-4);
+      background: linear-gradient(135deg, white 0%, #FFF7ED 100%);
+      border: 1.5px solid #FED7AA;
+      border-radius: var(--radius);
+      margin-bottom: var(--space-3);
+      transition: all var(--transition);
+    }
+
+    .receta-step:hover {
+      border-color: #F97316;
+      transform: translateX(2px);
+    }
+
+    .receta-step.completado {
+      background: linear-gradient(135deg, white 0%, #F0FDF4 100%);
+      border-color: #BBF7D0;
+      opacity: 0.65;
+    }
+
+    .receta-step-num {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+      color: white;
+      border-radius: var(--radius);
+      display: grid;
+      place-items: center;
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 800;
+      box-shadow: 0 4px 8px rgba(249,115,22,0.25);
+    }
+
+    .receta-step.completado .receta-step-num {
+      background: linear-gradient(135deg, #22C55E 0%, #15803D 100%);
+    }
+
+    .receta-step-content { flex: 1; }
+
+    .receta-step-action {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--neutral-900);
+      margin-bottom: 4px;
+    }
+
+    .receta-step-detail {
+      font-size: 0.8125rem;
+      color: var(--neutral-600);
+      line-height: 1.5;
+    }
+
+    .receta-step-amount {
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #C2410C;
+    }
+
+    .receta-step.completado .receta-step-amount {
+      color: #15803D;
+      text-decoration: line-through;
+    }
+
+    .receta-step-check {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--neutral-300);
+      background: white;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: all var(--transition);
+    }
+
+    .receta-step.completado .receta-step-check {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .receta-progress {
+      background: var(--neutral-100);
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: var(--space-4);
+    }
+
+    .receta-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #F97316 0%, #22C55E 100%);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .receta-mezcla-time {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: var(--space-5);
+      border-radius: var(--radius-lg);
+      text-align: center;
+      margin-top: var(--space-4);
+    }
+
+    .receta-mezcla-time strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--accent-light);
+    }
+
+    /* ============================================
+       COMPARADOR
+       ============================================ */
+    .comparar-input-group {
+      background: var(--neutral-50);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+      margin-bottom: var(--space-5);
+    }
+
+    .comparar-input-group label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--neutral-700);
+      margin-bottom: var(--space-2);
+    }
+
+    .comparar-input-group input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--neutral-200);
+      border-radius: var(--radius);
+      font-size: 1.125rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      text-align: right;
+      background: white;
+    }
+
+    .comparar-input-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(27,77,124,0.1);
+    }
+
+    .comparar-result {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: var(--space-4);
+      align-items: center;
+      margin: var(--space-5) 0;
+    }
+
+    @media (max-width: 600px) { .comparar-result { grid-template-columns: 1fr; } }
+
+    .comparar-side {
+      background: white;
+      border: 2px solid var(--neutral-200);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      text-align: center;
+    }
+
+    .comparar-side.winner {
+      border-color: var(--success);
+      background: linear-gradient(135deg, #F0FDF4 0%, white 100%);
+      box-shadow: 0 8px 24px rgba(34, 197, 94, 0.15);
+    }
+
+    .comparar-side-label {
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--neutral-500);
+      margin-bottom: var(--space-2);
+    }
+
+    .comparar-side.winner .comparar-side-label { color: var(--success); }
+
+    .comparar-side-cost {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--neutral-900);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .comparar-side-period {
+      font-size: 0.8125rem;
+      color: var(--neutral-500);
+    }
+
+    .comparar-vs {
+      width: 50px;
+      height: 50px;
+      background: var(--accent);
+      color: var(--neutral-900);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 0.875rem;
+      box-shadow: 0 4px 12px rgba(245,158,11,0.3);
+    }
+
+    @media (max-width: 600px) { .comparar-vs { margin: 0 auto; } }
+
+    .comparar-savings {
+      background: linear-gradient(135deg, var(--success) 0%, #15803D 100%);
+      color: white;
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      text-align: center;
+      margin-top: var(--space-4);
+    }
+
+    .comparar-savings.negative {
+      background: linear-gradient(135deg, var(--danger) 0%, #B91C1C 100%);
+    }
+
+    .comparar-savings-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0.9;
+      margin-bottom: 4px;
+    }
+
+    .comparar-savings-num {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .comparar-savings-msg {
+      font-size: 0.9375rem;
+      opacity: 0.95;
+      line-height: 1.4;
+    }
+
+    /* ============================================
        BANNER SUGERENCIA DE NÚCLEO
        ============================================ */
     .nucleo-banner {
@@ -1059,10 +1600,46 @@
                   <div class="section-title" style="margin-top:var(--space-5);">🧬 Perfil nutricional vs requerimientos</div>
                   <div id="resPerfil"></div>
 
-                  <button class="btn btn-accent btn-block mt-6" id="btnPdf">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                    Descargar PDF
-                  </button>
+                  <!-- BOTONES DE ACCIÓN -->
+                  <div class="action-buttons-grid">
+                    <button class="btn btn-action btn-action-sacos" id="btnSacos" data-fm-tip="formulador-sacos">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2 L18 2 L20 6 L20 22 L4 22 L4 6 Z"/>
+                        <line x1="9" y1="2" x2="9" y2="6"/>
+                        <line x1="15" y1="2" x2="15" y2="6"/>
+                        <path d="M8 12h8"/>
+                        <path d="M8 16h8"/>
+                      </svg>
+                      <span>Sacos a comprar</span>
+                    </button>
+
+                    <button class="btn btn-action btn-action-receta" id="btnReceta" data-fm-tip="formulador-receta">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 2v6"/>
+                        <path d="M15 2v6"/>
+                        <path d="M3 10h18"/>
+                        <path d="M5 10v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V10"/>
+                        <circle cx="12" cy="15" r="2"/>
+                      </svg>
+                      <span>Receta operador</span>
+                    </button>
+
+                    <button class="btn btn-action btn-action-comparar" id="btnComparar" data-fm-tip="formulador-comparar">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18"/>
+                        <path d="M7 12h10"/>
+                        <path d="M11 18h2"/>
+                        <circle cx="3" cy="6" r="1" fill="currentColor"/>
+                        <circle cx="21" cy="6" r="1" fill="currentColor"/>
+                      </svg>
+                      <span>Vs. alimento comprado</span>
+                    </button>
+
+                    <button class="btn btn-action btn-action-pdf" id="btnPdf" data-fm-tip="formulador-pdf">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                      <span>Descargar PDF</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1125,6 +1702,7 @@
       ingredientes: INGREDIENTES.map(i => ({ ...i, active: ["maiz","soya48","aceite","carb","fosf","sal","metio","lisina","premix"].includes(i.id) })),
       formula: null
     };
+    window.state = state; // Expuesto para modales (sacos, receta, comparar)
 
     // ============================================
     // RENDER: TIPOS
@@ -2305,6 +2883,487 @@
     renderIngredientes();
     actualizarValidaciones();
     actualizarVolumenPreview();
+  </script>
+
+  <!-- ============================================
+       MODAL: SACOS A COMPRAR
+       ============================================ -->
+  <div class="feat-modal-backdrop" id="modalSacos">
+    <div class="feat-modal">
+      <div class="feat-modal-header">
+        <div>
+          <h3>📦 Sacos a comprar</h3>
+          <p>Convierte tu fórmula en lista de compras por bulto</p>
+        </div>
+        <button class="feat-modal-close" data-close="modalSacos">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="feat-modal-body">
+        <div class="feat-instructions">
+          <strong>📋 Cómo se usa:</strong> Ajusta el tamaño del saco según lo que vendan tus proveedores (ej. 50 kg para maíz, 25 kg para premix). El sistema calcula cuántos sacos de cada ingrediente necesitas comprar.
+        </div>
+
+        <div class="sacos-info">
+          <div class="sacos-info-card">
+            <label>Tamaño saco cereales (kg)</label>
+            <input type="number" id="sacoCereal" value="50" min="1">
+          </div>
+          <div class="sacos-info-card">
+            <label>Tamaño saco proteínas (kg)</label>
+            <input type="number" id="sacoProteina" value="50" min="1">
+          </div>
+          <div class="sacos-info-card">
+            <label>Tamaño saco minerales (kg)</label>
+            <input type="number" id="sacoMineral" value="25" min="1">
+          </div>
+          <div class="sacos-info-card">
+            <label>Tamaño saco aditivos (kg)</label>
+            <input type="number" id="sacoAditivo" value="25" min="1">
+          </div>
+        </div>
+
+        <table class="sacos-table" id="sacosTable">
+          <thead>
+            <tr>
+              <th>Ingrediente</th>
+              <th class="right">Necesario</th>
+              <th class="right">Saco</th>
+              <th class="right">Sacos</th>
+              <th class="right">Total kg</th>
+            </tr>
+          </thead>
+          <tbody id="sacosBody"></tbody>
+        </table>
+
+        <button class="btn btn-primary btn-block btn-lg mt-4" id="btnSacosImprimir">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Imprimir lista
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       MODAL: RECETA DE COCINA
+       ============================================ -->
+  <div class="feat-modal-backdrop" id="modalReceta">
+    <div class="feat-modal">
+      <div class="feat-modal-header" style="background:linear-gradient(135deg,#F97316 0%,#EA580C 100%);">
+        <div>
+          <h3>👨‍🍳 Receta para el operador</h3>
+          <p>Pasos secuenciales para mezclar el alimento</p>
+        </div>
+        <button class="feat-modal-close" data-close="modalReceta">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="feat-modal-body">
+        <div class="feat-instructions">
+          <strong>📋 Cómo se usa:</strong> Imprime esta receta o muéstrala en el celular del operador de la mezcladora. Marca cada paso con ✓ al completarlo. Los pasos están en orden óptimo: primero los volúmenes grandes, después los pequeños y aditivos.
+        </div>
+
+        <div style="background:var(--neutral-50);border-radius:var(--radius);padding:var(--space-3);margin-bottom:var(--space-4);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <strong style="font-size:0.9375rem;">Progreso de la mezcla</strong>
+            <span id="recetaProgress" style="font-size:0.875rem;font-weight:700;color:var(--primary);">0%</span>
+          </div>
+          <div class="receta-progress">
+            <div class="receta-progress-bar" id="recetaProgressBar" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div id="recetaSteps"></div>
+
+        <div class="receta-mezcla-time">
+          <div style="font-size:0.75rem;letter-spacing:0.08em;text-transform:uppercase;opacity:0.85;margin-bottom:8px;">⏱️ Tiempo de mezcla recomendado</div>
+          <strong id="recetaTime">8 minutos</strong>
+          <p style="margin-top:8px;font-size:0.875rem;opacity:0.9;">A velocidad media después de agregar todo</p>
+        </div>
+
+        <button class="btn btn-primary btn-block btn-lg mt-4" id="btnRecetaImprimir">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Imprimir receta
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       MODAL: COMPARAR CON ALIMENTO COMPRADO
+       ============================================ -->
+  <div class="feat-modal-backdrop" id="modalComparar">
+    <div class="feat-modal">
+      <div class="feat-modal-header" style="background:linear-gradient(135deg,#22C55E 0%,#15803D 100%);">
+        <div>
+          <h3>⚖️ Vs. alimento comprado</h3>
+          <p>Compara hacer tu fórmula vs comprar alimento terminado</p>
+        </div>
+        <button class="feat-modal-close" data-close="modalComparar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="feat-modal-body">
+        <div class="feat-instructions">
+          <strong>📋 Cómo se usa:</strong> Captura el precio que cobra tu proveedor de alimento balanceado terminado (ej. Pollo Top, Purina, Malta). El sistema calcula cuánto ahorras formulando tú mismo y proyecta el ahorro mensual y anual.
+        </div>
+
+        <div class="comparar-input-group">
+          <label>Precio del alimento comprado (MXN/kg)</label>
+          <input type="number" id="precioAlimento" placeholder="11.50" step="0.10" min="0">
+        </div>
+
+        <div class="comparar-input-group">
+          <label>Toneladas de alimento al mes</label>
+          <input type="number" id="toneladasMes" placeholder="10" step="0.5" min="0">
+        </div>
+
+        <div class="comparar-result" id="compararResult" style="display:none;">
+          <div class="comparar-side" id="compararA">
+            <div class="comparar-side-label">Comprar terminado</div>
+            <div class="comparar-side-cost" id="costoComprado">$0</div>
+            <div class="comparar-side-period">por tonelada</div>
+          </div>
+          <div class="comparar-vs">VS</div>
+          <div class="comparar-side winner" id="compararB">
+            <div class="comparar-side-label">Tu fórmula</div>
+            <div class="comparar-side-cost" id="costoFeedmix">$0</div>
+            <div class="comparar-side-period">por tonelada</div>
+          </div>
+        </div>
+
+        <div class="comparar-savings" id="compararSavings" style="display:none;">
+          <div class="comparar-savings-label">💰 Ahorro proyectado</div>
+          <div class="comparar-savings-num" id="ahorroAnual">$0</div>
+          <div class="comparar-savings-msg" id="ahorroDetalle">Calcula primero ambos precios</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cargar sistema de guías -->
+  <script src="assets/guide-system.js?v=9"></script>
+
+  <!-- Lógica de los 3 modales -->
+  <script>
+    (function() {
+      // ============================================
+      // HELPERS COMUNES
+      // ============================================
+      function abrirModal(id) {
+        document.getElementById(id).classList.add("active");
+      }
+      function cerrarModal(id) {
+        document.getElementById(id).classList.remove("active");
+      }
+
+      document.querySelectorAll('[data-close]').forEach(btn => {
+        btn.addEventListener('click', () => cerrarModal(btn.dataset.close));
+      });
+
+      document.querySelectorAll('.feat-modal-backdrop').forEach(bd => {
+        bd.addEventListener('click', e => {
+          if (e.target === bd) bd.classList.remove("active");
+        });
+      });
+
+      const fmt = n => new Intl.NumberFormat("es-MX").format(Math.round(n));
+      const fmtCurr = n => "$" + new Intl.NumberFormat("es-MX", { maximumFractionDigits: 2 }).format(n);
+
+      // ============================================
+      // FEATURE A: SACOS A COMPRAR
+      // ============================================
+      function obtenerVolumenTon() {
+        const volumen = parseFloat(document.getElementById("volumen").value) || 0;
+        const unidad = document.getElementById("unidad").value;
+        return unidad === "ton" ? volumen : volumen / 1000;
+      }
+
+      function calcularSacos() {
+        if (!window.state || !window.state.formula || window.state.formula.length === 0) {
+          window.fmToast("Primero optimiza una fórmula", "warning");
+          return false;
+        }
+
+        const tons = obtenerVolumenTon();
+        const tamañoCereal = parseFloat(document.getElementById("sacoCereal").value) || 50;
+        const tamañoProteina = parseFloat(document.getElementById("sacoProteina").value) || 50;
+        const tamañoMineral = parseFloat(document.getElementById("sacoMineral").value) || 25;
+        const tamañoAditivo = parseFloat(document.getElementById("sacoAditivo").value) || 25;
+
+        const tamañosPorCat = {
+          cereal: tamañoCereal,
+          proteina: tamañoProteina,
+          mineral: tamañoMineral,
+          aditivo: tamañoAditivo,
+          aminoacido: tamañoAditivo,
+          subproducto: tamañoCereal,
+          energetico: tamañoMineral,
+          nucleo: tamañoAditivo
+        };
+
+        let totalSacos = 0;
+        let totalKg = 0;
+
+        const rows = window.state.formula.map(f => {
+          const kgNecesarios = (f.pct / 100) * tons * 1000;
+          const cat = (f.ing.cat || "cereal").toLowerCase();
+          const tamañoSaco = tamañosPorCat[cat] || tamañoCereal;
+          const sacos = Math.ceil(kgNecesarios / tamañoSaco);
+          const kgComprar = sacos * tamañoSaco;
+
+          totalSacos += sacos;
+          totalKg += kgComprar;
+
+          return `
+            <tr>
+              <td><strong>${f.name}</strong><br><small style="color:var(--neutral-500);">${f.ing.cat || ''}</small></td>
+              <td class="right">${fmt(kgNecesarios)} kg</td>
+              <td class="right">${tamañoSaco} kg</td>
+              <td class="right" style="color:var(--primary);font-size:1.0625rem;">${sacos}</td>
+              <td class="right">${fmt(kgComprar)} kg</td>
+            </tr>
+          `;
+        }).join("");
+
+        document.getElementById("sacosBody").innerHTML = rows + `
+          <tr class="total">
+            <td>TOTAL DE SACOS</td>
+            <td class="right">${fmt(tons * 1000)} kg</td>
+            <td class="right">—</td>
+            <td class="right" style="font-size:1.25rem;">${totalSacos}</td>
+            <td class="right">${fmt(totalKg)} kg</td>
+          </tr>
+        `;
+
+        return true;
+      }
+
+      // Cuando se abre el modal, calcular
+      document.getElementById("btnSacos").addEventListener("click", () => {
+        if (calcularSacos()) abrirModal("modalSacos");
+      });
+
+      // Recalcular cuando cambien los tamaños
+      ["sacoCereal", "sacoProteina", "sacoMineral", "sacoAditivo"].forEach(id => {
+        document.getElementById(id).addEventListener("input", calcularSacos);
+      });
+
+      // Imprimir
+      document.getElementById("btnSacosImprimir").addEventListener("click", () => {
+        const cliente = document.getElementById("cliente").value || "Sin cliente";
+        const tons = obtenerVolumenTon();
+        const printWin = window.open("", "_blank");
+        printWin.document.write(`
+          <!DOCTYPE html><html><head><title>Lista de sacos - ${cliente}</title>
+          <style>
+            body { font-family: -apple-system, sans-serif; padding: 24px; color: #0F172A; }
+            h1 { color: #1B4D7C; margin-bottom: 4px; }
+            .meta { color: #64748B; font-size: 0.875rem; margin-bottom: 24px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { padding: 10px; text-align: left; border-bottom: 1px solid #E2E8F0; }
+            th { background: #F1F5F9; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
+            td.right, th.right { text-align: right; font-family: monospace; }
+            tr.total td { background: #DBEAFE; font-weight: bold; border-top: 2px solid #1B4D7C; }
+            .firma { margin-top: 60px; border-top: 1px solid #ccc; padding-top: 8px; width: 280px; font-size: 0.875rem; color: #64748B; }
+          </style></head><body>
+          <h1>📦 Lista de sacos a comprar</h1>
+          <div class="meta"><strong>Cliente:</strong> ${cliente} · <strong>Volumen:</strong> ${tons} ton · <strong>Fecha:</strong> ${new Date().toLocaleDateString("es-MX")}</div>
+          ${document.getElementById("sacosTable").outerHTML}
+          <div class="firma">Firma de quien compra</div>
+          </body></html>
+        `);
+        printWin.document.close();
+        setTimeout(() => printWin.print(), 300);
+      });
+
+      // ============================================
+      // FEATURE D: RECETA OPERADOR
+      // ============================================
+      function generarReceta() {
+        if (!window.state || !window.state.formula || window.state.formula.length === 0) {
+          window.fmToast("Primero optimiza una fórmula", "warning");
+          return false;
+        }
+
+        const tons = obtenerVolumenTon();
+        const totalKg = tons * 1000;
+
+        // Ordenar por % descendente (volúmenes grandes primero, aditivos al final)
+        const ordenadas = [...window.state.formula].sort((a, b) => b.pct - a.pct);
+
+        const stepsHtml = ordenadas.map((f, i) => {
+          const kg = (f.pct / 100) * totalKg;
+          const detalleAccion = i === 0
+            ? `<strong>PRIMERO:</strong> Vacía en la mezcladora`
+            : i === ordenadas.length - 1
+              ? `<strong>ÚLTIMO:</strong> Agrega como aditivo final`
+              : `Agrega después del paso ${i}`;
+
+          return `
+            <div class="receta-step" data-step="${i}">
+              <div class="receta-step-num">${i + 1}</div>
+              <div class="receta-step-content">
+                <div class="receta-step-action">${f.name}</div>
+                <div class="receta-step-detail">${detalleAccion}</div>
+                <div class="receta-step-amount">${fmt(kg)} kg <small style="font-size:0.75rem;color:var(--neutral-500);">(${f.pct.toFixed(2)}%)</small></div>
+              </div>
+              <button class="receta-step-check" data-step-check="${i}" aria-label="Marcar completado">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+            </div>
+          `;
+        }).join("");
+
+        document.getElementById("recetaSteps").innerHTML = stepsHtml;
+        actualizarProgresoReceta();
+
+        // Tiempo de mezcla recomendado según número de ingredientes
+        const tiempoBase = 6;
+        const extra = Math.min(ordenadas.length, 12) * 0.5;
+        document.getElementById("recetaTime").textContent = `${Math.round(tiempoBase + extra)} minutos`;
+
+        // Eventos de check
+        document.querySelectorAll('[data-step-check]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const step = btn.closest('.receta-step');
+            step.classList.toggle('completado');
+            actualizarProgresoReceta();
+          });
+        });
+
+        return true;
+      }
+
+      function actualizarProgresoReceta() {
+        const total = document.querySelectorAll('.receta-step').length;
+        const done = document.querySelectorAll('.receta-step.completado').length;
+        const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+        document.getElementById('recetaProgress').textContent = pct + "%";
+        document.getElementById('recetaProgressBar').style.width = pct + "%";
+      }
+
+      document.getElementById("btnReceta").addEventListener("click", () => {
+        if (generarReceta()) abrirModal("modalReceta");
+      });
+
+      // Imprimir receta
+      document.getElementById("btnRecetaImprimir").addEventListener("click", () => {
+        const cliente = document.getElementById("cliente").value || "Sin cliente";
+        const tons = obtenerVolumenTon();
+        const printWin = window.open("", "_blank");
+        printWin.document.write(`
+          <!DOCTYPE html><html><head><title>Receta - ${cliente}</title>
+          <style>
+            body { font-family: -apple-system, sans-serif; padding: 24px; color: #0F172A; }
+            h1 { color: #C2410C; margin-bottom: 4px; }
+            .meta { color: #64748B; font-size: 0.875rem; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #FED7AA; }
+            .step { display: flex; gap: 12px; padding: 14px; background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 8px; margin-bottom: 10px; page-break-inside: avoid; }
+            .step-num { width: 36px; height: 36px; background: #F97316; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
+            .step-action { font-weight: 700; margin-bottom: 4px; }
+            .step-amount { font-family: monospace; font-size: 1.125rem; font-weight: 800; color: #C2410C; }
+            .check-box { width: 28px; height: 28px; border: 2px solid #D6D3D1; border-radius: 50%; flex-shrink: 0; }
+            .mezcla { background: #1B4D7C; color: white; padding: 16px; border-radius: 8px; text-align: center; margin-top: 24px; }
+            .mezcla strong { display: block; font-size: 2rem; font-weight: 800; color: #FCD34D; }
+          </style></head><body>
+          <h1>👨‍🍳 Receta de mezcla</h1>
+          <div class="meta"><strong>Cliente:</strong> ${cliente} · <strong>Volumen:</strong> ${tons} ton · <strong>Fecha:</strong> ${new Date().toLocaleDateString("es-MX")}</div>
+          ${[...document.querySelectorAll('.receta-step')].map((s, i) => {
+            const action = s.querySelector('.receta-step-action').textContent;
+            const detail = s.querySelector('.receta-step-detail').textContent;
+            const amount = s.querySelector('.receta-step-amount').textContent;
+            return `
+              <div class="step">
+                <div class="step-num">${i + 1}</div>
+                <div style="flex:1;">
+                  <div class="step-action">${action}</div>
+                  <div style="color:#64748B;font-size:0.875rem;margin-bottom:4px;">${detail}</div>
+                  <div class="step-amount">${amount}</div>
+                </div>
+                <div class="check-box"></div>
+              </div>
+            `;
+          }).join("")}
+          <div class="mezcla">
+            <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;opacity:0.85;">Tiempo de mezcla</div>
+            <strong>${document.getElementById('recetaTime').textContent}</strong>
+            <div style="font-size:0.875rem;opacity:0.9;">A velocidad media después de agregar todo</div>
+          </div>
+          </body></html>
+        `);
+        printWin.document.close();
+        setTimeout(() => printWin.print(), 300);
+      });
+
+      // ============================================
+      // FEATURE G: COMPARAR CON ALIMENTO COMPRADO
+      // ============================================
+      function calcularComparacion() {
+        const precioAlimento = parseFloat(document.getElementById("precioAlimento").value) || 0;
+        const tonsMes = parseFloat(document.getElementById("toneladasMes").value) || 0;
+
+        if (!window.state || !window.state.formula || window.state.formula.length === 0) {
+          return;
+        }
+
+        if (precioAlimento === 0 || tonsMes === 0) {
+          document.getElementById("compararResult").style.display = "none";
+          document.getElementById("compararSavings").style.display = "none";
+          return;
+        }
+
+        const costoCompradoTon = precioAlimento * 1000;
+
+        let costoFeedmix = 0;
+        window.state.formula.forEach(f => {
+          costoFeedmix += (f.pct / 100) * 1000 * f.ing.precio;
+        });
+
+        const ahorroPorTon = costoCompradoTon - costoFeedmix;
+        const ahorroMes = ahorroPorTon * tonsMes;
+        const ahorroAnual = ahorroMes * 12;
+        const pctAhorro = (ahorroPorTon / costoCompradoTon) * 100;
+
+        document.getElementById("costoComprado").textContent = fmtCurr(costoCompradoTon);
+        document.getElementById("costoFeedmix").textContent = fmtCurr(costoFeedmix);
+
+        // Determinar ganador
+        document.getElementById("compararA").classList.toggle("winner", costoCompradoTon < costoFeedmix);
+        document.getElementById("compararB").classList.toggle("winner", costoFeedmix < costoCompradoTon);
+
+        document.getElementById("compararResult").style.display = "grid";
+
+        const savings = document.getElementById("compararSavings");
+        if (ahorroAnual > 0) {
+          savings.classList.remove("negative");
+          document.getElementById("ahorroAnual").textContent = fmtCurr(ahorroAnual);
+          document.getElementById("ahorroDetalle").innerHTML = `
+            Formulando con FeedMix ahorras <strong>${fmtCurr(ahorroPorTon)}/ton</strong> (${pctAhorro.toFixed(1)}%).<br>
+            Eso son <strong>${fmtCurr(ahorroMes)}/mes</strong> en ${tonsMes} toneladas.
+          `;
+        } else {
+          savings.classList.add("negative");
+          document.getElementById("ahorroAnual").textContent = fmtCurr(Math.abs(ahorroAnual));
+          document.getElementById("ahorroDetalle").innerHTML = `
+            En este momento te conviene <strong>comprar terminado</strong>.<br>
+            Considera renegociar precios de tus ingredientes.
+          `;
+        }
+
+        savings.style.display = "block";
+      }
+
+      document.getElementById("btnComparar").addEventListener("click", () => {
+        if (!window.state || !window.state.formula || window.state.formula.length === 0) {
+          window.fmToast("Primero optimiza una fórmula", "warning");
+          return;
+        }
+        abrirModal("modalComparar");
+      });
+
+      document.getElementById("precioAlimento").addEventListener("input", calcularComparacion);
+      document.getElementById("toneladasMes").addEventListener("input", calcularComparacion);
+    })();
   </script>
 
 </body>

@@ -446,6 +446,287 @@
     /* ====== PRICING ====== */
     .pricing { background: white; }
 
+    /* ============================================
+       SIMULADOR DE ROI
+       ============================================ */
+    .roi-simulator {
+      background: linear-gradient(135deg, #0F3457 0%, #1B4D7C 100%);
+      border-radius: 24px;
+      padding: 48px;
+      margin-bottom: 80px;
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(15, 52, 87, 0.25);
+    }
+
+    .roi-simulator::before {
+      content: "";
+      position: absolute;
+      top: -150px; right: -150px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(245,158,11,0.18) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .roi-simulator::after {
+      content: "";
+      position: absolute;
+      bottom: -100px; left: -100px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(46,107,168,0.4) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .roi-simulator-header {
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .roi-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(245, 158, 11, 0.18);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 999px;
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #FCD34D;
+      margin-bottom: 16px;
+    }
+
+    .roi-simulator-header h3 {
+      color: white;
+      font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+
+    .roi-simulator-header p {
+      color: rgba(255,255,255,0.85);
+      font-size: 1.0625rem;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    .roi-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 768px) {
+      .roi-grid { grid-template-columns: 1fr; gap: 24px; }
+      .roi-simulator { padding: 24px; }
+    }
+
+    .roi-inputs {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 28px;
+      backdrop-filter: blur(8px);
+    }
+
+    .roi-input-group {
+      margin-bottom: 28px;
+    }
+    .roi-input-group:last-child { margin-bottom: 0; }
+
+    .roi-input-group label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .roi-input-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #FCD34D;
+      background: rgba(245, 158, 11, 0.15);
+      padding: 4px 12px;
+      border-radius: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .roi-input-group input[type="range"] {
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: rgba(255,255,255,0.15);
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .roi-input-group input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      background: #FCD34D;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(245,158,11,0.5);
+      transition: all 0.15s;
+    }
+
+    .roi-input-group input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      box-shadow: 0 6px 16px rgba(245,158,11,0.7);
+    }
+
+    .roi-input-group input[type="range"]::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      background: #FCD34D;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 4px 12px rgba(245,158,11,0.5);
+    }
+
+    .roi-input-scale {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .roi-plan-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .roi-plan-btn {
+      padding: 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      color: white;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .roi-plan-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.3);
+    }
+
+    .roi-plan-btn.active {
+      background: rgba(245, 158, 11, 0.18);
+      border-color: #FCD34D;
+      color: #FCD34D;
+    }
+
+    .roi-plan-btn strong { font-size: 1rem; font-weight: 800; }
+    .roi-plan-btn small { font-size: 0.75rem; opacity: 0.85; }
+
+    .roi-result {
+      background: linear-gradient(135deg, white 0%, #FFF7ED 100%);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .roi-result-eyebrow {
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #C2410C;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .roi-result-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .roi-stat {
+      text-align: center;
+      padding: 16px 8px;
+      background: rgba(245, 158, 11, 0.08);
+      border-radius: 12px;
+    }
+
+    .roi-stat-num {
+      display: block;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #C2410C;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .roi-stat-num.roi-stat-anual {
+      font-size: 2.25rem;
+      color: #15803D;
+    }
+
+    .roi-stat-label {
+      font-size: 0.75rem;
+      color: #64748B;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .roi-payback {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: linear-gradient(135deg, #15803D 0%, #166534 100%);
+      color: white;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      justify-content: center;
+    }
+
+    .roi-disclaimer {
+      display: block;
+      margin-top: 12px;
+      font-size: 0.6875rem;
+      color: #94A3B8;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    /* Pricing original */
     .pricing-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -943,6 +1224,87 @@
         <p class="lead">14 días de prueba gratis. Cancela cuando quieras. Sin contratos a largo plazo.</p>
       </div>
 
+      <!-- ============ SIMULADOR ROI ============ -->
+      <div class="roi-simulator">
+        <div class="roi-simulator-header">
+          <span class="roi-eyebrow">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 22h20L12 2z"/></svg>
+            Simulador de ROI
+          </span>
+          <h3>¿Cuánto vas a ahorrar con FeedMix?</h3>
+          <p>Calcula en segundos si te conviene. Mueve los controles según tu volumen actual.</p>
+        </div>
+
+        <div class="roi-grid">
+          <div class="roi-inputs">
+            <div class="roi-input-group">
+              <label>
+                Toneladas de alimento al mes
+                <span class="roi-input-value" id="roiTonsValue">10</span>
+              </label>
+              <input type="range" id="roiTons" min="1" max="100" step="1" value="10">
+              <div class="roi-input-scale">
+                <span>1 ton</span>
+                <span>100 ton</span>
+              </div>
+            </div>
+
+            <div class="roi-input-group">
+              <label>
+                Precio actual de tu alimento (MXN/kg)
+                <span class="roi-input-value">$<span id="roiPrecioValue">11.50</span></span>
+              </label>
+              <input type="range" id="roiPrecio" min="8" max="18" step="0.10" value="11.50">
+              <div class="roi-input-scale">
+                <span>$8 / kg</span>
+                <span>$18 / kg</span>
+              </div>
+            </div>
+
+            <div class="roi-input-group">
+              <label>
+                Plan que vas a contratar
+              </label>
+              <div class="roi-plan-toggle">
+                <button type="button" class="roi-plan-btn active" data-plan="pro">
+                  <strong>Pro</strong>
+                  <small>$500 USD/año</small>
+                </button>
+                <button type="button" class="roi-plan-btn" data-plan="despacho">
+                  <strong>Despacho</strong>
+                  <small>$1,500 USD/año</small>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="roi-result">
+            <div class="roi-result-eyebrow">💰 Tu ahorro estimado</div>
+            <div class="roi-result-stats">
+              <div class="roi-stat">
+                <span class="roi-stat-num" id="roiAhorroMes">$0</span>
+                <span class="roi-stat-label">por mes</span>
+              </div>
+              <div class="roi-stat">
+                <span class="roi-stat-num roi-stat-anual" id="roiAhorroAnual">$0</span>
+                <span class="roi-stat-label">por año</span>
+              </div>
+            </div>
+            <div class="roi-payback">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span id="roiPayback">FeedMix se paga sola en —</span>
+            </div>
+            <a href="registro.html?plan=pro" class="btn btn-accent btn-block btn-lg" style="margin-top:1rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Empezar prueba gratis
+            </a>
+            <small class="roi-disclaimer">
+              * Estimación basada en ahorro promedio del 12% al optimizar fórmulas con FeedMix vs comprar alimento terminado o formular en Excel.
+            </small>
+          </div>
+        </div>
+      </div>
+
       <div class="pricing-grid">
         <div class="price-card">
           <div class="price-name">Pro</div>
@@ -1104,6 +1466,77 @@
       <path d="M12 0C5.373 0 0 5.373 0 12c0 2.138.563 4.14 1.535 5.874L0 24l6.29-1.508A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.814 9.814 0 01-5.058-1.4l-.361-.214-3.735.896.944-3.653-.235-.374A9.817 9.817 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/>
     </svg>
   </a>
+
+  <!-- Simulador de ROI -->
+  <script>
+    (function() {
+      const roiTons = document.getElementById("roiTons");
+      const roiPrecio = document.getElementById("roiPrecio");
+      const roiTonsValue = document.getElementById("roiTonsValue");
+      const roiPrecioValue = document.getElementById("roiPrecioValue");
+      const roiAhorroMes = document.getElementById("roiAhorroMes");
+      const roiAhorroAnual = document.getElementById("roiAhorroAnual");
+      const roiPayback = document.getElementById("roiPayback");
+      const planBtns = document.querySelectorAll(".roi-plan-btn");
+
+      let planActivo = "pro";
+
+      const fmt = n => "$" + new Intl.NumberFormat("es-MX", { maximumFractionDigits: 0 }).format(n);
+
+      function calcularROI() {
+        const tonsMes = parseFloat(roiTons.value);
+        const precio = parseFloat(roiPrecio.value);
+
+        // Promedio de ahorro estimado: 12% del costo
+        const ahorroPctIngredientes = 0.12;
+        const costoComprado = precio * 1000 * tonsMes; // por mes
+        const ahorroMes = costoComprado * ahorroPctIngredientes;
+        const ahorroAnualMXN = ahorroMes * 12;
+
+        // Costo del plan en MXN (1 USD ≈ 17 MXN)
+        const tipoCambio = 17;
+        const costoPlanUSD = planActivo === "pro" ? 500 : 1500;
+        const costoPlanMXN = costoPlanUSD * tipoCambio;
+
+        // Días para recuperar inversión
+        const ahorroDiario = ahorroMes / 30;
+        let diasPayback = costoPlanMXN / ahorroDiario;
+        let mensajePayback;
+
+        if (diasPayback < 1) {
+          mensajePayback = "Se paga sola en menos de un día";
+        } else if (diasPayback < 30) {
+          mensajePayback = `Se paga sola en ${Math.ceil(diasPayback)} días`;
+        } else if (diasPayback < 365) {
+          mensajePayback = `Se paga sola en ${Math.ceil(diasPayback / 30)} meses`;
+        } else if (diasPayback < 730) {
+          mensajePayback = "Se paga sola en menos de 2 años";
+        } else {
+          mensajePayback = "Considera aumentar tu volumen para mejor ROI";
+        }
+
+        roiTonsValue.textContent = tonsMes;
+        roiPrecioValue.textContent = precio.toFixed(2);
+        roiAhorroMes.textContent = fmt(ahorroMes);
+        roiAhorroAnual.textContent = fmt(ahorroAnualMXN);
+        roiPayback.textContent = mensajePayback;
+      }
+
+      roiTons.addEventListener("input", calcularROI);
+      roiPrecio.addEventListener("input", calcularROI);
+
+      planBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          planBtns.forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          planActivo = btn.dataset.plan;
+          calcularROI();
+        });
+      });
+
+      calcularROI();
+    })();
+  </script>
 
 </body>
 </html>
