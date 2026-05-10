@@ -1322,6 +1322,210 @@
     }
 
     /* ============================================
+       ALERTAS DE DÉFICITS NRC
+       ============================================ */
+    .alerta-deficits {
+      background: linear-gradient(135deg, #FEE2E2 0%, #FEF3C7 100%);
+      border: 2px solid #DC2626;
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      animation: alertaIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes alertaIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .alerta-deficits-header {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .alerta-deficits-header svg {
+      flex-shrink: 0;
+      color: #DC2626;
+      margin-top: 2px;
+    }
+
+    .alerta-deficits-header strong {
+      display: block;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #991B1B;
+      margin-bottom: 4px;
+    }
+
+    .alerta-deficits-header p {
+      font-size: 0.8125rem;
+      color: #7F1D1D;
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    .alerta-deficits-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .deficit-item {
+      display: grid;
+      grid-template-columns: 1fr auto 50px;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 12px;
+      background: white;
+      border-radius: 10px;
+      border-left: 3px solid #F59E0B;
+    }
+
+    .deficit-item.critico {
+      border-left-color: #DC2626;
+      background: #FEF2F2;
+    }
+
+    .deficit-info strong {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 800;
+      color: var(--neutral-900);
+      margin-bottom: 2px;
+    }
+
+    .deficit-info small {
+      font-size: 0.75rem;
+      color: var(--neutral-600);
+      font-family: var(--font-mono, monospace);
+    }
+
+    .deficit-bar {
+      width: 80px;
+      height: 6px;
+      background: var(--neutral-100);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .deficit-bar-fill {
+      height: 100%;
+      transition: width 0.6s ease;
+    }
+
+    .deficit-pct {
+      font-size: 0.875rem;
+      font-weight: 800;
+      color: var(--danger);
+      text-align: right;
+      font-family: var(--font-mono, monospace);
+    }
+
+    .alerta-deficits-footer {
+      padding-top: 12px;
+      border-top: 1px solid rgba(220, 38, 38, 0.2);
+      font-size: 0.8125rem;
+      color: #7F1D1D;
+      line-height: 1.45;
+    }
+
+    /* Auto-ajustes */
+    .auto-ajustes-box {
+      background: linear-gradient(135deg, #DBEAFE 0%, #E0E7FF 100%);
+      border: 1.5px solid #3B82F6;
+      border-radius: var(--radius-lg);
+      padding: 14px 18px;
+      margin-bottom: 16px;
+    }
+
+    .auto-ajustes-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      color: #1E40AF;
+    }
+
+    .auto-ajustes-header strong {
+      font-size: 0.9375rem;
+      font-weight: 800;
+    }
+
+    .auto-ajustes-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .auto-ajustes-list li {
+      font-size: 0.8125rem;
+      color: #1E3A8A;
+      padding: 4px 8px;
+      background: white;
+      border-radius: 6px;
+      border-left: 2px solid #3B82F6;
+      font-family: var(--font-mono, monospace);
+    }
+
+    /* Solver Toggle */
+    .solver-toggle {
+      display: inline-flex;
+      background: var(--neutral-100);
+      border: 1px solid var(--neutral-200);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .solver-btn {
+      padding: 5px 10px;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      color: var(--neutral-500);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+      letter-spacing: 0.02em;
+    }
+
+    .solver-btn:hover {
+      color: var(--neutral-900);
+    }
+
+    .solver-btn.active {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    /* Badge BETA en topbar */
+    .beta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+      color: white;
+      font-size: 0.625rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      border-radius: 999px;
+      text-transform: uppercase;
+      margin-left: 8px;
+      box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+      cursor: help;
+    }
+
+    /* ============================================
        NIVEL 1: Card de Aportes del Núcleo
        ============================================ */
     .aportes-nucleo-box {
@@ -1825,10 +2029,14 @@
 
       <div class="app-topbar">
         <div>
-          <h2 style="font-size:1.25rem;font-weight:700;">Nuevo formulado</h2>
+          <h2 style="font-size:1.25rem;font-weight:700;">Nuevo formulado <span class="beta-badge" title="Versión beta — Las fórmulas son aproximadas. Validar con análisis bromatológico antes de producción comercial.">BETA</span></h2>
           <div style="font-size:0.875rem;color:var(--neutral-500);" id="topbarSubtitle">Configura tipo, raza y etapa</div>
         </div>
-        <div style="display:flex;gap:var(--space-3);">
+        <div style="display:flex;gap:var(--space-3);align-items:center;">
+          <div class="solver-toggle" title="Cambia entre solver Greedy (v1, rápido) y Simplex (v2, preciso)">
+            <button type="button" class="solver-btn" id="solverV1" data-solver="1">v1 Greedy</button>
+            <button type="button" class="solver-btn active" id="solverV2" data-solver="2">v2 Simplex ⚡</button>
+          </div>
           <button class="btn btn-ghost btn-sm" id="btnSave">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
             Guardar
@@ -2042,12 +2250,18 @@
             </div>
 
             <!-- Resultado de optimización -->
-            <div class="fm-card">
-              <div class="fm-card-header">
-                <h3>📊 Resultado óptimo</h3>
-                <p>Mínimo costo cumpliendo requerimientos</p>
+            <div class="fm-card" id="resultCard">
+              <div class="fm-card-header" id="resultHeader">
+                <h3 id="resultTitle">📊 Resultado óptimo</h3>
+                <p id="resultSubtitle">Mínimo costo cumpliendo requerimientos</p>
               </div>
               <div class="fm-card-body" id="resultBody">
+
+                <!-- Alerta de déficits (solo si hay) -->
+                <div id="alertaDeficits" class="alerta-deficits" style="display:none;"></div>
+
+                <!-- Lista de auto-ajustes realizados -->
+                <div id="autoAjustesBox" class="auto-ajustes-box" style="display:none;"></div>
 
                 <div class="result-empty" id="resultEmpty">
                   <div class="result-empty-icon">
@@ -2281,6 +2495,7 @@
   <script src="assets/firebase-config.js?v=12"></script>
   <script src="assets/avicola-data.js?v=12"></script>
   <script src="assets/nucleos-data.js?v=12"></script>
+  <script src="assets/solver-v2.js?v=12"></script>
   <script src="assets/species-system.js?v=12"></script>
   <script type="module">
     import "./assets/shared.js?v=12";
@@ -2905,29 +3120,305 @@
       consolidated.sort((a, b) => b.pct - a.pct);
 
       // Calcular perfil nutricional resultante
-      let perfil = { em: 0, pc: 0, ca: 0, p: 0, lys: 0, met: 0 };
+      // ⚡ FIX CRÍTICO: si es núcleo, usar aportes del catálogo (no del state)
+      let perfil = { em: 0, pc: 0, ca: 0, p: 0, lys: 0, met: 0, na: 0 };
       let costoTon = 0;
       consolidated.forEach(f => {
         const ing = f.ing;
         const factor = f.pct / 100;
-        perfil.em += factor * (ing.em || 0);
-        perfil.pc += factor * (ing.pc || 0);
-        perfil.ca += factor * (ing.ca || 0);
-        perfil.p += factor * (ing.p || 0);
-        perfil.lys += factor * (ing.lys || 0);
-        perfil.met += factor * (ing.met || 0);
+
+        // Si es núcleo, buscar sus aportes reales en el catálogo
+        if (ing.isNucleo && window.FM_NUCLEOS) {
+          const nucleoData = window.FM_NUCLEOS.CATALOGO.find(n => "nucleo_" + n.id === ing.id);
+          if (nucleoData && nucleoData.aportes) {
+            perfil.em += factor * (nucleoData.aportes.em || 0);
+            perfil.pc += factor * (nucleoData.aportes.pc || 0);
+            perfil.ca += factor * (nucleoData.aportes.ca || 0);
+            perfil.p += factor * (nucleoData.aportes.p || 0);
+            perfil.lys += factor * (nucleoData.aportes.lys || 0);
+            perfil.met += factor * (nucleoData.aportes.met || 0);
+            perfil.na += factor * (nucleoData.aportes.na || 0);
+          }
+        } else {
+          // Ingrediente normal
+          perfil.em += factor * (ing.em || 0);
+          perfil.pc += factor * (ing.pc || 0);
+          perfil.ca += factor * (ing.ca || 0);
+          perfil.p += factor * (ing.p || 0);
+          perfil.lys += factor * (ing.lys || 0);
+          perfil.met += factor * (ing.met || 0);
+          perfil.na += factor * (ing.na || 0);
+        }
         costoTon += factor * 1000 * ing.precio;
       });
 
-      return { formula: consolidated, perfil, costoTon, requerido: req };
+      // ⚡ AUTO-CORRECCIÓN: validar y ajustar si hay déficits críticos
+      const ajusteIters = autoCorregirDeficits(consolidated, perfil, req);
+      perfil = ajusteIters.perfil;
+      costoTon = ajusteIters.costoTon;
+
+      // Validar cumplimiento NRC
+      const cumple = validarCumplimientoNRC(perfil, req);
+
+      return {
+        formula: ajusteIters.formula,
+        perfil,
+        costoTon,
+        requerido: req,
+        cumple,
+        deficits: cumple.deficits,
+        autoAjustes: ajusteIters.ajustesRealizados
+      };
+    }
+
+    // ============================================
+    // VALIDADOR ESTRICTO NRC
+    // ============================================
+    function validarCumplimientoNRC(perfil, req) {
+      const tol = 0.95; // 5% de tolerancia
+      const deficits = [];
+
+      const checks = [
+        { nutriente: "em", label: "Energía Metabolizable", actual: perfil.em, req: req.em, unit: "kcal/kg" },
+        { nutriente: "pc", label: "Proteína Cruda", actual: perfil.pc, req: req.pc, unit: "%" },
+        { nutriente: "ca", label: "Calcio", actual: perfil.ca, req: req.ca, unit: "%" },
+        { nutriente: "p", label: "Fósforo disp.", actual: perfil.p, req: req.p, unit: "%" },
+        { nutriente: "lys", label: "Lisina dig.", actual: perfil.lys, req: req.lys, unit: "%" },
+        { nutriente: "met", label: "Metionina", actual: perfil.met, req: req.met, unit: "%" }
+      ];
+
+      checks.forEach(c => {
+        if (c.req && c.actual < c.req * tol) {
+          deficits.push({
+            nutriente: c.nutriente,
+            label: c.label,
+            actual: c.actual,
+            requerido: c.req,
+            faltante: c.req - c.actual,
+            severidad: c.actual < c.req * 0.85 ? "critico" : "moderado",
+            unit: c.unit
+          });
+        }
+      });
+
+      return {
+        ok: deficits.length === 0,
+        deficitsCount: deficits.length,
+        deficits,
+        criticos: deficits.filter(d => d.severidad === "critico").length
+      };
+    }
+
+    // ============================================
+    // AUTO-CORRECCIÓN ITERATIVA
+    // ============================================
+    function autoCorregirDeficits(formula, perfil, req) {
+      const ajustes = [];
+      const tol = 0.97;
+      let iter = 0;
+      const MAX_ITER = 8;
+
+      // Helper para recalcular perfil
+      function recalcPerfil(f) {
+        const p = { em: 0, pc: 0, ca: 0, p: 0, lys: 0, met: 0, na: 0 };
+        let costo = 0;
+        f.forEach(item => {
+          const factor = item.pct / 100;
+          if (item.ing.isNucleo && window.FM_NUCLEOS) {
+            const nd = window.FM_NUCLEOS.CATALOGO.find(n => "nucleo_" + n.id === item.id);
+            if (nd && nd.aportes) {
+              Object.keys(p).forEach(k => p[k] += factor * (nd.aportes[k] || 0));
+            }
+          } else {
+            p.em += factor * (item.ing.em || 0);
+            p.pc += factor * (item.ing.pc || 0);
+            p.ca += factor * (item.ing.ca || 0);
+            p.p += factor * (item.ing.p || 0);
+            p.lys += factor * (item.ing.lys || 0);
+            p.met += factor * (item.ing.met || 0);
+          }
+          costo += factor * 1000 * item.ing.precio;
+        });
+        return { perfil: p, costoTon: costo };
+      }
+
+      // Iterar para corregir déficits
+      while (iter < MAX_ITER) {
+        iter++;
+        let huboAjuste = false;
+
+        // 1. CALCIO bajo → subir carbonato
+        if (perfil.ca < req.ca * tol) {
+          let carb = formula.find(f => f.id === "carb");
+          const carbIng = state.ingredientes.find(i => i.id === "carb" && i.active);
+          const faltaCa = req.ca - perfil.ca;
+          const aportePorPunto = 0.38; // 1% carbonato = 0.38% Ca
+          const subirPct = Math.min(faltaCa / aportePorPunto * 1.05, 4);
+          if (carbIng) {
+            if (!carb) {
+              carb = { id: "carb", name: carbIng.name, pct: 0, ing: carbIng };
+              formula.push(carb);
+            }
+            const nuevoPct = Math.min(carb.pct + subirPct, carbIng.max || 12);
+            if (nuevoPct > carb.pct + 0.01) {
+              ajustes.push(`+${(nuevoPct - carb.pct).toFixed(2)}% carbonato (Ca insuficiente)`);
+              carb.pct = nuevoPct;
+              huboAjuste = true;
+            }
+          }
+        }
+
+        // 2. FÓSFORO bajo → subir fosfato monocálcico
+        if (perfil.p < req.p * tol) {
+          let fosf = formula.find(f => f.id === "fosf" || f.id === "fosbi");
+          const fosfIng = state.ingredientes.find(i => i.id === "fosf" && i.active) || state.ingredientes.find(i => i.id === "fosbi" && i.active);
+          const faltaP = req.p - perfil.p;
+          const aportePorPunto = 0.21; // 1% fosfato MCP = 0.21% P
+          const subirPct = Math.min(faltaP / aportePorPunto * 1.05, 1.5);
+          if (fosfIng) {
+            if (!fosf) {
+              fosf = { id: fosfIng.id, name: fosfIng.name, pct: 0, ing: fosfIng };
+              formula.push(fosf);
+            }
+            const nuevoPct = Math.min(fosf.pct + subirPct, fosfIng.max || 3);
+            if (nuevoPct > fosf.pct + 0.01) {
+              ajustes.push(`+${(nuevoPct - fosf.pct).toFixed(2)}% ${fosfIng.name} (P insuficiente)`);
+              fosf.pct = nuevoPct;
+              huboAjuste = true;
+            }
+          }
+        }
+
+        // 3. ENERGÍA baja → subir aceite
+        if (perfil.em < req.em * tol) {
+          let aceite = formula.find(f => f.id === "aceite" || f.ing.cat === "energetico");
+          const aceiteIng = state.ingredientes.find(i => i.id === "aceite" && i.active) || state.ingredientes.find(i => i.cat === "energetico" && i.active);
+          const faltaEM = req.em - perfil.em;
+          const aportePorPunto = 88; // 1% aceite = ~88 kcal/kg al alimento
+          const subirPct = Math.min(faltaEM / aportePorPunto * 1.05, 3);
+          if (aceiteIng) {
+            if (!aceite) {
+              aceite = { id: aceiteIng.id, name: aceiteIng.name, pct: 0, ing: aceiteIng };
+              formula.push(aceite);
+            }
+            const nuevoPct = Math.min(aceite.pct + subirPct, aceiteIng.max || 6);
+            if (nuevoPct > aceite.pct + 0.01) {
+              ajustes.push(`+${(nuevoPct - aceite.pct).toFixed(2)}% ${aceiteIng.name} (EM insuficiente)`);
+              aceite.pct = nuevoPct;
+              huboAjuste = true;
+            }
+          }
+        }
+
+        // 4. LISINA baja → subir L-Lisina
+        if (perfil.lys < req.lys * tol) {
+          let lis = formula.find(f => f.id === "lisina");
+          const lisIng = state.ingredientes.find(i => i.id === "lisina" && i.active);
+          const faltaLys = req.lys - perfil.lys;
+          const aportePorPunto = 0.78; // 1% L-Lys HCl = 0.784% lys
+          const subirPct = Math.min(faltaLys / aportePorPunto * 1.05, 0.5);
+          if (lisIng) {
+            if (!lis) {
+              lis = { id: "lisina", name: lisIng.name, pct: 0, ing: lisIng };
+              formula.push(lis);
+            }
+            const nuevoPct = Math.min(lis.pct + subirPct, lisIng.max || 0.5);
+            if (nuevoPct > lis.pct + 0.005) {
+              ajustes.push(`+${(nuevoPct - lis.pct).toFixed(3)}% L-Lisina (Lys insuficiente)`);
+              lis.pct = nuevoPct;
+              huboAjuste = true;
+            }
+          }
+        }
+
+        // 5. METIONINA baja → subir DL-Met
+        if (perfil.met < req.met * tol) {
+          let met = formula.find(f => f.id === "metio");
+          const metIng = state.ingredientes.find(i => i.id === "metio" && i.active);
+          const faltaMet = req.met - perfil.met;
+          const aportePorPunto = 0.99; // 1% DL-Met = 0.99% met
+          const subirPct = Math.min(faltaMet / aportePorPunto * 1.05, 0.4);
+          if (metIng) {
+            if (!met) {
+              met = { id: "metio", name: metIng.name, pct: 0, ing: metIng };
+              formula.push(met);
+            }
+            const nuevoPct = Math.min(met.pct + subirPct, metIng.max || 0.4);
+            if (nuevoPct > met.pct + 0.005) {
+              ajustes.push(`+${(nuevoPct - met.pct).toFixed(3)}% DL-Metionina (Met insuficiente)`);
+              met.pct = nuevoPct;
+              huboAjuste = true;
+            }
+          }
+        }
+
+        // Re-normalizar a 100% bajando cereal
+        const total = formula.reduce((s, f) => s + f.pct, 0);
+        if (Math.abs(total - 100) > 0.1) {
+          const cereal = formula.find(f => f.ing.cat === "cereal" && !f.ing.isNucleo);
+          if (cereal) {
+            cereal.pct = Math.max(0, cereal.pct - (total - 100));
+          }
+        }
+
+        // Recalcular perfil
+        const recalc = recalcPerfil(formula);
+        perfil = recalc.perfil;
+
+        if (!huboAjuste) break;
+      }
+
+      const final = recalcPerfil(formula);
+      return {
+        formula,
+        perfil: final.perfil,
+        costoTon: final.costoTon,
+        ajustesRealizados: ajustes,
+        iteraciones: iter
+      };
     }
 
     document.getElementById("btnOptimize").addEventListener("click", async () => {
       window.fmToast("Optimizando fórmula...", "info");
-      await new Promise(r => setTimeout(r, 800));
+      await new Promise(r => setTimeout(r, 400));
 
-      const result = optimizar();
+      let result = null;
+      let usedV2 = false;
+      const usarV2 = localStorage.getItem("fm_solver_v2") !== "0"; // por defecto sí
+
+      // INTENTAR NIVEL 2 (Solver Simplex real)
+      if (usarV2 && window.FM_SOLVER) {
+        try {
+          window.A = window.FM_AVICOLA;
+          window.FM_AVICULTURA = window.FM_AVICOLA;
+          window.fmToast("Usando solver Simplex (Nivel 2)...", "info");
+          const v2result = await window.FM_SOLVER.optimizarV2(state);
+
+          if (v2result.error === "infeasible") {
+            window.fmToast("⚠️ El solver no encontró solución factible — probando greedy v1", "warning");
+            result = optimizar(); // fallback v1
+          } else if (v2result.ok) {
+            result = v2result;
+            usedV2 = true;
+            window.fmToast("✅ Fórmula óptima encontrada (Simplex)", "success");
+          }
+        } catch (e) {
+          console.warn("Solver v2 falló, usando v1:", e);
+          window.fmToast("Solver Simplex no disponible — usando greedy v1", "warning");
+          result = optimizar();
+        }
+      } else {
+        result = optimizar();
+      }
+
       if (!result) return;
+      window._lastOptimization = window._lastOptimization || {};
+      window._lastOptimization.usedV2 = usedV2;
+
+      // Asegurar validación de cumplimiento NRC en ambos niveles
+      if (!result.cumple) {
+        result.cumple = validarCumplimientoNRC(result.perfil, result.requerido);
+      }
 
       state.formula = result.formula;
 
@@ -2938,6 +3429,88 @@
 
       document.getElementById("resultEmpty").classList.add("hidden");
       document.getElementById("resultOk").classList.remove("hidden");
+
+      // ⚡ Header dinámico según cumplimiento NRC
+      const resultCard = document.getElementById("resultCard");
+      const resultHeader = document.getElementById("resultHeader");
+      const resultTitle = document.getElementById("resultTitle");
+      const resultSubtitle = document.getElementById("resultSubtitle");
+      const alertaBox = document.getElementById("alertaDeficits");
+      const autoAjustesBox = document.getElementById("autoAjustesBox");
+
+      const cumple = result.cumple || { ok: true, deficits: [], criticos: 0 };
+
+      if (cumple.ok) {
+        resultTitle.innerHTML = "✅ Fórmula viable";
+        resultSubtitle.textContent = "Cumple requerimientos NRC dentro de tolerancia ±5%";
+        resultHeader.style.background = "linear-gradient(135deg, #DCE9C8 0%, transparent 100%)";
+        resultHeader.style.borderLeft = "4px solid var(--success)";
+        alertaBox.style.display = "none";
+      } else {
+        const sev = cumple.criticos > 0 ? "crítica" : "moderada";
+        resultTitle.innerHTML = `⚠️ Fórmula con déficits (${sev})`;
+        resultSubtitle.textContent = `${cumple.deficitsCount} nutriente${cumple.deficitsCount > 1 ? "s" : ""} por debajo del requerimiento NRC — NO usar como está`;
+        resultHeader.style.background = cumple.criticos > 0
+          ? "linear-gradient(135deg, #FEE2E2 0%, transparent 100%)"
+          : "linear-gradient(135deg, #FEF3C7 0%, transparent 100%)";
+        resultHeader.style.borderLeft = cumple.criticos > 0
+          ? "4px solid #DC2626"
+          : "4px solid var(--accent)";
+
+        // Alerta detallada de cada déficit
+        alertaBox.style.display = "block";
+        alertaBox.innerHTML = `
+          <div class="alerta-deficits-header">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <div>
+              <strong>⚠️ NO USAR ESTA FÓRMULA en producción comercial</strong>
+              <p>Aún después de auto-corrección, los siguientes nutrientes están por debajo del NRC. Aplicarla puede causar bajada de postura, cáscaras delgadas o problemas de crecimiento.</p>
+            </div>
+          </div>
+          <div class="alerta-deficits-list">
+            ${cumple.deficits.map(d => {
+              const pctCumplido = (d.actual / d.requerido) * 100;
+              return `
+                <div class="deficit-item ${d.severidad}">
+                  <div class="deficit-info">
+                    <strong>${d.label}</strong>
+                    <small>Tienes ${d.actual.toFixed(2)}${d.unit} · Necesitas ${d.requerido.toFixed(2)}${d.unit} · Falta ${d.faltante.toFixed(2)}${d.unit}</small>
+                  </div>
+                  <div class="deficit-bar">
+                    <div class="deficit-bar-fill" style="width:${Math.min(pctCumplido, 100)}%;background:${d.severidad === 'critico' ? '#DC2626' : '#F59E0B'};"></div>
+                  </div>
+                  <div class="deficit-pct">${pctCumplido.toFixed(0)}%</div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+          <div class="alerta-deficits-footer">
+            💡 <strong>Soluciones:</strong> Activa más ingredientes (carbonato, fosfato, aceite, L-Lisina, DL-Met), aumenta sus rangos máx, o cambia de núcleo. Próxima versión usará solver Simplex para garantizar cumplimiento.
+          </div>
+        `;
+      }
+
+      // Mostrar auto-ajustes realizados
+      if (result.autoAjustes && result.autoAjustes.length > 0) {
+        autoAjustesBox.style.display = "block";
+        autoAjustesBox.innerHTML = `
+          <div class="auto-ajustes-header">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+            </svg>
+            <strong>🔧 Auto-correcciones aplicadas</strong>
+          </div>
+          <ul class="auto-ajustes-list">
+            ${result.autoAjustes.map(a => `<li>${a}</li>`).join("")}
+          </ul>
+        `;
+      } else {
+        autoAjustesBox.style.display = "none";
+      }
 
       document.getElementById("resCost").textContent = window.fmCurrency(result.costoTon).replace(".00", "");
       document.getElementById("resCostLote").textContent = `${window.fmCurrency(costoLote).replace(".00","")} por ${tons} ton`;
@@ -3881,6 +4454,36 @@
     }
 
     aplicarNucleoPendiente();
+
+    // ============================================
+    // TOGGLE SOLVER v1/v2
+    // ============================================
+    function setSolver(v) {
+      localStorage.setItem("fm_solver_v2", v === "2" ? "1" : "0");
+      document.querySelectorAll(".solver-btn").forEach(b => {
+        b.classList.toggle("active", b.dataset.solver === v);
+      });
+      if (window.fmToast) {
+        window.fmToast(v === "2" ? "🎯 Solver Simplex (Nivel 2) activado" : "⚡ Solver Greedy (Nivel 1) activado", "info");
+      }
+    }
+
+    document.getElementById("solverV1")?.addEventListener("click", () => setSolver("1"));
+    document.getElementById("solverV2")?.addEventListener("click", () => setSolver("2"));
+
+    // Sincronizar UI con localStorage al cargar
+    const solverPref = localStorage.getItem("fm_solver_v2");
+    const solverActivo = solverPref === "0" ? "1" : "2"; // default v2
+    document.querySelectorAll(".solver-btn").forEach(b => {
+      b.classList.toggle("active", b.dataset.solver === solverActivo);
+    });
+
+    // Pre-cargar glpk.js en background al abrir formulador
+    if (window.FM_SOLVER && solverActivo === "2") {
+      window.FM_SOLVER.ensureGLPK().catch(() => {
+        console.warn("glpk.js no se pudo precargar — fallback automático a v1");
+      });
+    }
 
     // ============================================
     // BOTÓN: Usar valores típicos NRC
