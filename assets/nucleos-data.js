@@ -83,7 +83,7 @@ window.FM_NUCLEOS = {
       precio: 32.00,
       descripcion: "Núcleo para gallina ponedora pico de producción. Incluye carbonato fino + grueso para cáscara.",
       aportes: {
-        em: 0, pc: 14.0, ca: 90.0, p: 14.0, lys: 5.0, met: 3.5, na: 4.0
+        em: 0, pc: 8.0, ca: 90.0, p: 6.0, lys: 2.5, met: 2.0, na: 4.0
       },
       aditivos: ["Vitaminas", "Carbonato calcio (fino + grueso)", "DL-Met", "Pigmento amarillo"],
       requiere_extras: []

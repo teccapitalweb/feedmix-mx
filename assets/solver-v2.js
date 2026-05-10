@@ -125,25 +125,29 @@ window.FM_SOLVER = (function () {
       }
     });
 
-    // RESTRICCIÓN MAX para Ca (evita exceso, típico ponedora)
-    if (req.ca && req.ca > 0) {
-      const caMax = req.ca * 1.15; // 15% sobre el mínimo
-      subjectTo.push({
-        name: "ca_max",
-        vars: vars.map(v => ({ name: v.name, coef: aporte(v.ing, "ca") })),
-        bnds: { type: glpk.GLP_UP, ub: caMax, lb: 0 }
-      });
-    }
+    // ============================================
+    // RESTRICCIONES MAX (anti-sobreformulación)
+    // Evitan que el solver gaste de más en AAs caros y minerales
+    // ============================================
+    const maxConstraints = [
+      { name: "em_max", nut: "em", multiplier: 1.05 },   // EM no más de 105% del req
+      { name: "pc_max", nut: "pc", multiplier: 1.10 },   // PC no más de 110%
+      { name: "ca_max", nut: "ca", multiplier: req.ca > 3 ? 1.15 : 1.10 }, // ponedora 115%, otros 110%
+      { name: "p_max", nut: "p", multiplier: 1.15 },     // P no más de 115% (clave para evitar sobreformulación)
+      { name: "lys_max", nut: "lys", multiplier: 1.10 }, // Lys no más de 110% (L-Lys es CARO)
+      { name: "met_max", nut: "met", multiplier: 1.10 }  // Met no más de 110% (DL-Met MUY caro)
+    ];
 
-    // RESTRICCIÓN MAX para EM (evita exceso de energía)
-    if (req.em && req.em > 0) {
-      const emMax = req.em * 1.05; // 5% sobre
-      subjectTo.push({
-        name: "em_max",
-        vars: vars.map(v => ({ name: v.name, coef: aporte(v.ing, "em") })),
-        bnds: { type: glpk.GLP_UP, ub: emMax, lb: 0 }
-      });
-    }
+    maxConstraints.forEach(c => {
+      const reqVal = req[c.nut] || 0;
+      if (reqVal > 0) {
+        subjectTo.push({
+          name: c.name,
+          vars: vars.map(v => ({ name: v.name, coef: aporte(v.ing, c.nut) })),
+          bnds: { type: glpk.GLP_UP, ub: reqVal * c.multiplier, lb: 0 }
+        });
+      }
+    });
 
     // BOUNDS individuales por ingrediente (min/max %)
     const bounds = vars.map((v, i) => {

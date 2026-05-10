@@ -2033,9 +2033,9 @@
           <div style="font-size:0.875rem;color:var(--neutral-500);" id="topbarSubtitle">Configura tipo, raza y etapa</div>
         </div>
         <div style="display:flex;gap:var(--space-3);align-items:center;">
-          <div class="solver-toggle" title="Cambia entre solver Greedy (v1, rápido) y Simplex (v2, preciso)">
-            <button type="button" class="solver-btn" id="solverV1" data-solver="1">v1 Greedy</button>
-            <button type="button" class="solver-btn active" id="solverV2" data-solver="2">v2 Simplex ⚡</button>
+          <div class="solver-toggle" title="Modo Rápido (greedy aproximado) o Preciso (solver matemático Simplex profesional)">
+            <button type="button" class="solver-btn" id="solverV1" data-solver="1">⚡ Rápido</button>
+            <button type="button" class="solver-btn active" id="solverV2" data-solver="2">🎯 Preciso</button>
           </div>
           <button class="btn btn-ghost btn-sm" id="btnSave">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
@@ -3153,7 +3153,10 @@
       });
 
       // ⚡ AUTO-CORRECCIÓN: validar y ajustar si hay déficits críticos
-      const ajusteIters = autoCorregirDeficits(consolidated, perfil, req);
+      // IMPORTANTE: pasamos reqOriginal (NRC real), no req ajustado
+      // La función recalcPerfil suma aporte total (incluyendo núcleo)
+      // entonces debemos comparar contra req TOTAL (NRC real)
+      const ajusteIters = autoCorregirDeficits(consolidated, perfil, reqOriginal);
       perfil = ajusteIters.perfil;
       costoTon = ajusteIters.costoTon;
 
@@ -3210,15 +3213,17 @@
     }
 
     // ============================================
-    // AUTO-CORRECCIÓN ITERATIVA
+    // AUTO-CORRECCIÓN ROBUSTA (v17 - reescrita)
     // ============================================
-    function autoCorregirDeficits(formula, perfil, req) {
+    // 1. Calcula perfil correcto considerando núcleos
+    // 2. Itera hasta cubrir déficits (max 12 iteraciones)
+    // 3. Reduce excesos solo de aminoácidos sintéticos (caros)
+    // 4. Validación final que evita romper la fórmula
+    // ============================================
+    function autoCorregirDeficits(formula, perfilInicial, req) {
       const ajustes = [];
-      const tol = 0.97;
-      let iter = 0;
-      const MAX_ITER = 8;
 
-      // Helper para recalcular perfil
+      // Helper: recalcular perfil considerando núcleos correctamente
       function recalcPerfil(f) {
         const p = { em: 0, pc: 0, ca: 0, p: 0, lys: 0, met: 0, na: 0 };
         let costo = 0;
@@ -3227,7 +3232,13 @@
           if (item.ing.isNucleo && window.FM_NUCLEOS) {
             const nd = window.FM_NUCLEOS.CATALOGO.find(n => "nucleo_" + n.id === item.id);
             if (nd && nd.aportes) {
-              Object.keys(p).forEach(k => p[k] += factor * (nd.aportes[k] || 0));
+              p.em += factor * (nd.aportes.em || 0);
+              p.pc += factor * (nd.aportes.pc || 0);
+              p.ca += factor * (nd.aportes.ca || 0);
+              p.p += factor * (nd.aportes.p || 0);
+              p.lys += factor * (nd.aportes.lys || 0);
+              p.met += factor * (nd.aportes.met || 0);
+              p.na += factor * (nd.aportes.na || 0);
             }
           } else {
             p.em += factor * (item.ing.em || 0);
@@ -3237,135 +3248,166 @@
             p.lys += factor * (item.ing.lys || 0);
             p.met += factor * (item.ing.met || 0);
           }
-          costo += factor * 1000 * item.ing.precio;
+          costo += factor * 1000 * (item.ing.precio || 0);
         });
         return { perfil: p, costoTon: costo };
       }
 
-      // Iterar para corregir déficits
-      while (iter < MAX_ITER) {
-        iter++;
-        let huboAjuste = false;
+      // Helper: agregar/aumentar un ingrediente para cubrir un nutriente
+      function asegurarNutriente(idIng, nutriente, aporteUnitario, nombre, maxAjuste) {
+        const ing = state.ingredientes.find(i => i.id === idIng && i.active);
+        if (!ing) return false;
 
-        // 1. CALCIO bajo → subir carbonato
-        if (perfil.ca < req.ca * tol) {
-          let carb = formula.find(f => f.id === "carb");
-          const carbIng = state.ingredientes.find(i => i.id === "carb" && i.active);
-          const faltaCa = req.ca - perfil.ca;
-          const aportePorPunto = 0.38; // 1% carbonato = 0.38% Ca
-          const subirPct = Math.min(faltaCa / aportePorPunto * 1.05, 4);
-          if (carbIng) {
-            if (!carb) {
-              carb = { id: "carb", name: carbIng.name, pct: 0, ing: carbIng };
-              formula.push(carb);
-            }
-            const nuevoPct = Math.min(carb.pct + subirPct, carbIng.max || 12);
-            if (nuevoPct > carb.pct + 0.01) {
-              ajustes.push(`+${(nuevoPct - carb.pct).toFixed(2)}% carbonato (Ca insuficiente)`);
-              carb.pct = nuevoPct;
-              huboAjuste = true;
-            }
+        const check = recalcPerfil(formula);
+        const actual = check.perfil[nutriente];
+        const objetivo = req[nutriente] * 1.02; // 102% del requerimiento
+
+        if (actual >= objetivo * 0.98) return false; // ya está cubierto
+
+        const falta = objetivo - actual;
+        const incrementoNecesario = falta / aporteUnitario;
+
+        let item = formula.find(f => f.id === idIng);
+        if (item) {
+          const nuevoPct = Math.min(item.pct + incrementoNecesario, ing.max || maxAjuste);
+          const ajuste = nuevoPct - item.pct;
+          if (ajuste > 0.001) {
+            item.pct = nuevoPct;
+            ajustes.push("+" + ajuste.toFixed(3) + "% " + nombre + " (cubrir déficit de " + nutriente.toUpperCase() + ")");
+            return true;
+          }
+        } else {
+          const pctNuevo = Math.min(incrementoNecesario, ing.max || maxAjuste);
+          if (pctNuevo > 0.001) {
+            formula.push({
+              id: idIng,
+              name: ing.name,
+              pct: pctNuevo,
+              ing
+            });
+            ajustes.push("+" + pctNuevo.toFixed(3) + "% " + nombre + " (agregado por déficit de " + nutriente.toUpperCase() + ")");
+            return true;
           }
         }
+        return false;
+      }
 
-        // 2. FÓSFORO bajo → subir fosfato monocálcico
-        if (perfil.p < req.p * tol) {
-          let fosf = formula.find(f => f.id === "fosf" || f.id === "fosbi");
-          const fosfIng = state.ingredientes.find(i => i.id === "fosf" && i.active) || state.ingredientes.find(i => i.id === "fosbi" && i.active);
-          const faltaP = req.p - perfil.p;
-          const aportePorPunto = 0.21; // 1% fosfato MCP = 0.21% P
-          const subirPct = Math.min(faltaP / aportePorPunto * 1.05, 1.5);
-          if (fosfIng) {
-            if (!fosf) {
-              fosf = { id: fosfIng.id, name: fosfIng.name, pct: 0, ing: fosfIng };
-              formula.push(fosf);
-            }
-            const nuevoPct = Math.min(fosf.pct + subirPct, fosfIng.max || 3);
-            if (nuevoPct > fosf.pct + 0.01) {
-              ajustes.push(`+${(nuevoPct - fosf.pct).toFixed(2)}% ${fosfIng.name} (P insuficiente)`);
-              fosf.pct = nuevoPct;
-              huboAjuste = true;
-            }
-          }
+      // Helper: reducir un ingrediente si hay exceso (>110%)
+      function reducirSiExceso(idIng, nutriente, aporteUnitario, nombre) {
+        const item = formula.find(f => f.id === idIng);
+        if (!item || item.pct <= 0.001) return false;
+
+        const checkAntes = recalcPerfil(formula);
+        const actual = checkAntes.perfil[nutriente];
+        const maxAceptable = req[nutriente] * 1.10;
+        if (actual <= maxAceptable) return false;
+
+        const exceso = actual - req[nutriente] * 1.05;
+        const reducirPct = Math.min(exceso / aporteUnitario, item.pct);
+        if (reducirPct < 0.001) return false;
+
+        const pctOriginal = item.pct;
+        item.pct = Math.max(0, item.pct - reducirPct);
+
+        // VALIDAR: solo revertir si la reducción CAUSÓ un déficit nuevo
+        // (es decir, un nutriente que antes estaba ≥ req ahora está < req)
+        const checkDespues = recalcPerfil(formula);
+        const causoNuevoDeficit = ["em", "pc", "ca", "p", "lys", "met"].some(n => {
+          if (!req[n]) return false;
+          const antesOK = checkAntes.perfil[n] >= req[n];
+          const despuesFalla = checkDespues.perfil[n] < req[n];
+          return antesOK && despuesFalla;
+        });
+
+        // También revertir si el propio nutriente que reducimos cayó por debajo del 100%
+        const propioNutrienteCaeBajo = checkDespues.perfil[nutriente] < req[nutriente];
+
+        if (causoNuevoDeficit || propioNutrienteCaeBajo) {
+          item.pct = pctOriginal;
+          return false;
         }
+        ajustes.push("-" + reducirPct.toFixed(3) + "% " + nombre + " (evita exceso, ahorra costo)");
+        return true;
+      }
 
-        // 3. ENERGÍA baja → subir aceite
-        if (perfil.em < req.em * tol) {
-          let aceite = formula.find(f => f.id === "aceite" || f.ing.cat === "energetico");
-          const aceiteIng = state.ingredientes.find(i => i.id === "aceite" && i.active) || state.ingredientes.find(i => i.cat === "energetico" && i.active);
-          const faltaEM = req.em - perfil.em;
-          const aportePorPunto = 88; // 1% aceite = ~88 kcal/kg al alimento
-          const subirPct = Math.min(faltaEM / aportePorPunto * 1.05, 3);
+      // ============================================
+      // FASE 1: CUBRIR DÉFICITS ITERATIVAMENTE
+      // aporteUnitario = % del nutriente APORTADO al alimento por cada 1% del ingrediente
+      // Ej: carbonato tiene 38% Ca, entonces 1% carb = 0.38% Ca al alimento → aporteUnitario = 0.38
+      // ============================================
+      let MAX_ITER = 12;
+      for (let i = 0; i < MAX_ITER; i++) {
+        let huboCambio = false;
+
+        if (asegurarNutriente("carb", "ca", 0.38, "Carbonato de calcio", 12)) huboCambio = true;
+        if (asegurarNutriente("fosf", "p", 0.21, "Fosfato monocálcico", 3)) huboCambio = true;
+        if (asegurarNutriente("metio", "met", 0.99, "DL-Metionina", 0.4)) huboCambio = true;
+        if (asegurarNutriente("lisina", "lys", 0.784, "L-Lisina HCl", 0.5)) huboCambio = true;
+
+        // EM: subir aceite si falta energía
+        const checkEM = recalcPerfil(formula);
+        if (checkEM.perfil.em < req.em * 0.97) {
+          const aceiteIng = state.ingredientes.find(it => it.id === "aceite" && it.active) ||
+                           state.ingredientes.find(it => it.cat === "energetico" && it.active && it.id !== "maiz");
           if (aceiteIng) {
-            if (!aceite) {
-              aceite = { id: aceiteIng.id, name: aceiteIng.name, pct: 0, ing: aceiteIng };
-              formula.push(aceite);
-            }
-            const nuevoPct = Math.min(aceite.pct + subirPct, aceiteIng.max || 6);
-            if (nuevoPct > aceite.pct + 0.01) {
-              ajustes.push(`+${(nuevoPct - aceite.pct).toFixed(2)}% ${aceiteIng.name} (EM insuficiente)`);
-              aceite.pct = nuevoPct;
-              huboAjuste = true;
-            }
-          }
-        }
-
-        // 4. LISINA baja → subir L-Lisina
-        if (perfil.lys < req.lys * tol) {
-          let lis = formula.find(f => f.id === "lisina");
-          const lisIng = state.ingredientes.find(i => i.id === "lisina" && i.active);
-          const faltaLys = req.lys - perfil.lys;
-          const aportePorPunto = 0.78; // 1% L-Lys HCl = 0.784% lys
-          const subirPct = Math.min(faltaLys / aportePorPunto * 1.05, 0.5);
-          if (lisIng) {
-            if (!lis) {
-              lis = { id: "lisina", name: lisIng.name, pct: 0, ing: lisIng };
-              formula.push(lis);
-            }
-            const nuevoPct = Math.min(lis.pct + subirPct, lisIng.max || 0.5);
-            if (nuevoPct > lis.pct + 0.005) {
-              ajustes.push(`+${(nuevoPct - lis.pct).toFixed(3)}% L-Lisina (Lys insuficiente)`);
-              lis.pct = nuevoPct;
-              huboAjuste = true;
+            const aceite = formula.find(f => f.id === aceiteIng.id);
+            const falta = req.em - checkEM.perfil.em;
+            const subirPct = falta / (aceiteIng.em / 100);
+            if (aceite) {
+              const nuevo = Math.min(aceite.pct + subirPct, aceiteIng.max || 6);
+              if (nuevo > aceite.pct + 0.01) {
+                ajustes.push("+" + (nuevo - aceite.pct).toFixed(2) + "% " + aceiteIng.name + " (cubrir déficit EM)");
+                aceite.pct = nuevo;
+                huboCambio = true;
+              }
+            } else {
+              const pct = Math.min(subirPct, aceiteIng.max || 6);
+              formula.push({ id: aceiteIng.id, name: aceiteIng.name, pct, ing: aceiteIng });
+              ajustes.push("+" + pct.toFixed(2) + "% " + aceiteIng.name + " (agregado por déficit EM)");
+              huboCambio = true;
             }
           }
         }
 
-        // 5. METIONINA baja → subir DL-Met
-        if (perfil.met < req.met * tol) {
-          let met = formula.find(f => f.id === "metio");
-          const metIng = state.ingredientes.find(i => i.id === "metio" && i.active);
-          const faltaMet = req.met - perfil.met;
-          const aportePorPunto = 0.99; // 1% DL-Met = 0.99% met
-          const subirPct = Math.min(faltaMet / aportePorPunto * 1.05, 0.4);
-          if (metIng) {
-            if (!met) {
-              met = { id: "metio", name: metIng.name, pct: 0, ing: metIng };
-              formula.push(met);
-            }
-            const nuevoPct = Math.min(met.pct + subirPct, metIng.max || 0.4);
-            if (nuevoPct > met.pct + 0.005) {
-              ajustes.push(`+${(nuevoPct - met.pct).toFixed(3)}% DL-Metionina (Met insuficiente)`);
-              met.pct = nuevoPct;
-              huboAjuste = true;
-            }
-          }
-        }
-
-        // Re-normalizar a 100% bajando cereal
-        const total = formula.reduce((s, f) => s + f.pct, 0);
-        if (Math.abs(total - 100) > 0.1) {
+        // RE-NORMALIZAR a 100% ajustando cereal base (mantener total = 100)
+        const totalAhora = formula.reduce((s, f) => s + f.pct, 0);
+        if (Math.abs(totalAhora - 100) > 0.05) {
           const cereal = formula.find(f => f.ing.cat === "cereal" && !f.ing.isNucleo);
           if (cereal) {
-            cereal.pct = Math.max(0, cereal.pct - (total - 100));
+            const ajusteCereal = 100 - totalAhora;
+            const nuevoPctCereal = Math.max(0, Math.min((cereal.ing.max || 70), cereal.pct + ajusteCereal));
+            if (Math.abs(nuevoPctCereal - cereal.pct) > 0.01) {
+              cereal.pct = nuevoPctCereal;
+              huboCambio = true;
+            }
           }
         }
 
-        // Recalcular perfil
-        const recalc = recalcPerfil(formula);
-        perfil = recalc.perfil;
+        if (!huboCambio) break;
+      }
 
-        if (!huboAjuste) break;
+      // ============================================
+      // FASE 2: REDUCIR EXCESOS (iterativo, max 5 vueltas)
+      // Reducir aminoácidos sintéticos (caros), fosfato y carbonato si exceso
+      // ============================================
+      for (let i = 0; i < 5; i++) {
+        let huboReduccion = false;
+        if (reducirSiExceso("metio", "met", 0.99, "DL-Metionina")) huboReduccion = true;
+        if (reducirSiExceso("lisina", "lys", 0.784, "L-Lisina HCl")) huboReduccion = true;
+        if (reducirSiExceso("fosf", "p", 0.21, "Fosfato monocálcico")) huboReduccion = true;
+        if (reducirSiExceso("fosbi", "p", 0.18, "Fosfato bicálcico")) huboReduccion = true;
+        if (reducirSiExceso("carb", "ca", 0.38, "Carbonato de calcio")) huboReduccion = true;
+        if (!huboReduccion) break;
+      }
+
+      // RE-NORMALIZAR final
+      const totalFinal = formula.reduce((s, f) => s + f.pct, 0);
+      if (Math.abs(totalFinal - 100) > 0.05) {
+        const cereal = formula.find(f => f.ing.cat === "cereal" && !f.ing.isNucleo);
+        if (cereal) {
+          const ajusteCereal = 100 - totalFinal;
+          cereal.pct = Math.max(0, Math.min((cereal.ing.max || 70), cereal.pct + ajusteCereal));
+        }
       }
 
       const final = recalcPerfil(formula);
@@ -3374,7 +3416,7 @@
         perfil: final.perfil,
         costoTon: final.costoTon,
         ajustesRealizados: ajustes,
-        iteraciones: iter
+        iteraciones: MAX_ITER
       };
     }
 
@@ -3391,20 +3433,20 @@
         try {
           window.A = window.FM_AVICOLA;
           window.FM_AVICULTURA = window.FM_AVICOLA;
-          window.fmToast("Usando solver Simplex (Nivel 2)...", "info");
+          window.fmToast("Calculando fórmula precisa...", "info");
           const v2result = await window.FM_SOLVER.optimizarV2(state);
 
           if (v2result.error === "infeasible") {
-            window.fmToast("⚠️ El solver no encontró solución factible — probando greedy v1", "warning");
+            window.fmToast("⚠️ No hay solución exacta — usando modo rápido", "warning");
             result = optimizar(); // fallback v1
           } else if (v2result.ok) {
             result = v2result;
             usedV2 = true;
-            window.fmToast("✅ Fórmula óptima encontrada (Simplex)", "success");
+            window.fmToast("✅ Fórmula óptima encontrada", "success");
           }
         } catch (e) {
           console.warn("Solver v2 falló, usando v1:", e);
-          window.fmToast("Solver Simplex no disponible — usando greedy v1", "warning");
+          window.fmToast("Modo Preciso no disponible — usando modo Rápido", "warning");
           result = optimizar();
         }
       } else {
@@ -4464,7 +4506,7 @@
         b.classList.toggle("active", b.dataset.solver === v);
       });
       if (window.fmToast) {
-        window.fmToast(v === "2" ? "🎯 Solver Simplex (Nivel 2) activado" : "⚡ Solver Greedy (Nivel 1) activado", "info");
+        window.fmToast(v === "2" ? "🎯 Modo Preciso activado (solver Simplex)" : "⚡ Modo Rápido activado (greedy)", "info");
       }
     }
 
