@@ -2052,6 +2052,7 @@
 
         <!-- Banner sugerencia de núcleo (aparece dinámicamente) -->
         <div id="nucleoSugerencia" class="nucleo-banner" style="display:none;"></div>
+        <div id="nucleoEtapaWarning" style="display:none; background:linear-gradient(135deg,#fee2e2 0%,#fecaca 100%); border:2px solid #dc2626; border-radius:10px; padding:12px; margin:8px 0;"></div>
 
         <!-- Resumen del lote (siempre visible) -->
         <div class="lote-summary-bar" id="loteSummary" style="display:none;">
@@ -2558,12 +2559,12 @@
     </div>
   </div>
 
-  <script src="assets/firebase-config.js?v=13"></script>
-  <script src="assets/avicola-data.js?v=13"></script>
-  <script src="assets/nucleos-data.js?v=13"></script>
-  <script src="assets/consumo-data.js?v=13"></script>
-  <script src="assets/solver-v2.js?v=13"></script>
-  <script src="assets/species-system.js?v=13"></script>
+  <script src="assets/firebase-config.js?v=14"></script>
+  <script src="assets/avicola-data.js?v=14"></script>
+  <script src="assets/nucleos-data.js?v=14"></script>
+  <script src="assets/consumo-data.js?v=14"></script>
+  <script src="assets/solver-v2.js?v=14"></script>
+  <script src="assets/species-system.js?v=14"></script>
   <script type="module">
     import "./assets/shared.js?v=12";
     await window.fmAuthGuard({ requireAuth: true });
@@ -2986,6 +2987,11 @@
       const activos = state.ingredientes.filter(i => i.active);
       const sugerencias = A.generarSugerencias(state.razaId, state.etapaId, activos, state.formula);
 
+      // ============================================
+      // VALIDACIÓN núcleo-etapa: avisar si etapa actual no coincide con etapas del núcleo
+      // ============================================
+      validarCoincidenciaNucleoEtapa();
+
       const sugCard = document.getElementById("sugCard");
       const sugList = document.getElementById("sugList");
 
@@ -3001,6 +3007,110 @@
           <span>${s.msg}</span>
         </div>
       `).join("");
+    }
+
+    /**
+     * Verifica que la etapa actual coincida con las etapas para las que está diseñado el núcleo.
+     * Si no coincide, muestra alerta roja con sugerencia del núcleo correcto.
+     */
+    function validarCoincidenciaNucleoEtapa() {
+      const warnBox = document.getElementById("nucleoEtapaWarning");
+      if (!warnBox) return;
+
+      // Buscar núcleo activo
+      const nucleoActivo = state.ingredientes.find(i => i.isNucleo && i.active);
+      if (!nucleoActivo || !window.FM_NUCLEOS) {
+        warnBox.style.display = "none";
+        return;
+      }
+
+      // Buscar la definición del núcleo
+      const nucleoId = nucleoActivo.id.replace("nucleo_", "");
+      const nucleoDef = window.FM_NUCLEOS.CATALOGO.find(n => n.id === nucleoId);
+      if (!nucleoDef) {
+        warnBox.style.display = "none";
+        return;
+      }
+
+      // Verificar si la etapa actual está dentro de las etapas del núcleo
+      const etapasNucleo = nucleoDef.etapas || [];
+      const coincide = etapasNucleo.includes(state.etapaId);
+
+      if (coincide) {
+        warnBox.style.display = "none";
+        return;
+      }
+
+      // No coincide — buscar un núcleo alternativo apropiado para esta etapa
+      const nucleoSugerido = window.FM_NUCLEOS.CATALOGO.find(n =>
+        n.etapas && n.etapas.includes(state.etapaId) && n.tipo === nucleoDef.tipo
+      );
+
+      // Nombre legible de la etapa actual
+      const etapaActualObj = A.getEtapas(state.razaId).find(e => e.id === state.etapaId);
+      const etapaActualNombre = etapaActualObj?.nombre || state.etapaId;
+
+      // Construir warning
+      let html = '<div style="display:flex; align-items:flex-start; gap:10px;">';
+      html += '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+      html += '<div style="flex:1;">';
+      html += '<strong style="color:#991b1b; font-size:0.95rem;">⚠️ Núcleo y etapa no coinciden</strong>';
+      html += '<p style="color:#7f1d1d; font-size:0.85rem; margin:4px 0;">El núcleo <strong>"' + nucleoDef.nombre + '"</strong> está diseñado para <strong>' + (nucleoDef.descripcion || etapasNucleo.join(", ")) + '</strong>, pero tu etapa actual es <strong>"' + etapaActualNombre + '"</strong>.</p>';
+
+      if (nucleoSugerido) {
+        html += '<div style="background:white; padding:8px 10px; border-radius:6px; margin-top:6px; font-size:0.85rem;">';
+        html += '<strong style="color:#15803d;">✓ Núcleo recomendado para tu etapa:</strong><br>';
+        html += '<span style="color:#1e293b;">' + nucleoSugerido.nombre + '</span>';
+        html += '<button type="button" id="btnCambiarNucleo" style="margin-left:8px; padding:4px 10px; background:#16a34a; color:white; border:0; border-radius:4px; font-size:0.78rem; font-weight:700; cursor:pointer;" data-nuevo-id="' + nucleoSugerido.id + '">Cambiar ahora</button>';
+        html += '</div>';
+      } else {
+        html += '<p style="color:#7f1d1d; font-size:0.82rem; margin-top:4px;">⚠️ No hay núcleo en el catálogo para esta etapa específica. Considera quitar el núcleo o cambiar la etapa.</p>';
+      }
+
+      html += '</div></div>';
+
+      warnBox.innerHTML = html;
+      warnBox.style.display = "block";
+
+      // Listener para cambiar núcleo
+      const btnCambiar = document.getElementById("btnCambiarNucleo");
+      if (btnCambiar) {
+        btnCambiar.addEventListener("click", () => {
+          const nuevoId = btnCambiar.dataset.nuevoId;
+          const nuevoNucleo = window.FM_NUCLEOS.CATALOGO.find(n => n.id === nuevoId);
+          if (!nuevoNucleo) return;
+          cambiarNucleoActivo(nuevoNucleo);
+        });
+      }
+    }
+
+    /**
+     * Reemplaza el núcleo activo por uno nuevo (manteniendo otros ingredientes intactos)
+     */
+    function cambiarNucleoActivo(nuevoNucleo) {
+      // Quitar núcleos viejos
+      state.ingredientes = state.ingredientes.filter(i => !i.isNucleo);
+
+      // Agregar el nuevo núcleo
+      const nucleoIng = {
+        id: "nucleo_" + nuevoNucleo.id,
+        name: nuevoNucleo.nombre,
+        cat: "aditivo",
+        em: 0, pc: 0, ca: 0, p: 0, lys: 0, met: 0,
+        precio: nuevoNucleo.precio,
+        min: nuevoNucleo.inclusion,
+        max: nuevoNucleo.inclusion,
+        active: true,
+        isNucleo: true
+      };
+      state.ingredientes.unshift(nucleoIng);
+
+      renderIngredientes();
+      actualizarValidaciones();
+
+      if (window.fmToast) {
+        window.fmToast("Núcleo cambiado: " + nuevoNucleo.nombre, "success");
+      }
     }
 
     // ============================================
@@ -4685,7 +4795,7 @@
         const datosZoot = [
           ["Consumo oficial", consumoOficial],
           ["Peso esperado", pesoEsperado],
-          ["FCR esperado", fcrEsp !== "—" ? fcrEsp + " kg/kg" : "—"],
+          ["FCR esperado", fcrEsp !== "—" ? fcrEsp + " kg/kg" : (calc.produccionPct != null && calc.produccionPct < 50 ? "N/A (inicio postura)" : "—")],
           ["Producción", calc.produccionPct ? calc.produccionPct.toFixed(0) + "% postura" : (calc.tipo === "engorda" ? "engorda" : "—")]
         ];
         datosZoot.forEach(([label, val], idx) => {
@@ -4763,8 +4873,48 @@
           doc.text("• Costo del alimento por huevo: $" + costoPorHuevo.toFixed(2) + " MXN", M + 6, yp + 23);
 
           doc.setFont("helvetica", "bold");
+          // Si margen es negativo, en rojo
+          if (margen3 < 0) doc.setTextColor(220, 38, 38);
           doc.text("Si vendes a $3.00/huevo: Ingreso mensual $" + ingresoMes3.toLocaleString("es-MX", { maximumFractionDigits: 0 }) + " — Margen del alimento $" + margen3.toLocaleString("es-MX", { maximumFractionDigits: 0 }), M + 6, yp + 28);
+          doc.setTextColor.apply(doc, TEXT);
           yp += 38;
+
+          // ALERTA: si producción <50% explicar por qué margen es negativo
+          if (calc.produccionPct != null && calc.produccionPct < 50) {
+            doc.setFillColor(254, 249, 195); // amarillo claro
+            doc.setDrawColor(234, 179, 8);
+            doc.setLineWidth(0.5);
+            doc.roundedRect(M, yp, W - 2 * M, 20, 2, 2, "FD");
+            doc.setLineWidth(0.2);
+
+            doc.setTextColor(120, 53, 15);
+            doc.setFontSize(8);
+            doc.setFont("helvetica", "bold");
+            doc.text("INFORMACIÓN: Etapa de inicio de postura", M + 4, yp + 5);
+
+            doc.setFontSize(7.5);
+            doc.setFont("helvetica", "normal");
+            const explicacion = "Las aves apenas están alcanzando madurez (postura " + calc.produccionPct.toFixed(0) + "%). El margen mejora drásticamente al llegar al pico de postura (sem 25-32, ~95% postura). A esta edad es NORMAL tener margen negativo porque el ave consume alimento adulto pero aún no produce huevos suficientes. Es parte de la inversión inicial del lote.";
+            doc.text(explicacion, M + 4, yp + 10, { maxWidth: W - 2 * M - 8 });
+            yp += 26;
+          } else if (calc.produccionPct != null && calc.produccionPct >= 80 && margen3 < 0) {
+            doc.setFillColor(254, 226, 226); // rojo claro
+            doc.setDrawColor(220, 38, 38);
+            doc.setLineWidth(0.5);
+            doc.roundedRect(M, yp, W - 2 * M, 18, 2, 2, "FD");
+            doc.setLineWidth(0.2);
+
+            doc.setTextColor(153, 27, 27);
+            doc.setFontSize(8);
+            doc.setFont("helvetica", "bold");
+            doc.text("ALERTA: Margen negativo en pico de postura", M + 4, yp + 5);
+
+            doc.setFontSize(7.5);
+            doc.setFont("helvetica", "normal");
+            const alerta = "Tu fórmula está cara para el precio de venta. Considera: 1) Reducir costo por kg de alimento, 2) Negociar mejor precio de venta, o 3) Revisar ingredientes caros.";
+            doc.text(alerta, M + 4, yp + 10, { maxWidth: W - 2 * M - 8 });
+            yp += 22;
+          }
         } else if (calc.tipo === "engorda" && calc.fcr && costoKg > 0) {
           const costoPorKg = costoKg * calc.fcr;
           doc.setFillColor(254, 243, 199);
@@ -5163,6 +5313,8 @@
           b.classList.toggle("active", b.dataset.unidad === "kg");
         });
       }
+      // Guardar el volumen aplicado para detectar si se cambió manualmente después
+      window._volumenAplicadoParvada = Math.round(kg);
       actualizarVolumenPreview();
       window.fmToast("Volumen actualizado: " + Math.round(kg).toLocaleString() + " kg para tu parvada de " + parvadaUltimoCalculo.cantidadAves + " aves", "success");
     }

@@ -999,9 +999,32 @@ window.FM_CONSUMO = (function () {
 
     // PONEDORAS / REPRODUCTORAS / DP: crianza (0-17 sem) + postura (17-100 sem)
     const crianzaKgPorAve = raza.crianzaAcumKg || 6.0;
-    const consumoPosturaKgPorAve = (raza.consumoPromedioPostura || 110) / 1000 * (100 - 17) * 7;
+    const consumoPromPostura = raza.consumoPromedioPostura || 110;
+    const consumoPosturaKgPorAve = consumoPromPostura / 1000 * (100 - 17) * 7;
     const consumoTotalKgPorAve = crianzaKgPorAve + consumoPosturaKgPorAve;
-    const consumoTotalKg = consumoTotalKgPorAve * cantidadAves;
+
+    // Distribuir crianza en sub-fases proporcionalmente para que sumen al total oficial
+    // Crianza total = 17 semanas. Iniciación 6, Crecimiento 6, Desarrollo 3, Pre-postura 2.
+    // Proporción aproximada del consumo total durante crianza (basado en curvas oficiales)
+    const propIniciacion = 0.21;   // ~21% del consumo de crianza
+    const propCrecimiento = 0.41;  // ~41%
+    const propDesarrollo = 0.23;   // ~23%
+    const propPrepostura = 0.15;   // ~15%
+
+    const iniciacionKg = crianzaKgPorAve * propIniciacion;
+    const crecimientoKg = crianzaKgPorAve * propCrecimiento;
+    const desarrolloKg = crianzaKgPorAve * propDesarrollo;
+    const prepostKg = crianzaKgPorAve * propPrepostura;
+
+    // Postura: 22 + 21 + 40 = 83 semanas. Distribuir proporcionalmente.
+    const posturaPicoKg = consumoPromPostura * 22 * 7 / 1000;
+    const posturaMediaKg = consumoPromPostura * 21 * 7 / 1000;
+    const posturaFinalKg = consumoPromPostura * 40 * 7 / 1000;
+
+    // Recalcular consumoTotal a partir de las fases (para que SIEMPRE sumen)
+    const consumoTotalKgPorAveFases = iniciacionKg + crecimientoKg + desarrolloKg + prepostKg + posturaPicoKg + posturaMediaKg + posturaFinalKg;
+    const consumoTotalKg = consumoTotalKgPorAveFases * cantidadAves;
+
     const huevosTotales = (raza.eggsHenHoused_100 || 460) * cantidadAves;
 
     return {
@@ -1009,19 +1032,16 @@ window.FM_CONSUMO = (function () {
       cicloSemanas: 100,
       cantidadAves,
       fases: [
-        { nombre: "Iniciación (Starter 1+2)", semanas: 6,  kgPorAve: 1.20, totalKg: 1.20 * cantidadAves },
-        { nombre: "Crecimiento (Grower)",     semanas: 6,  kgPorAve: 2.30, totalKg: 2.30 * cantidadAves },
-        { nombre: "Desarrollo (Developer)",   semanas: 3,  kgPorAve: 1.40, totalKg: 1.40 * cantidadAves },
-        { nombre: "Pre-postura (Pre-Lay)",    semanas: 2,  kgPorAve: 0.95, totalKg: 0.95 * cantidadAves },
-        { nombre: "Postura pico (Peaking)",   semanas: 22, kgPorAve: (raza.consumoPromedioPostura || 110) * 22 * 7 / 1000,
-          totalKg: (raza.consumoPromedioPostura || 110) * 22 * 7 / 1000 * cantidadAves },
-        { nombre: "Postura media (Layer 2)",  semanas: 21, kgPorAve: (raza.consumoPromedioPostura || 110) * 21 * 7 / 1000,
-          totalKg: (raza.consumoPromedioPostura || 110) * 21 * 7 / 1000 * cantidadAves },
-        { nombre: "Postura final (Layer 3+)", semanas: 40, kgPorAve: (raza.consumoPromedioPostura || 110) * 40 * 7 / 1000,
-          totalKg: (raza.consumoPromedioPostura || 110) * 40 * 7 / 1000 * cantidadAves }
+        { nombre: "Iniciación (Starter 1+2)", semanas: 6,  kgPorAve: iniciacionKg,  totalKg: iniciacionKg * cantidadAves },
+        { nombre: "Crecimiento (Grower)",     semanas: 6,  kgPorAve: crecimientoKg, totalKg: crecimientoKg * cantidadAves },
+        { nombre: "Desarrollo (Developer)",   semanas: 3,  kgPorAve: desarrolloKg,  totalKg: desarrolloKg * cantidadAves },
+        { nombre: "Pre-postura (Pre-Lay)",    semanas: 2,  kgPorAve: prepostKg,     totalKg: prepostKg * cantidadAves },
+        { nombre: "Postura pico (Peaking)",   semanas: 22, kgPorAve: posturaPicoKg, totalKg: posturaPicoKg * cantidadAves },
+        { nombre: "Postura media (Layer 2)",  semanas: 21, kgPorAve: posturaMediaKg, totalKg: posturaMediaKg * cantidadAves },
+        { nombre: "Postura final (Layer 3+)", semanas: 40, kgPorAve: posturaFinalKg, totalKg: posturaFinalKg * cantidadAves }
       ],
       consumoTotalKg,
-      consumoTotalKgPorAve,
+      consumoTotalKgPorAve: consumoTotalKgPorAveFases,
       huevosTotalesParvada: huevosTotales,
       huevosPorAve: raza.eggsHenHoused_100 || 460,
       fcr: raza.fcr_100wk || 2.0,
