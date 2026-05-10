@@ -2559,12 +2559,12 @@
     </div>
   </div>
 
-  <script src="assets/firebase-config.js?v=14"></script>
-  <script src="assets/avicola-data.js?v=14"></script>
-  <script src="assets/nucleos-data.js?v=14"></script>
-  <script src="assets/consumo-data.js?v=14"></script>
-  <script src="assets/solver-v2.js?v=14"></script>
-  <script src="assets/species-system.js?v=14"></script>
+  <script src="assets/firebase-config.js?v=15"></script>
+  <script src="assets/avicola-data.js?v=15"></script>
+  <script src="assets/nucleos-data.js?v=15"></script>
+  <script src="assets/consumo-data.js?v=15"></script>
+  <script src="assets/solver-v2.js?v=15"></script>
+  <script src="assets/species-system.js?v=15"></script>
   <script type="module">
     import "./assets/shared.js?v=12";
     await window.fmAuthGuard({ requireAuth: true });
@@ -5572,6 +5572,31 @@
       try {
         const pendiente = JSON.parse(pendienteStr);
         localStorage.removeItem("fm_nucleo_pendiente"); // consumir
+
+        // ============================================================
+        // AUTO-AJUSTAR ETAPA: si el núcleo tiene etapas definidas y la etapa actual
+        // NO está en esas etapas, forzar la primera etapa válida del núcleo.
+        // Esto evita el warning innecesario cuando vienes de nucleos.html.
+        // ============================================================
+        if (window.FM_NUCLEOS) {
+          const nucleoDef = window.FM_NUCLEOS.CATALOGO.find(n => n.id === pendiente.id);
+          if (nucleoDef && nucleoDef.etapas && nucleoDef.etapas.length > 0) {
+            const etapasNucleo = nucleoDef.etapas;
+            const etapasDisponibles = A.getEtapas(state.razaId).map(e => e.id);
+            const etapaActualOK = etapasNucleo.includes(state.etapaId);
+
+            if (!etapaActualOK) {
+              // Buscar primera etapa del núcleo que exista en la raza actual
+              const nuevaEtapa = etapasNucleo.find(eId => etapasDisponibles.includes(eId));
+              if (nuevaEtapa) {
+                state.etapaId = nuevaEtapa;
+                renderEtapas();
+                renderRequerimientos();
+                renderTips();
+              }
+            }
+          }
+        }
 
         // Buscar si el ingrediente "nucleo" ya existe en INGREDIENTES, si no, agregarlo
         const nucleoIngId = "nucleo_" + pendiente.id;
