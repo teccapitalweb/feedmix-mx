@@ -2154,6 +2154,14 @@
                       <button type="button" class="parvada-periodo active" data-dias="7" style="padding:8px 12px; border:2px solid #d97706; background:#d97706; color:white; border-radius:8px; font-weight:600; cursor:pointer; font-size:0.85rem;">1 semana</button>
                       <button type="button" class="parvada-periodo" data-dias="30" style="padding:8px 12px; border:2px solid #d97706; background:white; color:#78350f; border-radius:8px; font-weight:600; cursor:pointer; font-size:0.85rem;">1 mes</button>
                       <button type="button" class="parvada-periodo" data-dias="365" style="padding:8px 12px; border:2px solid #d97706; background:white; color:#78350f; border-radius:8px; font-weight:600; cursor:pointer; font-size:0.85rem;">1 año</button>
+                      <button type="button" class="parvada-periodo" data-dias="custom" id="btnParvadaCustom" style="padding:8px 12px; border:2px solid #d97706; background:white; color:#78350f; border-radius:8px; font-weight:600; cursor:pointer; font-size:0.85rem;">⚙️ Personalizado</button>
+                    </div>
+                    <div id="parvadaCustomBox" style="display:none; margin-top:8px; padding:10px; background:#fffbeb; border:1px dashed #d97706; border-radius:8px;">
+                      <label style="font-size:0.75rem; font-weight:700; color:#78350f;">Cantidad de días:</label>
+                      <div style="display:flex; gap:8px; align-items:center; margin-top:4px;">
+                        <input type="number" id="parvadaDiasCustom" min="1" max="730" placeholder="Ej: 14" style="flex:1; padding:8px; border:2px solid #d97706; border-radius:6px; font-size:0.95rem; font-weight:600; color:#78350f;">
+                        <span style="font-size:0.78rem; color:#78350f; opacity:0.85;">días (1 a 730)</span>
+                      </div>
                     </div>
                   </div>
 
@@ -2511,6 +2519,17 @@
                         </div>
                       </div>
 
+                      <!-- Opción para incluir plan de parvada en PDF -->
+                      <div id="pdfParvadaOpcion" style="display:none; background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%); padding:12px; border-radius:10px; border:2px solid #f59e0b; margin:10px 0;">
+                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.92rem; font-weight:600; color:#78350f;">
+                          <input type="checkbox" id="chkIncluirParvadaPDF" checked style="width:18px; height:18px; accent-color:#d97706;">
+                          <span>📊 Incluir página de "Plan de Alimentación de tu Parvada" en el PDF</span>
+                        </label>
+                        <div style="font-size:0.78rem; color:#78350f; margin-top:4px; padding-left:26px; opacity:0.85;">
+                          Con datos oficiales del manual: consumo proyectado, costos por día/sem/mes/año, plan completo del ciclo y rentabilidad esperada.
+                        </div>
+                      </div>
+
                       <button class="btn btn-action-pdf btn-block btn-lg" id="btnPdf">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                         <span>Descargar PDF profesional</span>
@@ -2687,7 +2706,11 @@
       select.onchange = () => {
         state.razaId = select.value;
         const etapas = A.getEtapas(state.razaId);
-        state.etapaId = etapas[0]?.id;
+        // BUG FIX: Mantener etapa actual si existe en la nueva raza (evitar resetear y "perder" el núcleo)
+        const etapaActualExiste = etapas.some(e => e.id === state.etapaId);
+        if (!etapaActualExiste) {
+          state.etapaId = etapas[0]?.id;
+        }
         renderRazaInfo();
         renderEtapas();
         renderRequerimientos();
@@ -3840,14 +3863,36 @@
           const costoPorHuevo = (consumoKgDia * costoKg) / calc.huevosDiarios;
           html += '<div style="background:#fef3c7; padding:10px; border-radius:8px; margin-top:8px; font-size:0.88rem;">';
           html += '<div style="font-weight:700; color:#78350f; margin-bottom:4px;">🥚 PRODUCCIÓN Y RENTABILIDAD</div>';
-          html += '<div>• Huevos esperados: <strong>' + calc.huevosDiarios.toFixed(0) + '/día · ' + calc.huevosMes.toLocaleString("es-MX",{maximumFractionDigits:0}) + '/mes</strong></div>';
+          html += '<div>• Huevos esperados: <strong>' + calc.huevosDiarios.toFixed(0) + '/día · ' + calc.huevosMes.toLocaleString("es-MX",{maximumFractionDigits:0}) + '/mes</strong>';
+          if (calc.produccionPct != null) {
+            html += ' <span style="font-size:0.78rem;color:#78350f;">(' + calc.produccionPct.toFixed(0) + '% postura)</span>';
+          }
+          html += '</div>';
           html += '<div>• Costo del alimento por huevo: <strong>$' + costoPorHuevo.toFixed(2) + ' MXN</strong></div>';
           // Estimación con precio venta promedio
           const precioVenta = 3.0;
           const ingresoMes = calc.huevosMes * precioVenta;
           const margen = ingresoMes - costoMes;
+          const colorMargen = margen >= 0 ? "#15803d" : "#dc2626";
           html += '<div style="margin-top:4px; padding-top:4px; border-top:1px dashed #f59e0b;">';
-          html += 'Si vendes a <strong>$' + precioVenta.toFixed(2) + '/huevo</strong>: Ingreso mes <strong>$' + ingresoMes.toLocaleString("es-MX",{maximumFractionDigits:0}) + '</strong> · Margen alimento <strong>$' + margen.toLocaleString("es-MX",{maximumFractionDigits:0}) + '</strong></div>';
+          html += 'Si vendes a <strong>$' + precioVenta.toFixed(2) + '/huevo</strong>: Ingreso mes <strong>$' + ingresoMes.toLocaleString("es-MX",{maximumFractionDigits:0}) + '</strong> · Margen alimento <strong style="color:' + colorMargen + ';">$' + margen.toLocaleString("es-MX",{maximumFractionDigits:0}) + '</strong></div>';
+
+          // ALERTA INTELIGENTE: si la producción es <50% explicar por qué margen sale negativo
+          if (calc.produccionPct != null && calc.produccionPct < 50) {
+            html += '<div style="margin-top:8px; padding:8px; background:#fef9c3; border-left:3px solid #eab308; border-radius:4px; font-size:0.82rem;">';
+            html += '<strong>⚠️ Etapa de inicio de postura:</strong> Las aves apenas están alcanzando madurez (postura ' + calc.produccionPct.toFixed(0) + '%). ';
+            html += 'El margen mejora drásticamente al llegar al pico de postura (semanas 25-32, ~95% postura). ';
+            if (calc.produccionPct < 20) {
+              html += 'A esta edad es <strong>NORMAL tener margen negativo</strong> porque el ave ya consume alimento adulto pero aún no produce huevos suficientes. Es parte de la inversión inicial del lote.';
+            }
+            html += '</div>';
+          } else if (calc.produccionPct != null && calc.produccionPct >= 80 && margen < 0) {
+            // Postura alta pero margen negativo: revisar precios
+            html += '<div style="margin-top:8px; padding:8px; background:#fee2e2; border-left:3px solid #dc2626; border-radius:4px; font-size:0.82rem;">';
+            html += '<strong>🚨 Margen negativo en pico de postura:</strong> Tu fórmula está demasiado cara para el precio de venta del huevo. ';
+            html += 'Considera: 1) Reducir costo por kg de alimento, 2) Negociar mejor precio de venta, o 3) Revisar ingredientes caros.';
+            html += '</div>';
+          }
           html += '</div>';
         } else if (calc.tipo === "engorda" && calc.fcr) {
           const costoPorKgCarne = costoKg * calc.fcr;
@@ -4572,9 +4617,11 @@
 
       // ============================================
       // PÁGINA NUEVA: PLAN DE ALIMENTACIÓN DE LA PARVADA
-      // (solo si está activa la calculadora de parvada)
+      // (solo si está activa la calculadora de parvada Y el checkbox está marcado)
       // ============================================
-      if (parvadaActiva && parvadaUltimoCalculo && window.FM_CONSUMO) {
+      const incluirParvadaPDF = document.getElementById("chkIncluirParvadaPDF");
+      const incluirEnPDF = !incluirParvadaPDF || incluirParvadaPDF.checked;
+      if (parvadaActiva && parvadaUltimoCalculo && window.FM_CONSUMO && incluirEnPDF) {
         doc.addPage();
         let yp = M;
 
@@ -5007,15 +5054,18 @@
       parvadaActiva = !parvadaActiva;
       const panel = document.getElementById("parvadaPanel");
       const btn = document.getElementById("btnToggleParvada");
+      const opcionPDF = document.getElementById("pdfParvadaOpcion");
       if (parvadaActiva) {
         panel.style.display = "block";
         btn.textContent = "Desactivar";
         btn.style.background = "#64748b";
+        if (opcionPDF) opcionPDF.style.display = "block";
         actualizarLabelEdad();
       } else {
         panel.style.display = "none";
         btn.textContent = "Activar calculadora";
         btn.style.background = "#f59e0b";
+        if (opcionPDF) opcionPDF.style.display = "none";
         document.getElementById("parvadaResultado").style.display = "none";
       }
     }
@@ -5129,7 +5179,25 @@
 
       document.querySelectorAll(".parvada-periodo").forEach(btn => {
         btn.addEventListener("click", () => {
-          parvadaPeriodoDias = parseInt(btn.dataset.dias);
+          const valDias = btn.dataset.dias;
+          const customBox = document.getElementById("parvadaCustomBox");
+
+          if (valDias === "custom") {
+            // Mostrar input personalizado
+            customBox.style.display = "block";
+            const inp = document.getElementById("parvadaDiasCustom");
+            const v = parseInt(inp.value);
+            if (v >= 1 && v <= 730) {
+              parvadaPeriodoDias = v;
+            } else {
+              inp.focus();
+              return; // no calcular hasta que escriba
+            }
+          } else {
+            customBox.style.display = "none";
+            parvadaPeriodoDias = parseInt(valDias);
+          }
+
           document.querySelectorAll(".parvada-periodo").forEach(b => {
             const isActive = b === btn;
             b.classList.toggle("active", isActive);
@@ -5139,6 +5207,25 @@
           calcularParvadaUI();
         });
       });
+
+      // Input personalizado: actualizar al escribir
+      const inpCustom = document.getElementById("parvadaDiasCustom");
+      if (inpCustom) {
+        inpCustom.addEventListener("input", () => {
+          const v = parseInt(inpCustom.value);
+          if (v >= 1 && v <= 730) {
+            parvadaPeriodoDias = v;
+            // Marcar el botón "Personalizado" como activo
+            document.querySelectorAll(".parvada-periodo").forEach(b => {
+              const isActive = b.id === "btnParvadaCustom";
+              b.classList.toggle("active", isActive);
+              b.style.background = isActive ? "#d97706" : "white";
+              b.style.color = isActive ? "white" : "#78350f";
+            });
+            calcularParvadaUI();
+          }
+        });
+      }
 
       const btnAplicar = document.getElementById("parvadaAplicar");
       if (btnAplicar) btnAplicar.addEventListener("click", aplicarVolumenParvada);
