@@ -2128,8 +2128,49 @@
                 <div class="etapa-grid" id="etapaGrid"></div>
               </div>
 
+              <div class="setup-step" id="stepParvada">
+                <div class="step-label">
+                  <span class="step-num" id="stepNumParvada">5</span> 🐔 Tu parvada (calcular volumen automáticamente)
+                  <button type="button" id="btnToggleParvada" class="btn-mostrar-todas" style="background:#f59e0b;color:white;">Activar calculadora</button>
+                </div>
+
+                <div id="parvadaPanel" style="display:none; background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%); padding:16px; border-radius:10px; border:2px solid #f59e0b; margin-top:8px;">
+
+                  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+                    <div>
+                      <label style="font-size:0.78rem; font-weight:700; color:#78350f; text-transform:uppercase; letter-spacing:0.05em;">Cantidad de aves</label>
+                      <input type="number" class="form-input" id="parvadaCantidad" placeholder="500" min="1" style="margin-top:4px;">
+                    </div>
+                    <div>
+                      <label style="font-size:0.78rem; font-weight:700; color:#78350f; text-transform:uppercase; letter-spacing:0.05em;" id="parvadaEdadLabel">Edad (semanas)</label>
+                      <input type="number" class="form-input" id="parvadaEdad" placeholder="30" min="0" style="margin-top:4px;">
+                    </div>
+                  </div>
+
+                  <div style="margin-bottom:12px;">
+                    <label style="font-size:0.78rem; font-weight:700; color:#78350f; text-transform:uppercase; letter-spacing:0.05em;">¿Para cuánto tiempo?</label>
+                    <div class="unidad-toggle" style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">
+                      <button type="button" class="parvada-periodo" data-dias="1" style="padding:8px 12px; border:2px solid #d97706; background:white; color:#78350f; border-radius:8px; font-weight:600; cursor:pointer; font-size:0.85rem;">1 día</button>
+                      <button type="button" class="parvada-periodo active" data-dias="7" style="padding:8px 12px; border:2px solid #d97706; background:#d97706; color:white; border-radius:8px; font-weight:600; cursor:pointer; font-size:0.85rem;">1 semana</button>
+                      <button type="button" class="parvada-periodo" data-dias="30" style="padding:8px 12px; border:2px solid #d97706; background:white; color:#78350f; border-radius:8px; font-weight:600; cursor:pointer; font-size:0.85rem;">1 mes</button>
+                      <button type="button" class="parvada-periodo" data-dias="365" style="padding:8px 12px; border:2px solid #d97706; background:white; color:#78350f; border-radius:8px; font-weight:600; cursor:pointer; font-size:0.85rem;">1 año</button>
+                    </div>
+                  </div>
+
+                  <div id="parvadaResultado" style="display:none; background:white; padding:14px; border-radius:8px; border:1px solid #fde68a;">
+                    <div style="font-size:0.78rem; font-weight:700; color:#78350f; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">📊 Cálculo según manual oficial</div>
+                    <div id="parvadaCalculo" style="font-size:0.92rem; line-height:1.6; color:#1e293b;"></div>
+                    <button type="button" id="parvadaAplicar" style="margin-top:10px; width:100%; padding:10px; background:linear-gradient(135deg,#16a34a 0%,#15803d 100%); color:white; border:0; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.95rem;">
+                      ✓ Usar este volumen automáticamente
+                    </button>
+                  </div>
+
+                  <div style="font-size:0.72rem; color:#78350f; margin-top:8px; opacity:0.85;" id="parvadaFuente"></div>
+                </div>
+              </div>
+
               <div class="setup-step">
-                <div class="step-label"><span class="step-num" id="stepNumVolumen">5</span> Volumen del lote</div>
+                <div class="step-label"><span class="step-num" id="stepNumVolumen">6</span> Volumen del lote</div>
                 <div class="volumen-wrapper">
                   <div class="volumen-input-group">
                     <input type="number" class="form-input volumen-input" id="volumen" value="1000" min="1">
@@ -2279,6 +2320,12 @@
                     <div class="result-summary-label" id="resCostLoteLabel">Costo del lote</div>
                     <div class="result-summary-value" id="resCostLote">$0</div>
                     <div class="result-summary-sub" id="resCost">— por tonelada</div>
+                  </div>
+
+                  <!-- PROYECCIÓN PARVADA (visible solo si hay datos parvada) -->
+                  <div id="resParvada" style="display:none; background:linear-gradient(135deg,#fef3c7 0%,#fed7aa 100%); padding:16px; border-radius:12px; border:2px solid #f59e0b; margin:12px 0;">
+                    <div style="font-size:0.78rem; font-weight:800; color:#78350f; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">📊 Proyección económica para tu parvada</div>
+                    <div id="resParvadaContenido" style="font-size:0.92rem; line-height:1.6; color:#1e293b;"></div>
                   </div>
 
                   <!-- TABS NAVEGACIÓN -->
@@ -2492,11 +2539,12 @@
     </div>
   </div>
 
-  <script src="assets/firebase-config.js?v=12"></script>
-  <script src="assets/avicola-data.js?v=12"></script>
-  <script src="assets/nucleos-data.js?v=12"></script>
-  <script src="assets/solver-v2.js?v=12"></script>
-  <script src="assets/species-system.js?v=12"></script>
+  <script src="assets/firebase-config.js?v=13"></script>
+  <script src="assets/avicola-data.js?v=13"></script>
+  <script src="assets/nucleos-data.js?v=13"></script>
+  <script src="assets/consumo-data.js?v=13"></script>
+  <script src="assets/solver-v2.js?v=13"></script>
+  <script src="assets/species-system.js?v=13"></script>
   <script type="module">
     import "./assets/shared.js?v=12";
     await window.fmAuthGuard({ requireAuth: true });
@@ -2645,6 +2693,8 @@
         renderRequerimientos();
         renderTips();
         actualizarValidaciones();
+        if (typeof actualizarLabelEdad === "function") actualizarLabelEdad();
+        if (typeof calcularParvadaUI === "function") calcularParvadaUI();
       };
 
       renderRazaInfo();
@@ -3748,6 +3798,72 @@
       // Costo/ton SMALL
       document.getElementById("resCost").textContent = `${window.fmCurrency(result.costoTon).replace(".00","")} por tonelada`;
 
+      // PROYECCIÓN PARVADA (si la calculadora está activa)
+      const resParvada = document.getElementById("resParvada");
+      const resParvadaCont = document.getElementById("resParvadaContenido");
+      if (parvadaActiva && parvadaUltimoCalculo && resParvada && resParvadaCont) {
+        const calc = parvadaUltimoCalculo;
+        const cantidad = calc.cantidadAves;
+        const consumoKgDia = calc.consumoDiarioKg;
+        const costoKg = result.costoTon / 1000;
+        const costoDia = consumoKgDia * costoKg;
+        const costoMes = costoDia * 30;
+        const costoAno = costoDia * 365;
+        const costoSemana = costoDia * 7;
+
+        let html = '';
+        html += '<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:10px;">';
+        html += '<div style="background:white; padding:10px; border-radius:8px;">';
+        html += '<div style="font-size:0.72rem; color:#78350f; font-weight:700; text-transform:uppercase;">PARVADA</div>';
+        html += '<div style="font-size:1.05rem; font-weight:700; color:#1e293b;">' + cantidad.toLocaleString("es-MX") + ' ' + (calc.tipo === "pavo" ? "pavos" : calc.tipo === "engorda" ? "pollos" : "aves") + '</div>';
+        html += '<div style="font-size:0.78rem; color:#64748b;">' + calc.raza + ' · ' + calc.edad + ' ' + calc.edadUnidad + '</div>';
+        html += '</div>';
+        html += '<div style="background:white; padding:10px; border-radius:8px;">';
+        html += '<div style="font-size:0.72rem; color:#78350f; font-weight:700; text-transform:uppercase;">CONSUMO</div>';
+        html += '<div style="font-size:1.05rem; font-weight:700; color:#1e293b;">' + consumoKgDia.toFixed(1) + ' kg/día</div>';
+        html += '<div style="font-size:0.78rem; color:#64748b;">' + calc.consumoDiarioPorAveG.toFixed(0) + ' g/ave/día oficial</div>';
+        html += '</div>';
+        html += '</div>';
+
+        html += '<div style="background:linear-gradient(135deg,#15803d 0%,#16a34a 100%); color:white; padding:12px; border-radius:8px;">';
+        html += '<div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; opacity:0.9;">💵 COSTO PROYECTADO DEL ALIMENTO</div>';
+        html += '<div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:6px;">';
+        html += '<div><div style="font-size:0.7rem; opacity:0.85;">Por día</div><div style="font-size:1.05rem; font-weight:700;">$' + costoDia.toLocaleString("es-MX",{maximumFractionDigits:0}) + '</div></div>';
+        html += '<div><div style="font-size:0.7rem; opacity:0.85;">Por semana</div><div style="font-size:1.05rem; font-weight:700;">$' + costoSemana.toLocaleString("es-MX",{maximumFractionDigits:0}) + '</div></div>';
+        html += '<div><div style="font-size:0.7rem; opacity:0.85;">Por mes</div><div style="font-size:1.15rem; font-weight:800;">$' + costoMes.toLocaleString("es-MX",{maximumFractionDigits:0}) + '</div></div>';
+        html += '<div><div style="font-size:0.7rem; opacity:0.85;">Por año</div><div style="font-size:1.05rem; font-weight:700;">$' + costoAno.toLocaleString("es-MX",{maximumFractionDigits:0}) + '</div></div>';
+        html += '</div>';
+        html += '</div>';
+
+        // Producción y rentabilidad
+        if (calc.huevosDiarios != null && calc.huevosDiarios > 0) {
+          const costoPorHuevo = (consumoKgDia * costoKg) / calc.huevosDiarios;
+          html += '<div style="background:#fef3c7; padding:10px; border-radius:8px; margin-top:8px; font-size:0.88rem;">';
+          html += '<div style="font-weight:700; color:#78350f; margin-bottom:4px;">🥚 PRODUCCIÓN Y RENTABILIDAD</div>';
+          html += '<div>• Huevos esperados: <strong>' + calc.huevosDiarios.toFixed(0) + '/día · ' + calc.huevosMes.toLocaleString("es-MX",{maximumFractionDigits:0}) + '/mes</strong></div>';
+          html += '<div>• Costo del alimento por huevo: <strong>$' + costoPorHuevo.toFixed(2) + ' MXN</strong></div>';
+          // Estimación con precio venta promedio
+          const precioVenta = 3.0;
+          const ingresoMes = calc.huevosMes * precioVenta;
+          const margen = ingresoMes - costoMes;
+          html += '<div style="margin-top:4px; padding-top:4px; border-top:1px dashed #f59e0b;">';
+          html += 'Si vendes a <strong>$' + precioVenta.toFixed(2) + '/huevo</strong>: Ingreso mes <strong>$' + ingresoMes.toLocaleString("es-MX",{maximumFractionDigits:0}) + '</strong> · Margen alimento <strong>$' + margen.toLocaleString("es-MX",{maximumFractionDigits:0}) + '</strong></div>';
+          html += '</div>';
+        } else if (calc.tipo === "engorda" && calc.fcr) {
+          const costoPorKgCarne = costoKg * calc.fcr;
+          html += '<div style="background:#fef3c7; padding:10px; border-radius:8px; margin-top:8px; font-size:0.88rem;">';
+          html += '<div style="font-weight:700; color:#78350f; margin-bottom:4px;">🍗 RENTABILIDAD</div>';
+          html += '<div>• FCR oficial: <strong>' + calc.fcr.toFixed(2) + '</strong> kg alimento/kg carne</div>';
+          html += '<div>• Costo alimento por kg de pollo en pie: <strong>$' + costoPorKgCarne.toFixed(2) + ' MXN</strong></div>';
+          html += '</div>';
+        }
+
+        resParvadaCont.innerHTML = html;
+        resParvada.style.display = "block";
+      } else if (resParvada) {
+        resParvada.style.display = "none";
+      }
+
       document.getElementById("resFormula").innerHTML = result.formula.map(f => `
         <div class="result-row">
           <span style="color:var(--neutral-700);">
@@ -4455,6 +4571,286 @@
       }
 
       // ============================================
+      // PÁGINA NUEVA: PLAN DE ALIMENTACIÓN DE LA PARVADA
+      // (solo si está activa la calculadora de parvada)
+      // ============================================
+      if (parvadaActiva && parvadaUltimoCalculo && window.FM_CONSUMO) {
+        doc.addPage();
+        let yp = M;
+
+        // Banda superior verde olivo
+        doc.setFillColor.apply(doc, PRIMARY);
+        doc.rect(0, 0, W, 18, "F");
+        doc.setFillColor.apply(doc, ACCENT);
+        doc.rect(0, 18, W, 1.4, "F");
+
+        // Título
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(15);
+        doc.setFont("helvetica", "bold");
+        doc.text("PLAN DE ALIMENTACIÓN DE TU PARVADA", W / 2, 11, { align: "center" });
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "normal");
+        doc.text("Proyección con datos oficiales del manual de la línea genética", W / 2, 16, { align: "center" });
+
+        yp = 26;
+        doc.setTextColor.apply(doc, TEXT);
+
+        const calc = parvadaUltimoCalculo;
+        const datosRaza = window.FM_CONSUMO.getRaza(state.razaId);
+        const costoKg = costoTon ? costoTon / 1000 : 0;
+
+        // Tabla de datos parvada
+        doc.setFillColor(245, 248, 240);
+        doc.setDrawColor.apply(doc, BORDER);
+        doc.roundedRect(M, yp, W - 2 * M, 44, 2, 2, "FD");
+
+        doc.setFontSize(9);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor.apply(doc, PRIMARY);
+        doc.text("DATOS DE TU PARVADA (según manual oficial)", M + 4, yp + 6);
+
+        doc.setTextColor.apply(doc, TEXT);
+        doc.setFontSize(8);
+        const colW = (W - 2 * M) / 4;
+        const datosTabla = [
+          ["Cantidad", calc.cantidadAves.toLocaleString("es-MX") + " aves"],
+          ["Línea genética", calc.raza],
+          ["Edad actual", calc.edad + " " + calc.edadUnidad],
+          ["Etapa", calc.etapa || (calc.tipo === "engorda" ? "ciclo engorda" : "ciclo")]
+        ];
+        datosTabla.forEach(([label, val], idx) => {
+          const x = M + 4 + idx * colW;
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(7);
+          doc.setTextColor.apply(doc, MUTED);
+          doc.text(label.toUpperCase(), x, yp + 12);
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(9);
+          doc.setTextColor.apply(doc, TEXT);
+          doc.text(String(val), x, yp + 18);
+        });
+
+        // Datos zootécnicos (segunda fila)
+        const consumoOficial = calc.consumoDiarioPorAveG.toFixed(1) + " g/día";
+        const pesoEsperado = calc.pesoEsperadoG ? (calc.pesoEsperadoG >= 1000 ? (calc.pesoEsperadoG / 1000).toFixed(2) + " kg" : calc.pesoEsperadoG.toFixed(0) + " g") : "—";
+        const fcrEsp = calc.fcr ? calc.fcr.toFixed(2) : "—";
+        const datosZoot = [
+          ["Consumo oficial", consumoOficial],
+          ["Peso esperado", pesoEsperado],
+          ["FCR esperado", fcrEsp !== "—" ? fcrEsp + " kg/kg" : "—"],
+          ["Producción", calc.produccionPct ? calc.produccionPct.toFixed(0) + "% postura" : (calc.tipo === "engorda" ? "engorda" : "—")]
+        ];
+        datosZoot.forEach(([label, val], idx) => {
+          const x = M + 4 + idx * colW;
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(7);
+          doc.setTextColor.apply(doc, MUTED);
+          doc.text(label.toUpperCase(), x, yp + 28);
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(9);
+          doc.setTextColor.apply(doc, TEXT);
+          doc.text(String(val), x, yp + 34);
+        });
+
+        yp += 50;
+
+        // ============= COSTO PROYECTADO =============
+        if (costoKg > 0) {
+          const costoDia = calc.consumoDiarioKg * costoKg;
+          const costoSem = costoDia * 7;
+          const costoMes = costoDia * 30;
+          const costoAno = costoDia * 365;
+
+          doc.setFillColor(20, 100, 70);
+          doc.roundedRect(M, yp, W - 2 * M, 26, 2, 2, "F");
+
+          doc.setTextColor(255, 255, 255);
+          doc.setFontSize(9);
+          doc.setFont("helvetica", "bold");
+          doc.text("COSTO PROYECTADO DEL ALIMENTO", M + 4, yp + 6);
+
+          const costos = [
+            ["POR DÍA",     "$" + costoDia.toLocaleString("es-MX", { maximumFractionDigits: 0 })],
+            ["POR SEMANA",  "$" + costoSem.toLocaleString("es-MX", { maximumFractionDigits: 0 })],
+            ["POR MES",     "$" + costoMes.toLocaleString("es-MX", { maximumFractionDigits: 0 })],
+            ["POR AÑO",     "$" + costoAno.toLocaleString("es-MX", { maximumFractionDigits: 0 })]
+          ];
+          costos.forEach(([lbl, val], idx) => {
+            const x = M + 4 + idx * colW;
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(7);
+            doc.setTextColor(220, 230, 220);
+            doc.text(lbl, x, yp + 14);
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(idx === 2 ? 12 : 10); // Mes destacado
+            doc.setTextColor(255, 255, 255);
+            doc.text(val, x, yp + 22);
+          });
+
+          yp += 32;
+        }
+
+        // ============= PRODUCCIÓN Y RENTABILIDAD =============
+        if (calc.huevosDiarios && calc.huevosDiarios > 0) {
+          const costoMes2 = calc.consumoDiarioKg * costoKg * 30;
+          const costoPorHuevo = (calc.consumoDiarioKg * costoKg) / calc.huevosDiarios;
+          const ingresoMes3 = calc.huevosMes * 3.0;
+          const margen3 = ingresoMes3 - costoMes2;
+
+          doc.setFillColor(254, 243, 199);
+          doc.roundedRect(M, yp, W - 2 * M, 32, 2, 2, "F");
+
+          doc.setTextColor(120, 53, 15);
+          doc.setFontSize(9);
+          doc.setFont("helvetica", "bold");
+          doc.text("PRODUCCIÓN Y RENTABILIDAD", M + 4, yp + 6);
+
+          doc.setFontSize(8);
+          doc.setFont("helvetica", "normal");
+          doc.setTextColor.apply(doc, TEXT);
+          doc.text("• Huevos esperados: " + calc.huevosDiarios.toFixed(0) + "/día — " + calc.huevosMes.toLocaleString("es-MX", { maximumFractionDigits: 0 }) + "/mes — " + (calc.huevosDiarios * 365).toLocaleString("es-MX", { maximumFractionDigits: 0 }) + "/año", M + 6, yp + 13);
+          if (calc.eggWeightG) {
+            doc.text("• Peso huevo esperado: " + calc.eggWeightG.toFixed(1) + " g por huevo", M + 6, yp + 18);
+          }
+          doc.text("• Costo del alimento por huevo: $" + costoPorHuevo.toFixed(2) + " MXN", M + 6, yp + 23);
+
+          doc.setFont("helvetica", "bold");
+          doc.text("Si vendes a $3.00/huevo: Ingreso mensual $" + ingresoMes3.toLocaleString("es-MX", { maximumFractionDigits: 0 }) + " — Margen del alimento $" + margen3.toLocaleString("es-MX", { maximumFractionDigits: 0 }), M + 6, yp + 28);
+          yp += 38;
+        } else if (calc.tipo === "engorda" && calc.fcr && costoKg > 0) {
+          const costoPorKg = costoKg * calc.fcr;
+          doc.setFillColor(254, 243, 199);
+          doc.roundedRect(M, yp, W - 2 * M, 22, 2, 2, "F");
+          doc.setTextColor(120, 53, 15);
+          doc.setFontSize(9);
+          doc.setFont("helvetica", "bold");
+          doc.text("RENTABILIDAD ENGORDA", M + 4, yp + 6);
+          doc.setFontSize(8);
+          doc.setFont("helvetica", "normal");
+          doc.setTextColor.apply(doc, TEXT);
+          doc.text("• FCR oficial: " + calc.fcr.toFixed(2) + " kg alimento por kg de carne", M + 6, yp + 13);
+          doc.text("• Costo del alimento por kg de pollo en pie: $" + costoPorKg.toFixed(2) + " MXN", M + 6, yp + 18);
+          yp += 28;
+        }
+
+        // ============= PLAN COMPLETO DEL CICLO =============
+        const plan = window.FM_CONSUMO.planAlimentacionCompleto(state.razaId, calc.cantidadAves);
+        if (plan) {
+          if (yp > H - 90) { doc.addPage(); yp = M; }
+
+          doc.setFillColor(245, 248, 240);
+          doc.setDrawColor.apply(doc, BORDER);
+          doc.roundedRect(M, yp, W - 2 * M, 7, 2, 2, "FD");
+          doc.setFontSize(9);
+          doc.setFont("helvetica", "bold");
+          doc.setTextColor.apply(doc, PRIMARY);
+          doc.text("PLAN COMPLETO DEL CICLO (" + (plan.cicloDias || plan.cicloSemanas + " semanas") + ")", M + 4, yp + 5);
+          yp += 11;
+
+          // Tabla con fases
+          const cols = [
+            { label: "Fase", w: 60 },
+            { label: "Duración", w: 25 },
+            { label: "kg/ave", w: 22 },
+            { label: "Total kg", w: 30 },
+            { label: "Costo", w: 35 }
+          ];
+          const tableX = M;
+          let cx = tableX;
+
+          // Header
+          doc.setFillColor(20, 50, 30);
+          doc.rect(tableX, yp, W - 2 * M, 7, "F");
+          doc.setFontSize(7.5);
+          doc.setFont("helvetica", "bold");
+          doc.setTextColor(255, 255, 255);
+          cols.forEach(c => {
+            doc.text(c.label, cx + 2, yp + 5);
+            cx += c.w;
+          });
+          yp += 7;
+
+          // Filas
+          doc.setFontSize(8);
+          doc.setFont("helvetica", "normal");
+          doc.setTextColor.apply(doc, TEXT);
+          let totalKgPlan = 0, totalCostoPlan = 0;
+          plan.fases.forEach((f, idx) => {
+            cx = tableX;
+            const rowH = 6;
+            if (idx % 2 === 0) {
+              doc.setFillColor(248, 250, 244);
+              doc.rect(tableX, yp - 1, W - 2 * M, rowH + 1, "F");
+            }
+            const dur = f.dias ? f.dias + " días" : f.semanas + " sem";
+            const costoFase = f.totalKg * costoKg;
+            totalKgPlan += f.totalKg;
+            totalCostoPlan += costoFase;
+            const valores = [
+              f.nombre,
+              dur,
+              f.kgPorAve.toFixed(2),
+              f.totalKg.toFixed(0).toLocaleString(),
+              "$" + costoFase.toLocaleString("es-MX", { maximumFractionDigits: 0 })
+            ];
+            valores.forEach((v, i) => {
+              doc.text(String(v), cx + 2, yp + 4);
+              cx += cols[i].w;
+            });
+            yp += rowH;
+          });
+
+          // Total
+          doc.setFillColor.apply(doc, ACCENT);
+          doc.rect(tableX, yp, W - 2 * M, 8, "F");
+          doc.setFontSize(9);
+          doc.setFont("helvetica", "bold");
+          doc.setTextColor(255, 255, 255);
+          cx = tableX;
+          const totales = ["TOTAL CICLO", "", "", plan.consumoTotalKg.toFixed(0).toLocaleString(), "$" + totalCostoPlan.toLocaleString("es-MX", { maximumFractionDigits: 0 })];
+          totales.forEach((v, i) => {
+            doc.text(String(v), cx + 2, yp + 5.5);
+            cx += cols[i].w;
+          });
+          yp += 12;
+
+          // Resumen final
+          doc.setFontSize(8);
+          doc.setFont("helvetica", "normal");
+          doc.setTextColor.apply(doc, TEXT);
+          if (plan.tipo === "engorda") {
+            doc.text("• Peso al mercado: " + plan.pesoFinalKgPorAve + " kg/ave (" + (plan.pesoFinalKgTotal).toFixed(0).toLocaleString() + " kg total)", M + 4, yp + 4);
+            doc.text("• FCR oficial del ciclo: " + plan.fcr + " kg alimento/kg carne", M + 4, yp + 9);
+            doc.text("• Mortalidad esperada: " + ((1 - plan.livability) * 100).toFixed(1) + "%", M + 4, yp + 14);
+            yp += 18;
+          } else if (plan.tipo === "pavo") {
+            doc.text("• Peso al mercado: " + plan.pesoFinalKgPorAveMacho + " kg machos · " + plan.pesoFinalKgPorAveHembra + " kg hembras", M + 4, yp + 4);
+            doc.text("• FCR oficial del ciclo (machos): " + plan.fcrMacho, M + 4, yp + 9);
+            yp += 14;
+          } else {
+            doc.text("• Huevos esperados por ave (100 sem): " + plan.huevosPorAve, M + 4, yp + 4);
+            doc.text("• Total huevos parvada: " + plan.huevosTotalesParvada.toLocaleString("es-MX") + " huevos", M + 4, yp + 9);
+            doc.text("• FCR oficial 100 sem: " + plan.fcr.toFixed(2) + " kg alimento/kg huevo", M + 4, yp + 14);
+            doc.text("• Mortalidad esperada: " + ((1 - plan.livability) * 100).toFixed(1) + "%", M + 4, yp + 19);
+            yp += 24;
+          }
+        }
+
+        // Fuente
+        if (yp < H - 25) {
+          doc.setFontSize(7);
+          doc.setFont("helvetica", "italic");
+          doc.setTextColor.apply(doc, MUTED);
+          doc.text("Fuente: " + (calc.fuente || datosRaza.fuente), M, yp + 3, { maxWidth: W - 2 * M });
+
+          doc.setFontSize(7);
+          doc.setFont("helvetica", "italic");
+          doc.text("Proyección basada en condiciones óptimas según manual oficial de la línea genética. El consumo y producción real pueden variar ±10% por temperatura, calidad de alimento, salud y manejo. Para resultados óptimos, validar con análisis bromatológico y ajustar a las condiciones locales.", M, yp + 8, { maxWidth: W - 2 * M });
+        }
+      }
+
+      // ============================================
       // FOOTER en cada página
       // ============================================
       const totalPages = doc.internal.getNumberOfPages();
@@ -4581,6 +4977,172 @@
     // ============================================
     // INIT
     // ============================================
+
+    // ============================================
+    // CALCULADORA DE PARVADA — datos oficiales por raza
+    // ============================================
+    let parvadaActiva = false;
+    let parvadaPeriodoDias = 7;
+    let parvadaUltimoCalculo = null;
+
+    function actualizarLabelEdad() {
+      const raza = state.razaId;
+      const datosRaza = window.FM_CONSUMO ? window.FM_CONSUMO.getRaza(raza) : null;
+      const label = document.getElementById("parvadaEdadLabel");
+      const input = document.getElementById("parvadaEdad");
+      if (!label || !input) return;
+      if (datosRaza && datosRaza.tipo === "engorda") {
+        label.textContent = "Edad (días, ej: 21)";
+        input.placeholder = "21";
+      } else if (datosRaza && datosRaza.tipo === "pavo") {
+        label.textContent = "Edad (semanas, ej: 12)";
+        input.placeholder = "12";
+      } else {
+        label.textContent = "Edad (semanas, ej: 30)";
+        input.placeholder = "30";
+      }
+    }
+
+    function toggleParvada() {
+      parvadaActiva = !parvadaActiva;
+      const panel = document.getElementById("parvadaPanel");
+      const btn = document.getElementById("btnToggleParvada");
+      if (parvadaActiva) {
+        panel.style.display = "block";
+        btn.textContent = "Desactivar";
+        btn.style.background = "#64748b";
+        actualizarLabelEdad();
+      } else {
+        panel.style.display = "none";
+        btn.textContent = "Activar calculadora";
+        btn.style.background = "#f59e0b";
+        document.getElementById("parvadaResultado").style.display = "none";
+      }
+    }
+
+    function calcularParvadaUI() {
+      if (!parvadaActiva || !window.FM_CONSUMO) return;
+
+      const cantidad = parseInt(document.getElementById("parvadaCantidad").value) || 0;
+      const edad = parseFloat(document.getElementById("parvadaEdad").value) || 0;
+      const dias = parvadaPeriodoDias;
+
+      if (cantidad < 1 || edad <= 0) {
+        document.getElementById("parvadaResultado").style.display = "none";
+        document.getElementById("parvadaFuente").textContent = "";
+        return;
+      }
+
+      const datosRaza = window.FM_CONSUMO.getRaza(state.razaId);
+      if (!datosRaza) {
+        document.getElementById("parvadaCalculo").innerHTML = "<em style='color:#dc2626;'>No hay datos oficiales para esta raza</em>";
+        document.getElementById("parvadaResultado").style.display = "block";
+        return;
+      }
+
+      const edadUnidad = datosRaza.tipo === "engorda" ? "dias" : "semanas";
+      const calc = window.FM_CONSUMO.calcularParvada(state.razaId, cantidad, edad, dias, edadUnidad);
+      if (!calc) return;
+
+      parvadaUltimoCalculo = calc;
+
+      // Construir HTML del cálculo
+      let html = "";
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">';
+      html += '<div><strong>' + calc.raza + '</strong><br><span style="font-size:0.82rem;color:#64748b;">' + (calc.etapa || (datosRaza.tipo + " ciclo")) + '</span></div>';
+      html += '<div style="text-align:right;"><strong>' + cantidad.toLocaleString("es-MX") + ' aves</strong><br><span style="font-size:0.82rem;color:#64748b;">edad: ' + calc.edad + ' ' + calc.edadUnidad + '</span></div>';
+      html += '</div>';
+
+      html += '<div style="border-top:1px dashed #fbbf24;padding-top:8px;margin-top:8px;">';
+      html += '<div style="margin-bottom:4px;"><strong>Consumo oficial:</strong> ' + calc.consumoDiarioPorAveG.toFixed(1) + ' g/ave/día</div>';
+
+      if (calc.pesoEsperadoG != null) {
+        const pesoFmt = calc.pesoEsperadoG >= 1000 ? (calc.pesoEsperadoG/1000).toFixed(2) + ' kg' : calc.pesoEsperadoG.toFixed(0) + ' g';
+        html += '<div style="margin-bottom:4px;"><strong>Peso esperado:</strong> ' + pesoFmt + ' por ave</div>';
+      }
+      if (calc.fcr) {
+        html += '<div style="margin-bottom:4px;"><strong>FCR esperado:</strong> ' + calc.fcr.toFixed(2) + ' kg alimento/kg ' + ((datosRaza.tipo === "engorda" || datosRaza.tipo === "pavo") ? "carne" : "huevo") + '</div>';
+      }
+      html += '</div>';
+
+      // Volumen a formular
+      const periodoTexto = dias === 1 ? "1 día" : dias === 7 ? "1 semana" : dias === 30 ? "1 mes" : dias === 365 ? "1 año" : (dias + " días");
+      html += '<div style="background:linear-gradient(135deg,#15803d 0%,#16a34a 100%);color:white;padding:12px;border-radius:8px;margin-top:10px;text-align:center;">';
+      html += '<div style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.05em;font-weight:700;opacity:0.92;">VOLUMEN SUGERIDO PARA ' + periodoTexto.toUpperCase() + '</div>';
+      html += '<div style="font-size:1.6rem;font-weight:800;margin-top:4px;">' + calc.kgTotal.toFixed(0) + ' kg';
+      if (calc.kgTotal >= 1000) {
+        html += ' <span style="font-size:0.95rem;opacity:0.85;">(' + (calc.kgTotal/1000).toFixed(2) + ' ton)</span>';
+      }
+      html += '</div></div>';
+
+      // Producción esperada
+      if (calc.produccionPct != null && calc.produccionPct > 0) {
+        html += '<div style="background:#fef3c7;padding:10px;border-radius:8px;margin-top:8px;font-size:0.88rem;">';
+        html += '<strong>🥚 Producción esperada (' + calc.produccionPct.toFixed(0) + '% postura):</strong><br>';
+        html += '• ' + calc.huevosDiarios.toFixed(0) + ' huevos/día<br>';
+        html += '• ' + calc.huevosSemana.toFixed(0).toLocaleString() + ' huevos/semana<br>';
+        html += '• ' + calc.huevosMes.toFixed(0).toLocaleString() + ' huevos/mes';
+        if (calc.eggWeightG) {
+          html += '<br>• Peso huevo: ' + calc.eggWeightG.toFixed(1) + ' g';
+        }
+        html += '</div>';
+      }
+
+      document.getElementById("parvadaCalculo").innerHTML = html;
+      document.getElementById("parvadaResultado").style.display = "block";
+
+      // Mostrar fuente
+      document.getElementById("parvadaFuente").textContent = "Fuente: " + (calc.fuente || datosRaza.fuente);
+    }
+
+    function aplicarVolumenParvada() {
+      if (!parvadaUltimoCalculo) return;
+      const kg = parvadaUltimoCalculo.kgTotal;
+      const inputVol = document.getElementById("volumen");
+      // Si >= 1000 kg, usar ton; si menos, usar kg
+      if (kg >= 1000) {
+        inputVol.value = (kg / 1000).toFixed(2);
+        document.getElementById("unidad").value = "ton";
+        document.querySelectorAll(".unidad-btn").forEach(b => {
+          b.classList.toggle("active", b.dataset.unidad === "ton");
+        });
+      } else {
+        inputVol.value = Math.round(kg);
+        document.getElementById("unidad").value = "kg";
+        document.querySelectorAll(".unidad-btn").forEach(b => {
+          b.classList.toggle("active", b.dataset.unidad === "kg");
+        });
+      }
+      actualizarVolumenPreview();
+      window.fmToast("Volumen actualizado: " + Math.round(kg).toLocaleString() + " kg para tu parvada de " + parvadaUltimoCalculo.cantidadAves + " aves", "success");
+    }
+
+    // Registro directo (no en DOMContentLoaded porque el módulo ya cargó después)
+    (function() {
+      const btnToggle = document.getElementById("btnToggleParvada");
+      if (btnToggle) btnToggle.addEventListener("click", toggleParvada);
+
+      ["parvadaCantidad", "parvadaEdad"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("input", calcularParvadaUI);
+      });
+
+      document.querySelectorAll(".parvada-periodo").forEach(btn => {
+        btn.addEventListener("click", () => {
+          parvadaPeriodoDias = parseInt(btn.dataset.dias);
+          document.querySelectorAll(".parvada-periodo").forEach(b => {
+            const isActive = b === btn;
+            b.classList.toggle("active", isActive);
+            b.style.background = isActive ? "#d97706" : "white";
+            b.style.color = isActive ? "white" : "#78350f";
+          });
+          calcularParvadaUI();
+        });
+      });
+
+      const btnAplicar = document.getElementById("parvadaAplicar");
+      if (btnAplicar) btnAplicar.addEventListener("click", aplicarVolumenParvada);
+    })();
 
     // Toggle kg/ton + preview dinámico
     function actualizarVolumenPreview() {
