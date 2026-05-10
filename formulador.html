@@ -1321,6 +1321,115 @@
       color: var(--danger);
     }
 
+    /* ============================================
+       NIVEL 1: Card de Aportes del Núcleo
+       ============================================ */
+    .aportes-nucleo-box {
+      background: linear-gradient(135deg, #DCE9C8 0%, #F4F6F0 100%);
+      border: 1.5px solid var(--success);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4) var(--space-5);
+      margin: var(--space-4) 0;
+    }
+
+    .aportes-nucleo-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .aportes-nucleo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--success);
+      color: white;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .aportes-nucleo-header strong {
+      display: block;
+      font-size: 0.9375rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin-bottom: 2px;
+    }
+
+    .aportes-nucleo-header p {
+      font-size: 0.8125rem;
+      color: var(--primary);
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    .aportes-nucleo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .aporte-item {
+      background: white;
+      border-radius: 10px;
+      padding: 10px 12px;
+      border: 1px solid rgba(79, 124, 42, 0.2);
+    }
+
+    .aporte-label {
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--neutral-500);
+      margin-bottom: 4px;
+    }
+
+    .aporte-valor {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 8px;
+    }
+
+    .aporte-valor strong {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--success);
+      font-family: var(--font-mono, monospace);
+    }
+
+    .aporte-valor small {
+      font-size: 0.6875rem;
+      color: var(--neutral-500);
+    }
+
+    .aporte-barra {
+      width: 100%;
+      height: 4px;
+      background: var(--neutral-100);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .aporte-barra-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--success) 0%, var(--accent) 100%);
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+
+    .aportes-nucleo-footer {
+      padding-top: 8px;
+      border-top: 1px solid rgba(79, 124, 42, 0.2);
+      font-size: 0.75rem;
+      color: var(--primary);
+      line-height: 1.4;
+    }
+
     /* Botón Usar valores típicos NRC */
     .btn-typical-nrc {
       display: inline-flex;
@@ -1991,6 +2100,9 @@
                     <div class="section-title">📦 Fórmula resultante</div>
                     <div id="resFormula"></div>
 
+                    <!-- Aportes del núcleo (solo si hay núcleo activo) -->
+                    <div id="aportesNucleoCard" style="display:none;"></div>
+
                     <div class="section-title" style="margin-top:var(--space-5);">🧬 Perfil nutricional vs requerimientos</div>
                     <div id="resPerfil"></div>
                   </div>
@@ -2595,8 +2707,60 @@
     }
 
     // ============================================
-    // OPTIMIZADOR (mock pragmático que respeta restricciones)
+    // OPTIMIZADOR Nivel 1 — Greedy mejorado que RESPETA APORTES DE NÚCLEOS
     // ============================================
+    // Lógica:
+    // 1. Detecta núcleos activos en la fórmula
+    // 2. Calcula aportes nutricionales del núcleo (Ca, P, Lys, Met, etc)
+    // 3. Resta esos aportes de los requerimientos NRC originales
+    // 4. Optimiza el resto de ingredientes contra los requerimientos AJUSTADOS
+    // 5. Resultado: fórmula matemáticamente coherente con el núcleo
+    // ============================================
+
+    /**
+     * Calcula los aportes nutricionales totales de los núcleos activos en la fórmula.
+     * Devuelve un objeto con cuánto Ca, P, Lys, Met, etc aporta el núcleo al alimento final.
+     */
+    function calcularAportesNucleos(activos) {
+      const aportes = { em: 0, pc: 0, ca: 0, p: 0, lys: 0, met: 0, na: 0 };
+
+      activos.forEach(ing => {
+        if (!ing.isNucleo) return;
+        // El núcleo está al X% (su min === max === inclusion)
+        const inclusion = ing.min || ing.max || 0;
+        if (inclusion <= 0) return;
+
+        // Buscar el núcleo en el catálogo para obtener sus aportes reales
+        const nucleoData = (window.FM_NUCLEOS?.CATALOGO || []).find(n => "nucleo_" + n.id === ing.id);
+        if (!nucleoData || !nucleoData.aportes) return;
+
+        // Convertir aportes a base alimento final
+        // Ej: núcleo al 2.5% con 96% Ca → aporta 2.5% × 96% = 2.4% Ca al alimento
+        const f = inclusion / 100;
+        Object.keys(aportes).forEach(k => {
+          aportes[k] += (nucleoData.aportes[k] || 0) * f;
+        });
+      });
+
+      return aportes;
+    }
+
+    /**
+     * Ajusta los requerimientos NRC restando lo que ya aporta el núcleo.
+     * Si el núcleo aporta 2.4% Ca y el requerimiento es 4.0%, ajusta a 1.6%.
+     */
+    function ajustarRequerimientosPorNucleo(req, aportesNucleo) {
+      const ajustado = { ...req };
+      // Solo ajustar nutrientes que el núcleo aporta significativamente
+      if (aportesNucleo.ca > 0) ajustado.ca = Math.max(0, (req.ca || 0) - aportesNucleo.ca);
+      if (aportesNucleo.p > 0) ajustado.p = Math.max(0, (req.p || 0) - aportesNucleo.p);
+      if (aportesNucleo.lys > 0) ajustado.lys = Math.max(0, (req.lys || 0) - aportesNucleo.lys);
+      if (aportesNucleo.met > 0) ajustado.met = Math.max(0, (req.met || 0) - aportesNucleo.met);
+      if (aportesNucleo.pc > 0) ajustado.pc = Math.max(0, (req.pc || 0) - aportesNucleo.pc);
+      if (aportesNucleo.na > 0) ajustado.na = Math.max(0, (req.na || 0) - aportesNucleo.na);
+      return ajustado;
+    }
+
     function optimizar() {
       const activos = state.ingredientes.filter(i => i.active);
       if (activos.length < 4) {
@@ -2604,22 +2768,26 @@
         return null;
       }
 
-      const req = A.getRequerimientos(state.razaId, state.etapaId);
-      if (!req) return null;
+      const reqOriginal = A.getRequerimientos(state.razaId, state.etapaId);
+      if (!reqOriginal) return null;
 
-      // Algoritmo greedy aproximado (mientras integramos glpk.js real):
-      // 1. Empieza con maíz/sorgo (cereal base) ~55-65%
-      // 2. Pasta de soya para alcanzar PC objetivo
-      // 3. Aceite para alcanzar EM objetivo
-      // 4. Minerales para Ca y P
-      // 5. AA sintéticos para Lys y Met digestibles
-      // 6. Premezcla y aditivos al final
-      // 7. Resto se rellena con cereal hasta 100%
+      // ⚡ NIVEL 1: Respetar núcleos
+      const aportesNucleo = calcularAportesNucleos(activos);
+      const tieneNucleo = activos.some(i => i.isNucleo);
+      const req = tieneNucleo ? ajustarRequerimientosPorNucleo(reqOriginal, aportesNucleo) : reqOriginal;
+
+      // Guardar diagnóstico para mostrar al usuario
+      window._lastOptimization = {
+        tieneNucleo,
+        aportesNucleo,
+        reqOriginal,
+        reqAjustado: req
+      };
 
       const formula = [];
       let restante = 100;
 
-      // Ingredientes obligatorios (mín)
+      // Ingredientes obligatorios (mín) — incluye el núcleo si está activo
       activos.filter(i => i.min > 0).forEach(ing => {
         const pct = Math.min(ing.min, restante);
         formula.push({ id: ing.id, name: ing.name, pct, ing });
@@ -2783,6 +2951,67 @@
           <strong>${f.pct.toFixed(2)}%</strong>
         </div>
       `).join("");
+
+      // ⚡ Renderizar card de aportes del núcleo (Nivel 1)
+      const nucleoCard = document.getElementById("aportesNucleoCard");
+      if (window._lastOptimization && window._lastOptimization.tieneNucleo && nucleoCard) {
+        const apo = window._lastOptimization.aportesNucleo;
+        const reqOrig = window._lastOptimization.reqOriginal;
+        const reqAj = window._lastOptimization.reqAjustado;
+        const nucleoIng = result.formula.find(f => f.ing.isNucleo);
+        const nucleoNombre = nucleoIng ? nucleoIng.name : "Núcleo";
+        const inclusion = nucleoIng ? nucleoIng.pct : 2.5;
+
+        // Calcular % aportes vs requerimiento original (para mostrar al usuario qué tan importante es)
+        const filas = [
+          { label: "Calcio", aporta: apo.ca, req: reqOrig.ca, unit: "%" },
+          { label: "Fósforo", aporta: apo.p, req: reqOrig.p, unit: "%" },
+          { label: "Lisina", aporta: apo.lys, req: reqOrig.lys, unit: "%" },
+          { label: "Metionina", aporta: apo.met, req: reqOrig.met, unit: "%" },
+          { label: "Proteína", aporta: apo.pc, req: reqOrig.pc, unit: "%" }
+        ].filter(f => f.aporta > 0.01); // solo mostrar lo significativo
+
+        nucleoCard.style.display = "block";
+        nucleoCard.innerHTML = `
+          <div class="aportes-nucleo-box">
+            <div class="aportes-nucleo-header">
+              <div class="aportes-nucleo-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                  <line x1="12" y1="22.08" x2="12" y2="12"/>
+                </svg>
+              </div>
+              <div>
+                <strong>📊 Aporte del núcleo a la fórmula</strong>
+                <p>${nucleoNombre} al ${inclusion.toFixed(2)}% — el optimizador ya descontó estos nutrientes para evitar excesos</p>
+              </div>
+            </div>
+            <div class="aportes-nucleo-grid">
+              ${filas.map(f => {
+                const pctReq = f.req > 0 ? (f.aporta / f.req) * 100 : 0;
+                return `
+                  <div class="aporte-item">
+                    <div class="aporte-label">${f.label}</div>
+                    <div class="aporte-valor">
+                      <strong>+${f.aporta.toFixed(2)}${f.unit}</strong>
+                      <small>${pctReq.toFixed(0)}% del requerimiento</small>
+                    </div>
+                    <div class="aporte-barra">
+                      <div class="aporte-barra-fill" style="width:${Math.min(pctReq, 100)}%;"></div>
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+            <div class="aportes-nucleo-footer">
+              <small>💡 Sin esta deducción, la fórmula tendría exceso de calcio, fósforo y aminoácidos. El sistema optimiza descontando lo que el núcleo ya aporta.</small>
+            </div>
+          </div>
+        `;
+      } else if (nucleoCard) {
+        nucleoCard.style.display = "none";
+      }
 
       const req = result.requerido;
       const perfil = result.perfil;
@@ -3271,7 +3500,10 @@
         doc.text("Generado con FeedMix MX · feedmix.mx · contacto@feedmix.mx", M, H - 9);
         doc.text(`Página ${i} de ${totalPages}`, W - M, H - 9, { align: "right" });
         doc.setFontSize(6);
-        doc.text("Este documento es informativo. La aplicación final depende de las condiciones de cada granja.", M, H - 5);
+        const disclaimer = window._lastOptimization && window._lastOptimization.tieneNucleo
+          ? "Optimización aproximada (greedy, v1) — Recomendado validar con análisis bromatológico para producción comercial. La aplicación final depende de las condiciones de cada granja."
+          : "Optimización aproximada (greedy, v1) — La aplicación final depende de las condiciones de cada granja. Validar con análisis bromatológico cuando sea posible.";
+        doc.text(disclaimer, M, H - 5, { maxWidth: W - 2 * M });
       }
 
       // ============================================
