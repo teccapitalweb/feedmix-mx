@@ -478,6 +478,376 @@ window.FM_NUCLEOS = {
       },
       aditivos: ["Vitaminas básicas", "Minerales traza", "Carbonato"],
       requiere_extras: []
+    },
+
+    // ============ ENGORDA: NÚCLEOS ADICIONALES ============
+    {
+      id: "gen-25pct-engorda-crec",
+      nombre: "Núcleo Genérico 2.5% — Crecimiento engorda",
+      marca: "Genérico",
+      tipo: "engorda",
+      etapas: ["crecimiento"],
+      inclusion: 2.5,
+      precio: 36.00,
+      descripcion: "Núcleo balanceado para fase de crecimiento (15-28 días). Menos AAs que iniciador.",
+      aportes: {
+        em: 0, pc: 14.0, ca: 20.0, p: 10.5, lys: 5.5, met: 3.5, na: 4.5
+      },
+      aditivos: ["Vitaminas A,D,E,K,B-complex", "Minerales traza", "DL-Met", "L-Lys", "Coccidiostato"],
+      requiere_extras: []
+    },
+    {
+      id: "gen-25pct-engorda-fin",
+      nombre: "Núcleo Genérico 2.5% — Finalizador engorda",
+      marca: "Genérico",
+      tipo: "engorda",
+      etapas: ["finalizador"],
+      inclusion: 2.5,
+      precio: 34.00,
+      descripcion: "Finalizador (28-42 días). Sin coccidiostato (período de retiro). Menos proteína.",
+      aportes: {
+        em: 0, pc: 12.0, ca: 18.0, p: 9.0, lys: 4.5, met: 3.0, na: 4.5
+      },
+      aditivos: ["Vitaminas", "Minerales traza", "DL-Met", "L-Lys", "Pigmento amarillo"],
+      requiere_extras: []
+    },
+    {
+      id: "gen-5pct-engorda-ini",
+      nombre: "Núcleo Genérico 5% — Iniciador engorda",
+      marca: "Genérico",
+      tipo: "engorda",
+      etapas: ["preiniciador", "iniciador"],
+      inclusion: 5.0,
+      precio: 24.00,
+      descripcion: "Núcleo de mayor inclusión 5% — más Ca, P, AAs. Para granjeros con menos experiencia.",
+      aportes: {
+        em: 200, pc: 10.0, ca: 14.0, p: 7.0, lys: 4.0, met: 2.5, na: 3.5
+      },
+      aditivos: ["Vitaminas", "Minerales traza", "DL-Met", "L-Lys", "Carbonato fino", "Fosfato", "Coccidiostato"],
+      requiere_extras: []
+    },
+    {
+      id: "purina-broiler-1pct",
+      nombre: "Purina Broiler Premix 1%",
+      marca: "Purina",
+      tipo: "engorda",
+      etapas: ["preiniciador", "iniciador", "crecimiento", "finalizador"],
+      inclusion: 1.0,
+      precio: 78.00,
+      descripcion: "Premezcla concentrada Purina al 1% para granjas comerciales con sistema profesional.",
+      aportes: {
+        em: 0, pc: 0, ca: 0, p: 0, lys: 0, met: 0, na: 0
+      },
+      aditivos: ["Vitaminas premium", "Minerales orgánicos", "Antioxidantes", "Probióticos"],
+      requiere_extras: ["calcio", "fosforo", "metionina", "lisina", "treonina", "sal"]
+    },
+    {
+      id: "alpesa-engorda-3pct",
+      nombre: "ALPESA Engorda 3%",
+      marca: "ALPESA",
+      tipo: "engorda",
+      etapas: ["iniciador", "crecimiento", "finalizador"],
+      inclusion: 3.0,
+      precio: 30.00,
+      descripcion: "Núcleo nacional ALPESA al 3% para pollo de engorda. Buena relación calidad-precio.",
+      aportes: {
+        em: 0, pc: 13.0, ca: 18.0, p: 10.0, lys: 5.0, met: 3.2, na: 4.0
+      },
+      aditivos: ["Vitaminas", "Minerales traza", "DL-Met", "L-Lys", "Coccidiostato", "Carbonato"],
+      requiere_extras: []
+    },
+    {
+      id: "yara-broiler-prestarter",
+      nombre: "Yara Pre-Starter 4%",
+      marca: "Yara",
+      tipo: "engorda",
+      etapas: ["preiniciador"],
+      inclusion: 4.0,
+      precio: 32.00,
+      descripcion: "Núcleo de pre-iniciación Yara 4% — primeros 7 días. Alta proteína y digestibilidad.",
+      aportes: {
+        em: 100, pc: 14.0, ca: 16.0, p: 10.0, lys: 6.0, met: 4.0, na: 4.5
+      },
+      aditivos: ["Plasma porcino", "Vitaminas", "Minerales", "DL-Met", "L-Lys", "L-Treo", "Probióticos"],
+      requiere_extras: []
+    },
+
+    // ============ POSTURA: NÚCLEOS ADICIONALES ============
+    {
+      id: "gen-25pct-postura-fase2",
+      nombre: "Núcleo Genérico 2.5% — Postura fase 2",
+      marca: "Genérico",
+      tipo: "ponedora",
+      etapas: ["fase2"],
+      inclusion: 2.5,
+      precio: 30.00,
+      descripcion: "Para gallina post-pico (40-60 sem). Menos proteína, más calcio.",
+      aportes: {
+        em: 0, pc: 7.0, ca: 92.0, p: 5.5, lys: 2.2, met: 1.8, na: 4.0
+      },
+      aditivos: ["Vitaminas", "Carbonato fino+grueso", "DL-Met", "Pigmento"],
+      requiere_extras: []
+    },
+    {
+      id: "gen-25pct-postura-fase3",
+      nombre: "Núcleo Genérico 2.5% — Postura fase 3 final",
+      marca: "Genérico",
+      tipo: "ponedora",
+      etapas: ["fase3"],
+      inclusion: 2.5,
+      precio: 28.00,
+      descripcion: "Postura final (60+ sem). Aún más calcio para mantener cáscara.",
+      aportes: {
+        em: 0, pc: 6.0, ca: 100.0, p: 5.0, lys: 2.0, met: 1.6, na: 4.0
+      },
+      aditivos: ["Vitaminas", "Carbonato grueso (mayoría)", "DL-Met", "Pigmento intenso"],
+      requiere_extras: []
+    },
+    {
+      id: "gen-5pct-postura",
+      nombre: "Núcleo Genérico 5% — Postura",
+      marca: "Genérico",
+      tipo: "ponedora",
+      etapas: ["fase1", "fase2"],
+      inclusion: 5.0,
+      precio: 22.00,
+      descripcion: "Núcleo de mayor inclusión para postura. Más fácil de mezclar en planta pequeña.",
+      aportes: {
+        em: 0, pc: 4.5, ca: 50.0, p: 3.5, lys: 1.5, met: 1.2, na: 3.0
+      },
+      aditivos: ["Vitaminas", "Minerales", "Carbonato", "DL-Met", "Pigmento"],
+      requiere_extras: []
+    },
+    {
+      id: "purina-layer-25pct",
+      nombre: "Purina Layena Premix 2.5%",
+      marca: "Purina",
+      tipo: "ponedora",
+      etapas: ["fase1", "fase2"],
+      inclusion: 2.5,
+      precio: 36.00,
+      descripcion: "Premezcla Purina para gallina ponedora comercial. Calidad premium.",
+      aportes: {
+        em: 0, pc: 8.5, ca: 88.0, p: 6.5, lys: 2.8, met: 2.2, na: 4.2
+      },
+      aditivos: ["Vitaminas premium", "Minerales orgánicos", "Carbonato", "DL-Met", "Pigmento marigold"],
+      requiere_extras: []
+    },
+    {
+      id: "yara-postura-premium",
+      nombre: "Yara Postura Premium 2%",
+      marca: "Yara",
+      tipo: "ponedora",
+      etapas: ["fase1", "fase2"],
+      inclusion: 2.0,
+      precio: 42.00,
+      descripcion: "Núcleo Yara concentrado al 2% para granjas comerciales con buena formulación.",
+      aportes: {
+        em: 0, pc: 10.0, ca: 75.0, p: 7.0, lys: 3.2, met: 2.5, na: 4.5
+      },
+      aditivos: ["Vitaminas premium", "Minerales orgánicos", "Carbonato fino+grueso", "DL-Met", "Pigmento"],
+      requiere_extras: []
+    },
+    {
+      id: "alpesa-postura-3pct",
+      nombre: "ALPESA Postura 3%",
+      marca: "ALPESA",
+      tipo: "ponedora",
+      etapas: ["fase1", "fase2", "fase3"],
+      inclusion: 3.0,
+      precio: 26.00,
+      descripcion: "Núcleo ALPESA accesible para postura. Producto nacional.",
+      aportes: {
+        em: 0, pc: 7.0, ca: 75.0, p: 5.5, lys: 2.3, met: 1.8, na: 4.0
+      },
+      aditivos: ["Vitaminas", "Minerales", "Carbonato", "DL-Met", "Pigmento amarillo"],
+      requiere_extras: []
+    },
+    {
+      id: "gen-pre-postura",
+      nombre: "Núcleo Genérico 2.5% — Pre-postura",
+      marca: "Genérico",
+      tipo: "ponedora",
+      etapas: ["pre-postura"],
+      inclusion: 2.5,
+      precio: 30.00,
+      descripcion: "Núcleo para transición pollona-gallina (17-18 sem). Calcio creciente.",
+      aportes: {
+        em: 0, pc: 8.0, ca: 60.0, p: 6.5, lys: 2.5, met: 2.0, na: 4.0
+      },
+      aditivos: ["Vitaminas", "Carbonato (mezclado)", "DL-Met"],
+      requiere_extras: []
+    },
+    {
+      id: "gen-pollita-iniciacion",
+      nombre: "Núcleo Genérico 2.5% — Pollita iniciación",
+      marca: "Genérico",
+      tipo: "ponedora",
+      etapas: ["pollita-ini"],
+      inclusion: 2.5,
+      precio: 32.00,
+      descripcion: "Núcleo para crianza de pollita (0-6 sem). Sin coccidiostato.",
+      aportes: {
+        em: 0, pc: 12.0, ca: 14.0, p: 8.0, lys: 4.5, met: 3.2, na: 4.5
+      },
+      aditivos: ["Vitaminas", "Minerales", "DL-Met", "L-Lys", "Coccidiostato"],
+      requiere_extras: []
+    },
+    {
+      id: "gen-pollita-crecimiento",
+      nombre: "Núcleo Genérico 2.5% — Pollita crecimiento",
+      marca: "Genérico",
+      tipo: "ponedora",
+      etapas: ["pollita-crec"],
+      inclusion: 2.5,
+      precio: 30.00,
+      descripcion: "Núcleo para pollita de 7-12 semanas. Menos proteína, más fibra.",
+      aportes: {
+        em: 0, pc: 10.0, ca: 14.0, p: 7.0, lys: 3.8, met: 2.8, na: 4.5
+      },
+      aditivos: ["Vitaminas", "Minerales", "DL-Met", "L-Lys"],
+      requiere_extras: []
+    },
+    {
+      id: "gen-pollona-desarrollo",
+      nombre: "Núcleo Genérico 2.5% — Pollona desarrollo",
+      marca: "Genérico",
+      tipo: "ponedora",
+      etapas: ["pollona-des"],
+      inclusion: 2.5,
+      precio: 28.00,
+      descripcion: "Pollona 13-16 semanas. Preparación para postura.",
+      aportes: {
+        em: 0, pc: 8.0, ca: 18.0, p: 6.5, lys: 3.0, met: 2.2, na: 4.0
+      },
+      aditivos: ["Vitaminas", "Minerales", "DL-Met", "L-Lys"],
+      requiere_extras: []
+    },
+
+    // ============ PAVOS: NÚCLEOS ADICIONALES ============
+    {
+      id: "gen-pavo-iniciador",
+      nombre: "Núcleo Genérico 3% — Pavo iniciador",
+      marca: "Genérico",
+      tipo: "pavo",
+      etapas: ["pavo-ini"],
+      inclusion: 3.0,
+      precio: 42.00,
+      descripcion: "Para pavo bebé (0-4 sem). Alta proteína y AAs.",
+      aportes: {
+        em: 0, pc: 16.0, ca: 18.0, p: 10.0, lys: 7.0, met: 4.5, na: 4.5
+      },
+      aditivos: ["Vitaminas premium", "Minerales", "DL-Met", "L-Lys", "L-Treo", "Coccidiostato"],
+      requiere_extras: []
+    },
+    {
+      id: "gen-pavo-crecimiento",
+      nombre: "Núcleo Genérico 3% — Pavo crecimiento",
+      marca: "Genérico",
+      tipo: "pavo",
+      etapas: ["pavo-crec"],
+      inclusion: 3.0,
+      precio: 38.00,
+      descripcion: "Pavo crecimiento (5-12 sem). Buen balance de AAs.",
+      aportes: {
+        em: 0, pc: 12.0, ca: 15.0, p: 8.0, lys: 5.5, met: 3.5, na: 4.5
+      },
+      aditivos: ["Vitaminas", "Minerales", "DL-Met", "L-Lys", "Coccidiostato"],
+      requiere_extras: []
+    },
+    {
+      id: "gen-pavo-finalizador",
+      nombre: "Núcleo Genérico 3% — Pavo finalizador",
+      marca: "Genérico",
+      tipo: "pavo",
+      etapas: ["pavo-fin"],
+      inclusion: 3.0,
+      precio: 35.00,
+      descripcion: "Pavo finalizador (12+ sem). Menos proteína, sin coccidiostato.",
+      aportes: {
+        em: 0, pc: 10.0, ca: 12.0, p: 7.0, lys: 4.5, met: 3.0, na: 4.5
+      },
+      aditivos: ["Vitaminas", "Minerales", "DL-Met", "L-Lys"],
+      requiere_extras: []
+    },
+
+    // ============ REPRODUCTORAS: NÚCLEOS ============
+    {
+      id: "gen-reproductora-pesada",
+      nombre: "Núcleo Genérico 2.5% — Reproductora pesada",
+      marca: "Genérico",
+      tipo: "reproductora",
+      etapas: ["rep-pico", "rep-media", "rep-final"],
+      inclusion: 2.5,
+      precio: 38.00,
+      descripcion: "Para gallina reproductora pesada en producción. Vit E, biotina, ácido fólico altos.",
+      aportes: {
+        em: 0, pc: 9.0, ca: 80.0, p: 6.5, lys: 2.8, met: 2.2, na: 4.5
+      },
+      aditivos: ["Vitaminas reproducción premium", "Vit E alta", "Biotina", "Carbonato", "DL-Met"],
+      requiere_extras: []
+    },
+    {
+      id: "gen-reproductora-ligera",
+      nombre: "Núcleo Genérico 2.5% — Reproductora ligera",
+      marca: "Genérico",
+      tipo: "reproductora",
+      etapas: ["rep-pico", "rep-media", "rep-final"],
+      inclusion: 2.5,
+      precio: 36.00,
+      descripcion: "Para gallina reproductora ligera (huevo fértil). Menor calcio, más Vit E.",
+      aportes: {
+        em: 0, pc: 8.5, ca: 75.0, p: 6.5, lys: 2.7, met: 2.1, na: 4.5
+      },
+      aditivos: ["Vitaminas reproducción", "Vit E", "Biotina", "Carbonato", "DL-Met"],
+      requiere_extras: []
+    },
+    {
+      id: "yara-reproductora-pesada",
+      nombre: "Yara Reproductora Pesada Premium 2%",
+      marca: "Yara",
+      tipo: "reproductora",
+      etapas: ["rep-pico", "rep-media", "rep-final"],
+      inclusion: 2.0,
+      precio: 48.00,
+      descripcion: "Núcleo premium Yara para reproductoras de alta producción.",
+      aportes: {
+        em: 0, pc: 10.5, ca: 90.0, p: 7.5, lys: 3.4, met: 2.7, na: 4.8
+      },
+      aditivos: ["Vitaminas premium", "Vit E ultra alta", "Biotina", "Selenio orgánico", "DL-Met"],
+      requiere_extras: []
+    },
+
+    // ============ DOBLE PROPÓSITO: MÁS NÚCLEOS ============
+    {
+      id: "gen-25pct-rural",
+      nombre: "Núcleo Genérico 2.5% — Doble propósito rural",
+      marca: "Genérico",
+      tipo: "doble_proposito",
+      etapas: ["dp-ini", "dp-crec", "dp-post", "dp-mant"],
+      inclusion: 2.5,
+      precio: 26.00,
+      descripcion: "Núcleo balanceado al 2.5% para criollas, bardas y traspatio. Costo accesible.",
+      aportes: {
+        em: 0, pc: 10.0, ca: 50.0, p: 7.0, lys: 3.5, met: 2.5, na: 4.0
+      },
+      aditivos: ["Vitaminas", "Minerales", "Carbonato", "DL-Met"],
+      requiere_extras: []
+    },
+    {
+      id: "alpesa-rural-3pct",
+      nombre: "ALPESA Rural 3%",
+      marca: "ALPESA",
+      tipo: "doble_proposito",
+      etapas: ["dp-ini", "dp-crec", "dp-post"],
+      inclusion: 3.0,
+      precio: 24.00,
+      descripcion: "ALPESA Rural 3% — accesible para granjeros pequeños. Cubre criollas y bardas.",
+      aportes: {
+        em: 0, pc: 8.0, ca: 45.0, p: 6.0, lys: 3.0, met: 2.0, na: 4.0
+      },
+      aditivos: ["Vitaminas básicas", "Minerales", "Carbonato"],
+      requiere_extras: []
     }
   ],
 

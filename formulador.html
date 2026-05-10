@@ -2274,11 +2274,11 @@
                 </div>
 
                 <div id="resultOk" class="hidden">
-                  <!-- Costo destacado -->
+                  <!-- Costo destacado: lote real grande, ton chiquito -->
                   <div class="result-summary">
-                    <div class="result-summary-label">Costo por tonelada</div>
-                    <div class="result-summary-value" id="resCost">$0</div>
-                    <div class="result-summary-sub" id="resCostLote">— por lote</div>
+                    <div class="result-summary-label" id="resCostLoteLabel">Costo del lote</div>
+                    <div class="result-summary-value" id="resCostLote">$0</div>
+                    <div class="result-summary-sub" id="resCost">— por tonelada</div>
                   </div>
 
                   <!-- TABS NAVEGACIÓN -->
@@ -2513,7 +2513,7 @@
       { id: "cebada",   name: "Cebada",                 cat: "cereal",       em: 2700, pc: 11.0, ca: 0.05, p: 0.15, lys: 0.39, met: 0.18, precio: 6.00, min: 0, max: 15 },
       { id: "soya48",   name: "Pasta soya 48%",         cat: "proteina",     em: 2440, pc: 47.5, ca: 0.32, p: 0.32, lys: 2.85, met: 0.65, precio: 14.20, min: 0, max: 40 },
       { id: "soya44",   name: "Pasta soya 44%",         cat: "proteina",     em: 2350, pc: 44.0, ca: 0.29, p: 0.30, lys: 2.62, met: 0.60, precio: 13.50, min: 0, max: 40 },
-      { id: "harpez",   name: "Harina de pescado",      cat: "proteina",     em: 3000, pc: 60.0, ca: 4.50, p: 2.80, lys: 4.80, met: 1.65, precio: 28.00, min: 0, max: 5  },
+      { id: "harpez",   name: "Harina de pescado",      cat: "proteina",     em: 3000, pc: 60.0, ca: 4.50, p: 2.80, lys: 4.80, met: 1.65, precio: 28.00, min: 0, max: 8  },
       { id: "harcarn",  name: "Harina carne y hueso",   cat: "proteina",     em: 2700, pc: 50.0, ca: 9.20, p: 4.50, lys: 2.60, met: 0.70, precio: 16.00, min: 0, max: 5  },
       { id: "canola",   name: "Pasta de canola",        cat: "proteina",     em: 1900, pc: 36.0, ca: 0.62, p: 0.50, lys: 2.05, met: 0.70, precio: 11.00, min: 0, max: 8  },
       { id: "ddgs",     name: "DDGS",                   cat: "subproducto",  em: 2700, pc: 27.0, ca: 0.10, p: 0.40, lys: 0.78, met: 0.50, precio: 8.80, min: 0, max: 8 },
@@ -2551,9 +2551,9 @@
     const razasPorTipo = {
       engorda: "ross308",
       ponedora: "hyline-w36",
-      reproductora: "cobb-breeder",
+      reproductora: "cobb500-ap",
       pavo: "nicholas-select",
-      doble_proposito: "criollo-mexicano"
+      doble_proposito: "plymouth-rock"
     };
     const razaInicial = razasPorTipo[tipoInicial] || "ross308";
 
@@ -2571,7 +2571,16 @@
       tipo: tipoInicial,
       razaId: razaInicial,
       etapaId: etapaInicial,
-      ingredientes: INGREDIENTES.map(i => ({ ...i, active: ["maiz","soya48","aceite","carb","fosf","sal","metio","lisina","premix"].includes(i.id) })),
+      ingredientes: INGREDIENTES.map(i => {
+        // Lista base de ingredientes activos
+        const baseActivos = ["maiz","soya48","aceite","carb","fosf","sal","metio","lisina","premix"];
+        // Para engorda, pavo y reproductora, también activar harina de pescado (alta proteína)
+        const tipoNecesitaProteinaAlta = ["engorda", "pavo", "reproductora"].includes(tipoInicial);
+        if (tipoNecesitaProteinaAlta) {
+          baseActivos.push("harpez");
+        }
+        return { ...i, active: baseActivos.includes(i.id) };
+      }),
       formula: null
     };
     window.state = state;
@@ -2986,9 +2995,20 @@
       const reqOriginal = A.getRequerimientos(state.razaId, state.etapaId);
       if (!reqOriginal) return null;
 
+      // ⚡ AUTO-ACTIVAR INGREDIENTES CRÍTICOS si la formulación lo requiere
+      // Si requerimiento de PC es alto (>20%), asegurar harina de pescado
+      if (reqOriginal.pc && reqOriginal.pc > 20) {
+        const harpez = state.ingredientes.find(i => i.id === "harpez");
+        if (harpez && !harpez.active) {
+          harpez.active = true;
+        }
+      }
+      // Para reproductora también activar si Ca es alto
+      const activosNuevos = state.ingredientes.filter(i => i.active);
+
       // ⚡ NIVEL 1: Respetar núcleos
-      const aportesNucleo = calcularAportesNucleos(activos);
-      const tieneNucleo = activos.some(i => i.isNucleo);
+      const aportesNucleo = calcularAportesNucleos(activosNuevos);
+      const tieneNucleo = activosNuevos.some(i => i.isNucleo);
       const req = tieneNucleo ? ajustarRequerimientosPorNucleo(reqOriginal, aportesNucleo) : reqOriginal;
 
       // Guardar diagnóstico para mostrar al usuario
@@ -3160,14 +3180,15 @@
       perfil = ajusteIters.perfil;
       costoTon = ajusteIters.costoTon;
 
-      // Validar cumplimiento NRC
-      const cumple = validarCumplimientoNRC(perfil, req);
+      // Validar cumplimiento NRC contra req REAL (no ajustado)
+      const cumple = validarCumplimientoNRC(perfil, reqOriginal);
 
       return {
         formula: ajusteIters.formula,
         perfil,
         costoTon,
-        requerido: req,
+        requerido: reqOriginal, // req REAL NRC, NO el ajustado (perfil ya incluye núcleo)
+        requeridoAjustado: req, // por si se necesita en debug
         cumple,
         deficits: cumple.deficits,
         autoAjustes: ajusteIters.ajustesRealizados
@@ -3344,14 +3365,45 @@
         if (asegurarNutriente("metio", "met", 0.99, "DL-Metionina", 0.4)) huboCambio = true;
         if (asegurarNutriente("lisina", "lys", 0.784, "L-Lisina HCl", 0.5)) huboCambio = true;
 
-        // EM: subir aceite si falta energía
+        // PC: si hay déficit, agregar harina de pescado (60% PC) o aumentar soya
+        const checkPC = recalcPerfil(formula);
+        if (checkPC.perfil.pc < req.pc * 0.97) {
+          // Primera opción: harina de pescado (alta PC, alta Lys/Met)
+          const harpezIng = state.ingredientes.find(it => it.id === "harpez");
+          if (harpezIng) {
+            // Auto-activar si no está activo
+            if (!harpezIng.active) harpezIng.active = true;
+            const harpez = formula.find(f => f.id === "harpez");
+            const faltaPC = req.pc - checkPC.perfil.pc;
+            const subirPct = faltaPC / 0.60; // harpez tiene 60% PC
+            if (harpez) {
+              const nuevo = Math.min(harpez.pct + subirPct, harpezIng.max || 8);
+              if (nuevo > harpez.pct + 0.01) {
+                ajustes.push("+" + (nuevo - harpez.pct).toFixed(2) + "% Harina de pescado (cubrir déficit PC)");
+                harpez.pct = nuevo;
+                huboCambio = true;
+              }
+            } else {
+              const pct = Math.min(subirPct, harpezIng.max || 8);
+              if (pct > 0.01) {
+                formula.push({ id: "harpez", name: harpezIng.name, pct, ing: harpezIng });
+                ajustes.push("+" + pct.toFixed(2) + "% Harina de pescado (cubrir déficit PC)");
+                huboCambio = true;
+              }
+            }
+          }
+        }
+
+        // EM: subir aceite si falta energía (objetivo: 99%-101% del req)
         const checkEM = recalcPerfil(formula);
-        if (checkEM.perfil.em < req.em * 0.97) {
+        if (checkEM.perfil.em < req.em * 0.99) {
           const aceiteIng = state.ingredientes.find(it => it.id === "aceite" && it.active) ||
                            state.ingredientes.find(it => it.cat === "energetico" && it.active && it.id !== "maiz");
           if (aceiteIng) {
             const aceite = formula.find(f => f.id === aceiteIng.id);
-            const falta = req.em - checkEM.perfil.em;
+            // Target 100% del requerimiento (con margen pequeño)
+            const objetivo = req.em * 1.005;
+            const falta = objetivo - checkEM.perfil.em;
             const subirPct = falta / (aceiteIng.em / 100);
             if (aceite) {
               const nuevo = Math.min(aceite.pct + subirPct, aceiteIng.max || 6);
@@ -3363,22 +3415,70 @@
             } else {
               const pct = Math.min(subirPct, aceiteIng.max || 6);
               formula.push({ id: aceiteIng.id, name: aceiteIng.name, pct, ing: aceiteIng });
-              ajustes.push("+" + pct.toFixed(2) + "% " + aceiteIng.name + " (agregado por déficit EM)");
+              ajustes.push("+" + pct.toFixed(2) + "% " + aceiteIng.name + " (cubrir déficit EM)");
               huboCambio = true;
             }
           }
         }
 
-        // RE-NORMALIZAR a 100% ajustando cereal base (mantener total = 100)
+        // RE-NORMALIZAR a 100% — si cereal está al max, usar soya como llenador secundario
         const totalAhora = formula.reduce((s, f) => s + f.pct, 0);
         if (Math.abs(totalAhora - 100) > 0.05) {
+          let faltante = 100 - totalAhora;
+
+          // Primer intento: cereal base
           const cereal = formula.find(f => f.ing.cat === "cereal" && !f.ing.isNucleo);
-          if (cereal) {
-            const ajusteCereal = 100 - totalAhora;
-            const nuevoPctCereal = Math.max(0, Math.min((cereal.ing.max || 70), cereal.pct + ajusteCereal));
-            if (Math.abs(nuevoPctCereal - cereal.pct) > 0.01) {
-              cereal.pct = nuevoPctCereal;
+          if (cereal && faltante > 0) {
+            const espacio = (cereal.ing.max || 70) - cereal.pct;
+            const aplicar = Math.min(espacio, faltante);
+            if (aplicar > 0.01) {
+              cereal.pct += aplicar;
+              faltante -= aplicar;
               huboCambio = true;
+            }
+          } else if (cereal && faltante < 0) {
+            // Reducir cereal si nos pasamos
+            const reducir = Math.min(-faltante, cereal.pct);
+            cereal.pct -= reducir;
+            faltante += reducir;
+            huboCambio = true;
+          }
+
+          // Segundo intento: soya como llenador secundario
+          if (Math.abs(faltante) > 0.05) {
+            const soya = formula.find(f => f.id === "soya48" || f.id === "soya44" || f.ing.cat === "proteina") ||
+                         (() => {
+                           const soyaIng = state.ingredientes.find(i => (i.id === "soya48" || i.id === "soya44") && i.active);
+                           if (soyaIng) {
+                             const newItem = { id: soyaIng.id, name: soyaIng.name, pct: 0, ing: soyaIng };
+                             formula.push(newItem);
+                             return newItem;
+                           }
+                           return null;
+                         })();
+            if (soya && faltante > 0) {
+              const espacio = (soya.ing.max || 40) - soya.pct;
+              const aplicar = Math.min(espacio, faltante);
+              if (aplicar > 0.01) {
+                soya.pct += aplicar;
+                faltante -= aplicar;
+                huboCambio = true;
+              }
+            }
+          }
+
+          // Tercer intento: si aún falta, agregar cualquier cereal o subproducto disponible
+          if (Math.abs(faltante) > 0.05) {
+            const ingExtra = state.ingredientes.find(i =>
+              i.active && !formula.some(f => f.id === i.id) &&
+              (i.cat === "cereal" || i.cat === "subproducto") && !i.isNucleo
+            );
+            if (ingExtra && faltante > 0) {
+              const aplicar = Math.min(ingExtra.max || 30, faltante);
+              if (aplicar > 0.01) {
+                formula.push({ id: ingExtra.id, name: ingExtra.name, pct: aplicar, ing: ingExtra });
+                huboCambio = true;
+              }
             }
           }
         }
@@ -3400,22 +3500,102 @@
         if (!huboReduccion) break;
       }
 
-      // RE-NORMALIZAR final
-      const totalFinal = formula.reduce((s, f) => s + f.pct, 0);
-      if (Math.abs(totalFinal - 100) > 0.05) {
+      // RE-NORMALIZAR final con cascada: cereal → soya → subproducto
+      let intentos = 0;
+      while (intentos < 3) {
+        const totalFinal = formula.reduce((s, f) => s + f.pct, 0);
+        if (Math.abs(totalFinal - 100) <= 0.05) break;
+        let faltante = 100 - totalFinal;
+
+        // 1. Cereal
         const cereal = formula.find(f => f.ing.cat === "cereal" && !f.ing.isNucleo);
         if (cereal) {
-          const ajusteCereal = 100 - totalFinal;
-          cereal.pct = Math.max(0, Math.min((cereal.ing.max || 70), cereal.pct + ajusteCereal));
+          const espacio = (cereal.ing.max || 70) - cereal.pct;
+          if (faltante > 0 && espacio > 0.01) {
+            const aplicar = Math.min(espacio, faltante);
+            cereal.pct += aplicar;
+            faltante -= aplicar;
+          } else if (faltante < 0) {
+            const reducir = Math.min(-faltante, cereal.pct);
+            cereal.pct -= reducir;
+            faltante += reducir;
+          }
         }
+
+        // 2. Soya
+        if (Math.abs(faltante) > 0.05) {
+          let soya = formula.find(f => f.id === "soya48" || f.id === "soya44");
+          if (!soya) {
+            const soyaIng = state.ingredientes.find(i => (i.id === "soya48" || i.id === "soya44") && i.active);
+            if (soyaIng) {
+              soya = { id: soyaIng.id, name: soyaIng.name, pct: 0, ing: soyaIng };
+              formula.push(soya);
+            }
+          }
+          if (soya && faltante > 0) {
+            const espacio = (soya.ing.max || 40) - soya.pct;
+            const aplicar = Math.min(espacio, faltante);
+            if (aplicar > 0.01) {
+              soya.pct += aplicar;
+              faltante -= aplicar;
+            }
+          } else if (soya && faltante < 0) {
+            const reducir = Math.min(-faltante, soya.pct);
+            soya.pct -= reducir;
+            faltante += reducir;
+          }
+        }
+
+        // 3. Otro cereal o subproducto
+        if (Math.abs(faltante) > 0.05) {
+          const ingExtra = state.ingredientes.find(i =>
+            i.active && !formula.some(f => f.id === i.id) &&
+            (i.cat === "cereal" || i.cat === "subproducto") && !i.isNucleo
+          );
+          if (ingExtra && faltante > 0) {
+            const aplicar = Math.min(ingExtra.max || 30, faltante);
+            if (aplicar > 0.01) {
+              formula.push({ id: ingExtra.id, name: ingExtra.name, pct: aplicar, ing: ingExtra });
+            }
+          }
+        }
+        intentos++;
       }
 
       const final = recalcPerfil(formula);
+
+      // Consolidar mensajes duplicados (mismo ingrediente + mismo motivo)
+      const consolidados = {};
+      ajustes.forEach(msg => {
+        // Extraer: signo, valor, ingrediente, motivo
+        const m = msg.match(/^([+-])(\d+\.?\d*)% (.+?) \((.+)\)$/);
+        if (m) {
+          const [, signo, val, ing, motivo] = m;
+          // Normalizar motivos similares
+          const motivoNorm = motivo
+            .replace(/cubrir déficit de \w+/i, "cubrir déficit nutricional")
+            .replace(/agregado por déficit de \w+/i, "cubrir déficit nutricional")
+            .replace(/cubrir déficit EM/i, "cubrir déficit EM")
+            .replace(/agregado por déficit EM/i, "cubrir déficit EM");
+          const key = `${signo}|${ing}|${motivoNorm}`;
+          if (consolidados[key]) {
+            consolidados[key].valor += parseFloat(val);
+            consolidados[key].count += 1;
+          } else {
+            consolidados[key] = { signo, ing, motivo: motivoNorm, valor: parseFloat(val), count: 1 };
+          }
+        }
+      });
+
+      const ajustesLimpios = Object.values(consolidados).map(c => {
+        return `${c.signo}${c.valor.toFixed(2)}% ${c.ing} (${c.motivo})`;
+      });
+
       return {
         formula,
         perfil: final.perfil,
         costoTon: final.costoTon,
-        ajustesRealizados: ajustes,
+        ajustesRealizados: ajustesLimpios,
         iteraciones: MAX_ITER
       };
     }
@@ -3554,8 +3734,19 @@
         autoAjustesBox.style.display = "none";
       }
 
-      document.getElementById("resCost").textContent = window.fmCurrency(result.costoTon).replace(".00", "");
-      document.getElementById("resCostLote").textContent = `${window.fmCurrency(costoLote).replace(".00","")} por ${tons} ton`;
+      // Mostrar volumen real GRANDE y costo/ton CHIQUITO
+      // Si volumen es < 1 ton, mostrar en kg; si >= 1 ton, mostrar en ton
+      const labelLote = document.getElementById("resCostLoteLabel");
+      if (tons < 1) {
+        const kg = Math.round(tons * 1000);
+        labelLote.textContent = `Costo de tu lote (${kg} kg)`;
+      } else if (tons >= 1) {
+        labelLote.textContent = `Costo de tu lote (${tons.toFixed(tons >= 10 ? 0 : 1)} ton)`;
+      }
+      // Costo del lote BIG
+      document.getElementById("resCostLote").textContent = window.fmCurrency(costoLote).replace(".00", "");
+      // Costo/ton SMALL
+      document.getElementById("resCost").textContent = `${window.fmCurrency(result.costoTon).replace(".00","")} por tonelada`;
 
       document.getElementById("resFormula").innerHTML = result.formula.map(f => `
         <div class="result-row">
@@ -3754,22 +3945,28 @@
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "letter" });
 
-      // Colores corporativos
-      const PRIMARY = [27, 77, 124];      // #1B4D7C
-      const PRIMARY_DARK = [15, 52, 87];  // #0F3457
-      const ACCENT = [245, 158, 11];      // #F59E0B
-      const TEXT = [30, 41, 59];          // #1E293B
-      const MUTED = [100, 116, 139];      // #64748B
-      const LIGHT = [248, 250, 252];      // #F8FAFC
-      const SUCCESS = [16, 185, 129];     // #10B981
-      const DANGER = [239, 68, 68];       // #EF4444
+      // ============================================
+      // PALETA AGRO-TECH PROFESIONAL
+      // ============================================
+      const PRIMARY = [60, 95, 47];        // Verde olivo profundo
+      const PRIMARY_DARK = [42, 67, 33];   // Verde olivo oscuro
+      const ACCENT = [184, 110, 48];       // Cobre
+      const ACCENT_LIGHT = [225, 165, 100]; // Cobre claro
+      const TEXT = [30, 41, 59];           // Slate 800
+      const MUTED = [100, 116, 139];       // Slate 500
+      const LIGHT = [248, 250, 252];       // Slate 50
+      const BORDER = [226, 232, 240];      // Slate 200
+      const SUCCESS = [22, 163, 74];       // Verde
+      const WARN = [202, 138, 4];          // Ámbar
+      const DANGER = [220, 38, 38];        // Rojo
+      const NUCLEO = [109, 40, 217];       // Morado para núcleo
 
       const W = doc.internal.pageSize.getWidth();
       const H = doc.internal.pageSize.getHeight();
-      const M = 18; // margen
+      const M = 16;
 
       // ============================================
-      // Datos del reporte
+      // DATOS DEL REPORTE
       // ============================================
       const cliente = document.getElementById("cliente").value || "Sin cliente";
       const raza = A.getRaza(state.razaId);
@@ -3778,190 +3975,267 @@
       const volumen = parseFloat(document.getElementById("volumen").value) || 1;
       const unidad = document.getElementById("unidad").value;
       const tons = unidad === "ton" ? volumen : volumen / 1000;
+      const kgTotal = tons * 1000;
       const profile = window.fmProfile || {};
       const fecha = new Intl.DateTimeFormat("es-MX", {
         weekday: "long", day: "numeric", month: "long", year: "numeric"
       }).format(new Date());
       const folio = "FM-" + Date.now().toString(36).toUpperCase().slice(-6);
 
-      // Recalcular perfil para asegurar precisión
+      // VOLUMEN DISPLAY humano
+      let volumenDisplay = "";
+      if (kgTotal >= 1000) {
+        volumenDisplay = (kgTotal/1000).toFixed(kgTotal >= 10000 ? 0 : 1) + " ton";
+      } else {
+        volumenDisplay = kgTotal.toFixed(0) + " kg";
+      }
+
+      // Recalcular perfil considerando núcleos correctamente
       let perfil = { em: 0, pc: 0, ca: 0, p: 0, lys: 0, met: 0 };
       let costoTon = 0;
       state.formula.forEach(f => {
         const ing = f.ing;
         const factor = f.pct / 100;
-        perfil.em += factor * (ing.em || 0);
-        perfil.pc += factor * (ing.pc || 0);
-        perfil.ca += factor * (ing.ca || 0);
-        perfil.p += factor * (ing.p || 0);
-        perfil.lys += factor * (ing.lys || 0);
-        perfil.met += factor * (ing.met || 0);
+        if (ing.isNucleo && window.FM_NUCLEOS) {
+          const nd = window.FM_NUCLEOS.CATALOGO.find(n => "nucleo_" + n.id === ing.id);
+          if (nd && nd.aportes) {
+            Object.keys(perfil).forEach(k => perfil[k] += factor * (nd.aportes[k] || 0));
+          }
+        } else {
+          perfil.em += factor * (ing.em || 0);
+          perfil.pc += factor * (ing.pc || 0);
+          perfil.ca += factor * (ing.ca || 0);
+          perfil.p += factor * (ing.p || 0);
+          perfil.lys += factor * (ing.lys || 0);
+          perfil.met += factor * (ing.met || 0);
+        }
         costoTon += factor * 1000 * ing.precio;
       });
       const costoLote = costoTon * tons;
+      const costoKg = costoLote / kgTotal;
       const req = A.getRequerimientos(state.razaId, state.etapaId);
 
       // ============================================
-      // HEADER (banda azul superior)
+      // HEADER PROFESIONAL (banda verde)
       // ============================================
-      doc.setFillColor(...PRIMARY);
-      doc.rect(0, 0, W, 32, "F");
+      doc.setFillColor.apply(doc, PRIMARY);
+      doc.rect(0, 0, W, 36, "F");
+      // Banda accent inferior
+      doc.setFillColor.apply(doc, ACCENT);
+      doc.rect(0, 36, W, 1.5, "F");
 
-      // Logo (gota/huevo SVG simulado con círculos)
+      // Logo box (cuadro blanco con icono)
       doc.setFillColor(255, 255, 255);
-      doc.roundedRect(M, 8, 16, 16, 3, 3, "F");
-      doc.setFillColor(...PRIMARY);
-      doc.circle(M + 8, 14, 1.8, "F");
-      doc.setDrawColor(...PRIMARY);
-      doc.setLineWidth(1.2);
-      doc.line(M + 5, 18, M + 5, 14);
-      doc.line(M + 11, 18, M + 11, 14);
+      doc.roundedRect(M, 9, 18, 18, 2, 2, "F");
+      // Icono saco (rectángulo redondeado interno)
+      doc.setFillColor.apply(doc, PRIMARY);
+      doc.roundedRect(M + 4, 13, 10, 10, 1, 1, "F");
+      doc.setFillColor.apply(doc, ACCENT);
+      doc.rect(M + 6, 16, 6, 1, "F");
+      doc.rect(M + 6, 18, 6, 1, "F");
 
-      // Texto del header
+      // Texto FeedMix MX
       doc.setTextColor(255, 255, 255);
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(16);
-      doc.text("FeedMix MX", M + 22, 16);
+      doc.setFontSize(18);
+      doc.text("FeedMix MX", M + 24, 18);
+
       doc.setFont("helvetica", "normal");
       doc.setFontSize(8);
-      doc.setTextColor(245, 158, 11);
-      doc.text("AVICULTURA · Producto de TEC CAPITAL Group", M + 22, 21);
+      doc.setTextColor.apply(doc, ACCENT_LIGHT);
+      doc.text("Formulación profesional avícola · TEC CAPITAL Group", M + 24, 23);
+
+      // BETA badge
+      doc.setFillColor.apply(doc, ACCENT);
+      doc.roundedRect(M + 24, 26, 11, 5, 1, 1, "F");
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(7);
+      doc.setFont("helvetica", "bold");
+      doc.text("BETA", M + 26.5, 29.5);
 
       // Folio y fecha (derecha)
       doc.setTextColor(255, 255, 255);
-      doc.setFontSize(8);
-      doc.text(`Folio: ${folio}`, W - M, 13, { align: "right" });
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "bold");
+      doc.text("Folio " + folio, W - M, 14, { align: "right" });
       doc.setFont("helvetica", "normal");
       doc.setFontSize(8);
-      doc.text(fecha, W - M, 18, { align: "right" });
+      doc.setTextColor.apply(doc, ACCENT_LIGHT);
+      doc.text(fecha.charAt(0).toUpperCase() + fecha.slice(1), W - M, 19, { align: "right" });
       doc.setFontSize(7);
-      doc.setTextColor(200, 220, 240);
-      doc.text("Reporte de formulación profesional", W - M, 23, { align: "right" });
+      doc.setTextColor(220, 235, 220);
+      doc.text("Reporte de formulación", W - M, 24, { align: "right" });
+      doc.text("feedmix.mx", W - M, 28.5, { align: "right" });
 
       // ============================================
       // TÍTULO PRINCIPAL
       // ============================================
-      let y = 44;
-      doc.setTextColor(...TEXT);
+      let y = 50;
+      doc.setTextColor.apply(doc, TEXT);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(20);
-      doc.text("Fórmula optimizada", M, y);
+      doc.text("Fórmula optimizada para tu lote", M, y);
 
       y += 6;
       doc.setFont("helvetica", "normal");
       doc.setFontSize(10);
-      doc.setTextColor(...MUTED);
-      doc.text(`${tipo.nombre} · ${raza.nombre} · ${etapa.nombre} (${etapa.rango})`, M, y);
+      doc.setTextColor.apply(doc, MUTED);
+      doc.text(tipo.nombre + " · " + raza.nombre + " · " + etapa.nombre + " (" + etapa.rango + ")", M, y);
 
       // ============================================
-      // BLOQUE DE DATOS DEL CLIENTE (caja gris claro)
+      // BLOQUE DATOS DEL CLIENTE (caja gris claro)
       // ============================================
       y += 8;
-      doc.setFillColor(...LIGHT);
-      doc.roundedRect(M, y, W - M * 2, 26, 2, 2, "F");
+      doc.setFillColor.apply(doc, LIGHT);
+      doc.setDrawColor.apply(doc, BORDER);
+      doc.setLineWidth(0.3);
+      doc.roundedRect(M, y, W - M * 2, 22, 2, 2, "FD");
 
       const colW = (W - M * 2) / 4;
       const dataRow = [
-        ["CLIENTE", cliente],
+        ["CLIENTE / REFERENCIA", cliente],
         ["RAZA", raza.nombre],
         ["ETAPA", etapa.nombre],
-        ["VOLUMEN", `${volumen} ${unidad}`]
+        ["VOLUMEN DEL LOTE", volumenDisplay]
       ];
 
       dataRow.forEach((d, i) => {
         const x = M + 4 + i * colW;
-        doc.setFontSize(7);
-        doc.setTextColor(...MUTED);
+        doc.setFontSize(6.5);
+        doc.setTextColor.apply(doc, MUTED);
         doc.setFont("helvetica", "bold");
-        doc.text(d[0], x, y + 8);
+        doc.text(d[0], x, y + 7);
         doc.setFontSize(10);
-        doc.setTextColor(...TEXT);
-        doc.setFont("helvetica", "normal");
+        doc.setTextColor.apply(doc, TEXT);
+        doc.setFont("helvetica", "bold");
         const val = d[1].length > 22 ? d[1].slice(0, 20) + "…" : d[1];
-        doc.text(val, x, y + 15);
+        doc.text(val, x, y + 14);
       });
-      // Profesión (debajo)
+      // Elaborado por (debajo, dentro del box)
       doc.setFontSize(7);
-      doc.setTextColor(...MUTED);
+      doc.setTextColor.apply(doc, MUTED);
       doc.setFont("helvetica", "italic");
       const nutricionista = profile.firstName ?
-        `Elaborado por: ${profile.firstName} ${profile.lastName || ""} ${profile.profession ? `· ${profile.profession}` : ""}` :
-        `Elaborado por: Nutricionista FeedMix`;
-      doc.text(nutricionista, M + 4, y + 22);
+        "Elaborado por: " + profile.firstName + " " + (profile.lastName || "") + (profile.profession ? " · " + profile.profession : "") :
+        "Elaborado por: " + cliente;
+      doc.text(nutricionista, M + 4, y + 19);
 
       // ============================================
-      // CAJA DE COSTO DESTACADO
+      // CAJA DE COSTO INVERTIDA (lote grande, ton chico)
       // ============================================
-      y += 32;
-      doc.setFillColor(...PRIMARY);
-      doc.roundedRect(M, y, W - M * 2, 26, 2, 2, "F");
+      y += 28;
+      doc.setFillColor.apply(doc, PRIMARY);
+      doc.roundedRect(M, y, W - M * 2, 30, 3, 3, "F");
 
-      // Costo / ton (izquierda)
-      doc.setTextColor(245, 158, 11);
-      doc.setFontSize(7);
-      doc.setFont("helvetica", "bold");
-      doc.text("COSTO POR TONELADA", M + 6, y + 8);
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(20);
-      doc.setFont("helvetica", "bold");
-      const costoStr = "$" + costoTon.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      doc.text(costoStr, M + 6, y + 18);
+      // COSTO DEL LOTE (izquierda - GRANDE)
+      doc.setTextColor.apply(doc, ACCENT_LIGHT);
       doc.setFontSize(8);
-      doc.setFont("helvetica", "normal");
-      doc.text("MXN", M + 6, y + 23);
-
-      // Costo total (derecha)
-      doc.setTextColor(245, 158, 11);
-      doc.setFontSize(7);
       doc.setFont("helvetica", "bold");
-      doc.text(`COSTO DEL LOTE (${tons} ton)`, W - M - 6, y + 8, { align: "right" });
+      doc.text("COSTO TOTAL DE TU LOTE (" + volumenDisplay + ")", M + 6, y + 8);
+
       doc.setTextColor(255, 255, 255);
-      doc.setFontSize(20);
+      doc.setFontSize(26);
       doc.setFont("helvetica", "bold");
       const costoLoteStr = "$" + costoLote.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      doc.text(costoLoteStr, W - M - 6, y + 18, { align: "right" });
+      doc.text(costoLoteStr, M + 6, y + 21);
+
       doc.setFontSize(8);
       doc.setFont("helvetica", "normal");
-      doc.text("MXN total", W - M - 6, y + 23, { align: "right" });
+      doc.text("MXN", M + 6, y + 26);
+
+      // Separador vertical
+      doc.setDrawColor(255, 255, 255);
+      doc.setLineWidth(0.3);
+      doc.line(W / 2, y + 6, W / 2, y + 24);
+
+      // COSTO POR TONELADA y POR KILO (derecha)
+      doc.setTextColor.apply(doc, ACCENT_LIGHT);
+      doc.setFontSize(7);
+      doc.setFont("helvetica", "bold");
+      doc.text("POR TONELADA", W / 2 + 6, y + 8);
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(13);
+      doc.setFont("helvetica", "bold");
+      const costoTonStr = "$" + costoTon.toLocaleString("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+      doc.text(costoTonStr, W / 2 + 6, y + 15);
+      doc.setFontSize(7);
+      doc.setFont("helvetica", "normal");
+      doc.text("MXN/ton", W / 2 + 6, y + 19);
+
+      // POR KG
+      doc.setTextColor.apply(doc, ACCENT_LIGHT);
+      doc.setFontSize(7);
+      doc.setFont("helvetica", "bold");
+      doc.text("POR KILOGRAMO", W - M - 6, y + 8, { align: "right" });
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(13);
+      doc.setFont("helvetica", "bold");
+      doc.text("$" + costoKg.toFixed(2), W - M - 6, y + 15, { align: "right" });
+      doc.setFontSize(7);
+      doc.setFont("helvetica", "normal");
+      doc.text("MXN/kg", W - M - 6, y + 19, { align: "right" });
+
+      // Línea económica adicional
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(7);
+      doc.setFont("helvetica", "italic");
+      const costo100kg = costoKg * 100;
+      doc.text("Equivalente: $" + costo100kg.toFixed(2) + " por saco de 100 kg", W / 2 + 6, y + 26);
 
       // ============================================
-      // TABLA DE FÓRMULA
+      // TABLA DE FÓRMULA (CON KG REALES DEL LOTE)
       // ============================================
-      y += 32;
-      doc.setTextColor(...TEXT);
-      doc.setFontSize(11);
+      y += 36;
+      doc.setTextColor.apply(doc, TEXT);
+      doc.setFontSize(12);
       doc.setFont("helvetica", "bold");
-      doc.text("Composición de la fórmula", M, y);
+      doc.text("Composición de tu fórmula", M, y);
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor.apply(doc, MUTED);
+      doc.text("Cantidades calculadas para tu lote de " + volumenDisplay, M, y + 4);
 
       const filasFormula = state.formula.map(f => {
-        const kg_ton = (f.pct / 100) * 1000;
-        const kg_lote = kg_ton * tons;
-        const costo_kg = f.ing.precio;
-        const costo_total = kg_lote * costo_kg;
+        const kg_lote = (f.pct / 100) * kgTotal;
+        const costo_total = kg_lote * f.ing.precio;
+        const isNucleo = f.ing.isNucleo;
+
+        const nameCell = isNucleo
+          ? { content: ">> " + f.name, styles: { textColor: NUCLEO, fontStyle: "bold" } }
+          : f.name;
+
+        // Formato de kg según volumen
+        let kgFmt;
+        if (kg_lote < 1) {
+          kgFmt = (kg_lote * 1000).toFixed(0) + " g";
+        } else if (kg_lote < 10) {
+          kgFmt = kg_lote.toFixed(2) + " kg";
+        } else {
+          kgFmt = kg_lote.toFixed(1) + " kg";
+        }
+
         return [
-          f.name,
+          nameCell,
           f.pct.toFixed(2) + "%",
-          kg_ton.toFixed(2),
-          kg_lote.toFixed(2),
-          "$" + costo_kg.toFixed(2),
+          kgFmt,
+          "$" + f.ing.precio.toFixed(2),
           "$" + costo_total.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
         ];
       });
 
-      const totalKgTon = state.formula.reduce((s, f) => s + (f.pct / 100) * 1000, 0);
-      const totalKgLote = totalKgTon * tons;
       filasFormula.push([
-        { content: "TOTAL", styles: { fontStyle: "bold", textColor: PRIMARY } },
-        { content: "100.00%", styles: { fontStyle: "bold", textColor: PRIMARY } },
-        { content: totalKgTon.toFixed(2), styles: { fontStyle: "bold", textColor: PRIMARY } },
-        { content: totalKgLote.toFixed(2), styles: { fontStyle: "bold", textColor: PRIMARY } },
-        { content: "—", styles: { fontStyle: "bold", textColor: PRIMARY } },
-        { content: "$" + costoLote.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 }), styles: { fontStyle: "bold", textColor: PRIMARY } }
+        { content: "TOTAL DEL LOTE", styles: { fontStyle: "bold", textColor: PRIMARY, fillColor: [241, 245, 233] } },
+        { content: "100.00%", styles: { fontStyle: "bold", textColor: PRIMARY, halign: "right", fillColor: [241, 245, 233] } },
+        { content: kgTotal.toFixed(0) + " kg", styles: { fontStyle: "bold", textColor: PRIMARY, halign: "right", fillColor: [241, 245, 233] } },
+        { content: "—", styles: { fontStyle: "bold", textColor: PRIMARY, halign: "right", fillColor: [241, 245, 233] } },
+        { content: costoLoteStr, styles: { fontStyle: "bold", textColor: PRIMARY, halign: "right", fillColor: [241, 245, 233] } }
       ]);
 
       doc.autoTable({
-        startY: y + 3,
-        head: [["Ingrediente", "%", "kg/ton", `kg total`, "$/kg", "Costo"]],
+        startY: y + 7,
+        head: [["Ingrediente", "%", "Cantidad para tu lote", "Precio $/kg", "Costo total"]],
         body: filasFormula,
         theme: "grid",
         styles: {
@@ -3969,133 +4243,215 @@
           fontSize: 9,
           cellPadding: 2.5,
           textColor: TEXT,
-          lineColor: [226, 232, 240],
+          lineColor: BORDER,
           lineWidth: 0.2
         },
         headStyles: {
           fillColor: PRIMARY,
           textColor: [255, 255, 255],
           fontStyle: "bold",
-          fontSize: 8,
+          fontSize: 8.5,
           cellPadding: 3
         },
         columnStyles: {
-          0: { cellWidth: 55 },
-          1: { halign: "right", cellWidth: 18 },
-          2: { halign: "right", cellWidth: 22 },
-          3: { halign: "right", cellWidth: 25 },
-          4: { halign: "right", cellWidth: 20 },
-          5: { halign: "right", cellWidth: 38 }
+          0: { cellWidth: 65 },
+          1: { halign: "right", cellWidth: 20 },
+          2: { halign: "right", cellWidth: 38 },
+          3: { halign: "right", cellWidth: 22 },
+          4: { halign: "right", cellWidth: 33 }
         },
         alternateRowStyles: { fillColor: [248, 250, 252] },
         margin: { left: M, right: M }
       });
 
-      y = doc.lastAutoTable.finalY + 8;
+      y = doc.lastAutoTable.finalY + 6;
 
       // ============================================
-      // PERFIL NUTRICIONAL VS REQUERIMIENTOS
+      // PERFIL NUTRICIONAL CON BARRAS VISUALES
       // ============================================
-      // Verificar si hay espacio, sino nueva página
-      if (y > H - 100) {
-        doc.addPage();
-        y = M;
-      }
+      if (y > H - 100) { doc.addPage(); y = M; }
 
-      doc.setTextColor(...TEXT);
-      doc.setFontSize(11);
+      doc.setTextColor.apply(doc, TEXT);
+      doc.setFontSize(12);
       doc.setFont("helvetica", "bold");
-      doc.text("Perfil nutricional vs. requerimientos NRC", M, y);
+      doc.text("Perfil nutricional vs. requerimiento NRC", M, y);
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor.apply(doc, MUTED);
+      doc.text("Verificación contra requerimientos National Research Council", M, y + 4);
+
+      y += 10;
 
       const checks = [
-        { label: "Energía Metabolizable", actual: Math.round(perfil.em), req: req.em, unit: " kcal/kg" },
-        { label: "Proteína Cruda", actual: perfil.pc.toFixed(1), req: req.pc, unit: " %" },
-        { label: "Lisina total", actual: perfil.lys.toFixed(2), req: req.lys, unit: " %" },
-        { label: "Metionina total", actual: perfil.met.toFixed(2), req: req.met, unit: " %" },
-        { label: "Calcio", actual: perfil.ca.toFixed(2), req: req.ca, unit: " %" },
-        { label: "Fósforo disponible", actual: perfil.p.toFixed(2), req: req.p, unit: " %" }
+        { label: "Energía Metabolizable", actual: Math.round(perfil.em), req: req.em, unit: " kcal/kg", crit: false },
+        { label: "Proteína Cruda", actual: parseFloat(perfil.pc.toFixed(2)), req: req.pc, unit: "%", crit: true },
+        { label: "Lisina total", actual: parseFloat(perfil.lys.toFixed(2)), req: req.lys, unit: "%", crit: true },
+        { label: "Metionina total", actual: parseFloat(perfil.met.toFixed(2)), req: req.met, unit: "%", crit: true },
+        { label: "Calcio", actual: parseFloat(perfil.ca.toFixed(2)), req: req.ca, unit: "%", crit: true },
+        { label: "Fósforo disponible", actual: parseFloat(perfil.p.toFixed(2)), req: req.p, unit: "%", crit: true }
       ];
 
-      const filasPerfil = checks.map(c => {
-        const a = parseFloat(c.actual);
-        const r = parseFloat(c.req) || 0;
-        let status = "✓ Cumple";
-        let color = SUCCESS;
-        if (a < r * 0.95) { status = "✗ Bajo"; color = DANGER; }
-        else if (a < r) { status = "≈ Justo"; color = ACCENT; }
-        return [
-          c.label,
-          c.actual + c.unit,
-          c.req + c.unit,
-          { content: status, styles: { textColor: color, fontStyle: "bold", halign: "center" } }
-        ];
-      });
+      checks.forEach(c => {
+        const a = c.actual;
+        const r = c.req || 0;
+        const ratio = r > 0 ? a / r : 1;
+        let status, color;
+        if (ratio >= 0.95 && ratio <= 1.15) { status = "OK"; color = SUCCESS; }
+        else if (ratio < 0.95) { status = "BAJO"; color = DANGER; }
+        else { status = "ALTO"; color = WARN; }
 
-      doc.autoTable({
-        startY: y + 3,
-        head: [["Nutriente", "Resultado", "Requerido", "Estado"]],
-        body: filasPerfil,
-        theme: "grid",
-        styles: {
-          font: "helvetica",
-          fontSize: 9,
-          cellPadding: 2.5,
-          textColor: TEXT,
-          lineColor: [226, 232, 240],
-          lineWidth: 0.2
-        },
-        headStyles: {
-          fillColor: PRIMARY,
-          textColor: [255, 255, 255],
-          fontStyle: "bold",
-          fontSize: 8,
-          cellPadding: 3
-        },
-        columnStyles: {
-          0: { cellWidth: 70 },
-          1: { halign: "right", cellWidth: 35 },
-          2: { halign: "right", cellWidth: 35 },
-          3: { halign: "center", cellWidth: 38 }
-        },
-        alternateRowStyles: { fillColor: [248, 250, 252] },
-        margin: { left: M, right: M }
-      });
+        // Label
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(9);
+        doc.setTextColor.apply(doc, TEXT);
+        doc.text(c.label, M, y);
 
-      y = doc.lastAutoTable.finalY + 8;
+        // Valores actual / req
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8);
+        doc.setTextColor.apply(doc, MUTED);
+        doc.text("Tu fórmula: ", M, y + 4);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor.apply(doc, TEXT);
+        doc.text(a + c.unit, M + 22, y + 4);
+
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor.apply(doc, MUTED);
+        doc.text("Requerido NRC: ", M + 60, y + 4);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor.apply(doc, TEXT);
+        doc.text(r + c.unit, M + 88, y + 4);
+
+        // Barra de progreso visual
+        const barX = M + 115;
+        const barW = 50;
+        const barY = y + 1.2;
+        // Fondo
+        doc.setFillColor.apply(doc, LIGHT);
+        doc.roundedRect(barX, barY, barW, 4, 1, 1, "F");
+        // Llenado proporcional (max 120%)
+        const fillW = Math.min(barW, (ratio * barW) / 1.2);
+        doc.setFillColor.apply(doc, color);
+        doc.roundedRect(barX, barY, fillW, 4, 1, 1, "F");
+        // Línea del 100%
+        const x100 = barX + (barW / 1.2);
+        doc.setDrawColor.apply(doc, MUTED);
+        doc.setLineWidth(0.3);
+        doc.line(x100, barY - 0.5, x100, barY + 4.5);
+
+        // Status badge
+        doc.setFillColor.apply(doc, color);
+        doc.roundedRect(W - M - 16, y - 2, 16, 5, 1, 1, "F");
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7);
+        doc.setTextColor(255, 255, 255);
+        doc.text(status, W - M - 8, y + 1.5, { align: "center" });
+
+        // Diff %
+        doc.setFont("helvetica", "italic");
+        doc.setFontSize(7);
+        doc.setTextColor.apply(doc, MUTED);
+        const diff = ((ratio - 1) * 100).toFixed(0);
+        doc.text((diff > 0 ? "+" : "") + diff + "% vs req", barX, y + 8);
+
+        y += 11;
+      });
 
       // ============================================
-      // NOTAS DEL EXPERTO
+      // APORTE DEL NÚCLEO (si hay)
+      // ============================================
+      const nucleoEnFormula = state.formula.find(f => f.ing.isNucleo);
+      if (nucleoEnFormula && y < H - 60) {
+        y += 4;
+        doc.setFillColor(243, 232, 255); // Morado claro
+        doc.setDrawColor.apply(doc, NUCLEO);
+        doc.setLineWidth(0.3);
+        doc.roundedRect(M, y, W - M * 2, 22, 2, 2, "FD");
+
+        doc.setTextColor.apply(doc, NUCLEO);
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "bold");
+        doc.text("Núcleo aplicado: " + nucleoEnFormula.name, M + 4, y + 6);
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8);
+        doc.setTextColor.apply(doc, TEXT);
+        const inclusionPct = nucleoEnFormula.pct.toFixed(2);
+        doc.text("Inclusión: " + inclusionPct + "% (" + ((nucleoEnFormula.pct/100)*kgTotal).toFixed(2) + " kg de tu lote)", M + 4, y + 12);
+        doc.text("El optimizador descontó los aportes del núcleo (Ca, P, AAs) para evitar sobreformulación.", M + 4, y + 17);
+        y += 26;
+      }
+
+      // ============================================
+      // NOTAS TÉCNICAS DEL NUTRICIONISTA
       // ============================================
       const tips = A.getTips(state.razaId, state.etapaId).slice(0, 4);
       if (tips.length > 0) {
-        // Verificar espacio
         if (y > H - 60) { doc.addPage(); y = M; }
 
-        doc.setTextColor(...TEXT);
+        doc.setTextColor.apply(doc, TEXT);
         doc.setFontSize(11);
         doc.setFont("helvetica", "bold");
-        doc.text("Notas técnicas del nutricionista", M, y);
+        doc.text("Recomendaciones técnicas", M, y);
 
-        y += 6;
-        doc.setFillColor(254, 243, 199); // ámbar claro
-        doc.setDrawColor(245, 158, 11);
+        y += 5;
+        doc.setFillColor(254, 243, 199); // Ámbar claro
+        doc.setDrawColor.apply(doc, ACCENT);
         doc.setLineWidth(0.3);
-        const notasH = tips.length * 6 + 6;
+        const notasH = tips.length * 7 + 4;
         doc.roundedRect(M, y, W - M * 2, notasH, 2, 2, "FD");
 
         doc.setFontSize(9);
         doc.setFont("helvetica", "normal");
-        doc.setTextColor(120, 53, 15);
+        doc.setTextColor.apply(doc, ACCENT);
         tips.forEach((tip, i) => {
-          const yTip = y + 5 + i * 6;
+          const yTip = y + 5 + i * 7;
           doc.setFont("helvetica", "bold");
           doc.text("•", M + 4, yTip);
           doc.setFont("helvetica", "normal");
+          doc.setTextColor(120, 53, 15);
           const tipWrapped = doc.splitTextToSize(tip, W - M * 2 - 12);
           doc.text(tipWrapped, M + 8, yTip);
         });
 
-        y += notasH + 8;
+        y += notasH + 6;
+      }
+
+      // ============================================
+      // ANÁLISIS ECONÓMICO ADICIONAL
+      // ============================================
+      if (y < H - 50) {
+        doc.setTextColor.apply(doc, TEXT);
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "bold");
+        doc.text("Análisis económico", M, y);
+        y += 5;
+
+        // Caja con datos económicos
+        doc.setFillColor.apply(doc, LIGHT);
+        doc.setDrawColor.apply(doc, BORDER);
+        doc.setLineWidth(0.3);
+        doc.roundedRect(M, y, W - M * 2, 22, 2, 2, "FD");
+
+        const econData = [
+          ["Costo por kilogramo", "$" + costoKg.toFixed(2) + " MXN"],
+          ["Costo por tonelada", "$" + costoTon.toLocaleString("es-MX", { maximumFractionDigits: 0 }) + " MXN"],
+          ["Costo por saco 40 kg", "$" + (costoKg * 40).toFixed(0) + " MXN"],
+          ["Costo de tu lote", costoLoteStr + " MXN"]
+        ];
+        const colE = (W - M * 2) / 4;
+        econData.forEach((d, i) => {
+          const x = M + 4 + i * colE;
+          doc.setFontSize(7);
+          doc.setTextColor.apply(doc, MUTED);
+          doc.setFont("helvetica", "bold");
+          doc.text(d[0].toUpperCase(), x, y + 7);
+          doc.setFontSize(10);
+          doc.setTextColor.apply(doc, PRIMARY);
+          doc.setFont("helvetica", "bold");
+          doc.text(d[1], x, y + 15);
+        });
+        y += 26;
       }
 
       // ============================================
@@ -4104,29 +4460,30 @@
       const totalPages = doc.internal.getNumberOfPages();
       for (let i = 1; i <= totalPages; i++) {
         doc.setPage(i);
-        // Línea separadora
-        doc.setDrawColor(...LIGHT);
-        doc.setLineWidth(0.3);
-        doc.line(M, H - 14, W - M, H - 14);
+        // Banda accent
+        doc.setFillColor.apply(doc, ACCENT);
+        doc.rect(0, H - 12, W, 0.8, "F");
 
         doc.setFontSize(7);
-        doc.setTextColor(...MUTED);
+        doc.setTextColor.apply(doc, MUTED);
         doc.setFont("helvetica", "normal");
-        doc.text("Generado con FeedMix MX · feedmix.mx · contacto@feedmix.mx", M, H - 9);
-        doc.text(`Página ${i} de ${totalPages}`, W - M, H - 9, { align: "right" });
+        doc.text("FeedMix MX · feedmix.mx · WhatsApp +52 1 238 251 4313 · TEC CAPITAL Group", M, H - 7);
+        doc.setFont("helvetica", "bold");
+        doc.text("Página " + i + " de " + totalPages, W - M, H - 7, { align: "right" });
+
         doc.setFontSize(6);
-        const disclaimer = window._lastOptimization && window._lastOptimization.tieneNucleo
-          ? "Optimización aproximada (greedy, v1) — Recomendado validar con análisis bromatológico para producción comercial. La aplicación final depende de las condiciones de cada granja."
-          : "Optimización aproximada (greedy, v1) — La aplicación final depende de las condiciones de cada granja. Validar con análisis bromatológico cuando sea posible.";
-        doc.text(disclaimer, M, H - 5, { maxWidth: W - 2 * M });
+        doc.setFont("helvetica", "italic");
+        doc.setTextColor.apply(doc, MUTED);
+        const disclaimer = "BETA — Optimización aproximada, validar con análisis bromatológico para producción comercial. La aplicación final depende de las condiciones de cada granja, calidad real de ingredientes, y manejo zootécnico. Recomendaciones basadas en NRC y prácticas estándar de la industria.";
+        doc.text(disclaimer, M, H - 3.5, { maxWidth: W - 2 * M });
       }
 
       // ============================================
       // Descargar
       // ============================================
-      const filename = `FeedMix_${cliente.replace(/[^a-z0-9]/gi, "_").slice(0, 20)}_${etapa.id}_${folio}.pdf`;
+      const filename = "FeedMix_" + cliente.replace(/[^a-z0-9]/gi, "_").slice(0, 20) + "_" + etapa.id + "_" + folio + ".pdf";
       doc.save(filename);
-      window.fmToast("PDF generado y descargado", "success");
+      window.fmToast("PDF profesional generado", "success");
     }
 
     document.getElementById("btnSave").addEventListener("click", async () => {
@@ -4385,10 +4742,30 @@
     actualizarVolumenPreview();
 
     // ============================================
-    // APLICAR NÚCLEO PENDIENTE (desde nucleos.html)
+    // APLICAR NÚCLEO PENDIENTE (desde nucleos.html o URL ?nucleo=)
     // ============================================
     function aplicarNucleoPendiente() {
-      const pendienteStr = localStorage.getItem("fm_nucleo_pendiente");
+      let pendienteStr = localStorage.getItem("fm_nucleo_pendiente");
+
+      // Si no hay pendiente, intentar leer del URL (?nucleo=id)
+      if (!pendienteStr) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const nucleoIdUrl = urlParams.get("nucleo");
+        if (nucleoIdUrl && window.FM_NUCLEOS) {
+          const nucleo = window.FM_NUCLEOS.CATALOGO.find(n => n.id === nucleoIdUrl);
+          if (nucleo) {
+            pendienteStr = JSON.stringify({
+              id: nucleo.id,
+              nombre: nucleo.nombre,
+              tipo: nucleo.tipo,
+              inclusion: nucleo.inclusion,
+              precio: nucleo.precio,
+              etapa: nucleo.etapas[0] || ""
+            });
+          }
+        }
+      }
+
       if (!pendienteStr) return;
 
       try {
