@@ -14,6 +14,301 @@
   <link rel="stylesheet" href="assets/shared.css?v=12">
 
   <style>
+    /* ============================================
+       BANNER ESPECIE ACTIVA (filtrado estricto)
+       ============================================ */
+    .especie-filtro-banner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 16px;
+      background: linear-gradient(135deg, var(--primary-50) 0%, white 100%);
+      border: 1.5px solid var(--primary-100);
+      border-radius: 12px;
+      margin-bottom: var(--space-5);
+    }
+
+    .especie-filtro-img {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: white;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .especie-filtro-img img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+
+    .especie-filtro-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .especie-filtro-info strong {
+      display: block;
+      font-size: 0.9375rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin-bottom: 2px;
+    }
+
+    .especie-filtro-info p {
+      font-size: 0.8125rem;
+      color: var(--neutral-600);
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .especie-filtro-cambiar {
+      padding: 6px 12px;
+      background: white;
+      border: 1px solid var(--neutral-200);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .especie-filtro-cambiar:hover {
+      border-color: var(--primary);
+      background: var(--primary-50);
+    }
+
+    /* ============================================
+       MODAL EDUCATIVO — ¿Qué es un núcleo?
+       ============================================ */
+    .edu-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(42, 53, 32, 0.7);
+      backdrop-filter: blur(10px);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .edu-modal-backdrop.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .edu-modal {
+      background: white;
+      border-radius: 24px;
+      max-width: 720px;
+      width: 100%;
+      max-height: 92vh;
+      overflow-y: auto;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+      transform: translateY(20px) scale(0.96);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .edu-modal-backdrop.active .edu-modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .edu-modal-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      padding: 36px 36px 24px;
+      border-radius: 24px 24px 0 0;
+      color: white;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .edu-modal-header::before {
+      content: "";
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(184,115,51,0.3) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .edu-modal-header > * { position: relative; z-index: 1; }
+
+    .edu-modal-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(212,146,90,0.25);
+      border: 1px solid rgba(212,146,90,0.4);
+      border-radius: 999px;
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #D4925A;
+      margin-bottom: 12px;
+    }
+
+    .edu-modal-header h2 {
+      color: white;
+      font-size: 1.625rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .edu-modal-header p {
+      color: rgba(255,255,255,0.85);
+      font-size: 0.9375rem;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .edu-modal-body {
+      padding: 32px 36px;
+    }
+
+    /* Animación SVG del núcleo */
+    .edu-svg-wrapper {
+      background: linear-gradient(180deg, var(--primary-50) 0%, white 100%);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .edu-svg {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+    }
+
+    /* Animaciones del SVG */
+    @keyframes ingrediente1 {
+      0%, 100% { transform: translateX(0); opacity: 0; }
+      30% { opacity: 1; }
+      50% { transform: translateX(120px); opacity: 0; }
+      100% { transform: translateX(0); opacity: 0; }
+    }
+    @keyframes ingrediente2 {
+      0%, 100% { transform: translateX(0); opacity: 0; }
+      35% { opacity: 1; }
+      55% { transform: translateX(120px); opacity: 0; }
+    }
+    @keyframes ingrediente3 {
+      0%, 100% { transform: translateX(0); opacity: 0; }
+      40% { opacity: 1; }
+      60% { transform: translateX(120px); opacity: 0; }
+    }
+    @keyframes ingrediente4 {
+      0%, 100% { transform: translateX(0); opacity: 0; }
+      45% { opacity: 1; }
+      65% { transform: translateX(120px); opacity: 0; }
+    }
+    @keyframes mezclaCirculo {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+    @keyframes brilloNucleo {
+      0%, 100% { opacity: 0; }
+      70% { opacity: 0; }
+      85% { opacity: 1; }
+    }
+
+    .ing-anim-1 { animation: ingrediente1 4s ease-in-out infinite; transform-origin: center; }
+    .ing-anim-2 { animation: ingrediente2 4s ease-in-out infinite; transform-origin: center; }
+    .ing-anim-3 { animation: ingrediente3 4s ease-in-out infinite; transform-origin: center; }
+    .ing-anim-4 { animation: ingrediente4 4s ease-in-out infinite; transform-origin: center; }
+    .mezcla-anim { animation: mezclaCirculo 4s ease-in-out infinite; transform-origin: center; }
+    .brillo-anim { animation: brilloNucleo 4s ease-in-out infinite; }
+
+    .edu-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 600px) {
+      .edu-cards { grid-template-columns: 1fr; }
+    }
+
+    .edu-card {
+      background: var(--neutral-50);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .edu-card-icon {
+      width: 40px; height: 40px;
+      background: var(--primary);
+      color: white;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 8px;
+    }
+
+    .edu-card strong {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 800;
+      color: var(--neutral-900);
+      margin-bottom: 4px;
+    }
+
+    .edu-card p {
+      font-size: 0.75rem;
+      color: var(--neutral-600);
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    .edu-tip {
+      background: linear-gradient(135deg, #FAF7F0 0%, #F4F6F0 100%);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 24px;
+      font-size: 0.875rem;
+      color: var(--neutral-700);
+      line-height: 1.5;
+    }
+
+    .edu-tip strong {
+      color: var(--accent-dark);
+      font-weight: 800;
+    }
+
+    .edu-modal-footer {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      padding-top: 16px;
+      border-top: 1px solid var(--neutral-100);
+    }
+
+    /* ============================================
+       NUEVO: Tag de "listo para usar" en cards
+       ============================================ */
+    .nucleo-tag-listo {
+      background: var(--success-light);
+      color: var(--primary-dark);
+      font-weight: 700;
+    }
+
+    .nucleo-tag-extras {
+      background: #FEF3C7;
+      color: #92400E;
+      font-weight: 700;
+    }
+
     /* HERO DETECTOR */
     .detector-hero {
       background: linear-gradient(135deg, #1B4D7C 0%, #0F3457 100%);
@@ -30,7 +325,7 @@
       position: absolute;
       top: -100px; right: -100px;
       width: 350px; height: 350px;
-      background: radial-gradient(circle, rgba(245,158,11,0.18) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(184,115,51,0.18) 0%, transparent 70%);
       pointer-events: none;
     }
 
@@ -44,8 +339,8 @@
       align-items: center;
       gap: 8px;
       padding: 6px 14px;
-      background: rgba(245, 158, 11, 0.18);
-      border: 1px solid rgba(245, 158, 11, 0.35);
+      background: rgba(184, 115, 51, 0.18);
+      border: 1px solid rgba(184, 115, 51, 0.35);
       border-radius: var(--radius-full);
       font-size: 0.6875rem;
       font-weight: 800;
@@ -505,7 +800,9 @@
       <a href="index.html" class="brand">
         <span class="brand-mark">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2v4"/><path d="M5.5 5.5l2.8 2.8"/><path d="M18.5 5.5l-2.8 2.8"/>
+            <path d="M12 2v4"/>
+            <path d="M5.5 5.5l2.8 2.8"/>
+            <path d="M18.5 5.5l-2.8 2.8"/>
             <path d="M12 8a6 6 0 0 1 6 6c0 4-3 8-6 8s-6-4-6-8a6 6 0 0 1 6-6z"/>
             <circle cx="12" cy="14" r="1.5" fill="currentColor"/>
           </svg>
@@ -524,18 +821,9 @@
 
       <div class="sidebar-section-title">Configuración</div>
       <ul class="sidebar-nav">
-        <li><a href="perfil.html">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          Mi perfil
-        </a></li>
-        <li><a href="suscripcion.html">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          Suscripción
-        </a></li>
-        <li><a href="https://wa.me/5212382514313?text=Hola%2C%20necesito%20ayuda%20o%20informaci%C3%B3n%20sobre%20cursos" target="_blank">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          Soporte / Cursos
-        </a></li>
+        <li><a href="perfil.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Mi perfil</a></li>
+        <li><a href="suscripcion.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Suscripción</a></li>
+        <li><a href="https://wa.me/5212382514313?text=Hola%2C%20necesito%20ayuda%20o%20informaci%C3%B3n%20sobre%20cursos" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Soporte / Cursos</a></li>
       </ul>
     </aside>
 
@@ -553,6 +841,9 @@
       </div>
 
       <div class="app-content">
+
+        <!-- BANNER ESPECIE ACTIVA -->
+        <div id="especieFiltroBanner" class="especie-filtro-banner" style="display:none;"></div>
 
         <!-- DETECTOR INTELIGENTE -->
         <div class="detector-hero">
@@ -703,6 +994,126 @@
     </div>
   </div>
 
+  <!-- ============================================
+       MODAL EDUCATIVO: ¿Qué es un núcleo? (primera vez)
+       ============================================ -->
+  <div class="edu-modal-backdrop" id="eduModal">
+    <div class="edu-modal">
+      <div class="edu-modal-header">
+        <span class="edu-modal-eyebrow">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2z"/></svg>
+          Antes de empezar
+        </span>
+        <h2>¿Qué es un núcleo premezclado?</h2>
+        <p>Es la mezcla concentrada que ahorra el 70% del trabajo de formular alimento balanceado.</p>
+      </div>
+
+      <div class="edu-modal-body">
+
+        <!-- Animación SVG explicativa -->
+        <div class="edu-svg-wrapper">
+          <svg class="edu-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+            <!-- Ingredientes individuales que se mueven hacia el núcleo -->
+            <g>
+              <!-- Ingrediente 1: Vitaminas -->
+              <g class="ing-anim-1">
+                <circle cx="40" cy="50" r="14" fill="#B87333" opacity="0.9"/>
+                <text x="40" y="80" text-anchor="middle" font-size="10" fill="#2A3520" font-weight="700">Vit.</text>
+              </g>
+              <!-- Ingrediente 2: Minerales -->
+              <g class="ing-anim-2">
+                <circle cx="40" cy="90" r="14" fill="#5A6E45" opacity="0.9"/>
+                <text x="40" y="120" text-anchor="middle" font-size="10" fill="#2A3520" font-weight="700">Min.</text>
+              </g>
+              <!-- Ingrediente 3: Aminoácidos -->
+              <g class="ing-anim-3">
+                <circle cx="40" cy="130" r="14" fill="#D4925A" opacity="0.9"/>
+                <text x="40" y="160" text-anchor="middle" font-size="10" fill="#2A3520" font-weight="700">AA</text>
+              </g>
+              <!-- Ingrediente 4: Aditivos -->
+              <g class="ing-anim-4">
+                <circle cx="40" cy="170" r="14" fill="#8B5024" opacity="0.9"/>
+                <text x="40" y="195" text-anchor="middle" font-size="10" fill="#2A3520" font-weight="700">Adit.</text>
+              </g>
+            </g>
+
+            <!-- Flecha -->
+            <path d="M 110 110 L 170 110" stroke="#5A6E45" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 4" opacity="0.5"/>
+            <polygon points="170,105 180,110 170,115" fill="#5A6E45" opacity="0.7"/>
+
+            <!-- Núcleo final -->
+            <g class="mezcla-anim">
+              <circle cx="240" cy="110" r="50" fill="url(#nucleoGrad)"/>
+              <circle cx="240" cy="110" r="50" fill="none" stroke="#3F4F2E" stroke-width="2"/>
+              <text x="240" y="105" text-anchor="middle" font-size="13" fill="white" font-weight="800">NÚCLEO</text>
+              <text x="240" y="122" text-anchor="middle" font-size="10" fill="white" opacity="0.85">2.5%</text>
+            </g>
+
+            <!-- Brillo -->
+            <g class="brillo-anim">
+              <circle cx="240" cy="110" r="60" fill="none" stroke="#B87333" stroke-width="2" opacity="0.4"/>
+              <circle cx="240" cy="110" r="70" fill="none" stroke="#B87333" stroke-width="1.5" opacity="0.25"/>
+            </g>
+
+            <!-- Flecha 2 -->
+            <path d="M 300 110 L 340 110" stroke="#5A6E45" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 4" opacity="0.5"/>
+            <polygon points="340,105 350,110 340,115" fill="#5A6E45" opacity="0.7"/>
+
+            <!-- Saco final -->
+            <g>
+              <rect x="355" y="80" width="35" height="60" rx="4" fill="#FAF7F0" stroke="#5A6E45" stroke-width="1.5"/>
+              <text x="372" y="115" text-anchor="middle" font-size="9" fill="#3F4F2E" font-weight="700">FEED</text>
+            </g>
+
+            <defs>
+              <radialGradient id="nucleoGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#5A6E45"/>
+                <stop offset="100%" stop-color="#2A3520"/>
+              </radialGradient>
+            </defs>
+          </svg>
+          <p style="font-size:0.8125rem;color:#5A6E45;margin-top:8px;">Vitaminas + Minerales + Aminoácidos + Aditivos = <strong style="color:#3F4F2E;">Núcleo listo para mezclar</strong></p>
+        </div>
+
+        <!-- 3 Cards explicativas -->
+        <div class="edu-cards">
+          <div class="edu-card">
+            <div class="edu-card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <strong>Ahorras tiempo</strong>
+            <p>De 3 hrs a 10 min. Solo agregas maíz + soya y listo.</p>
+          </div>
+          <div class="edu-card">
+            <div class="edu-card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <strong>Calidad garantizada</strong>
+            <p>Vitaminas y minerales medidos con exactitud por laboratorio.</p>
+          </div>
+          <div class="edu-card">
+            <div class="edu-card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <strong>Reduce costos</strong>
+            <p>15-20% más barato que comprar alimento terminado.</p>
+          </div>
+        </div>
+
+        <!-- Tip educativo -->
+        <div class="edu-tip">
+          <strong>💡 ¿Cómo se usa?</strong> Un núcleo al <strong>2.5%</strong> significa que en 1 tonelada (1,000 kg) de alimento, agregas <strong>25 kg</strong> de núcleo + maíz, soya y agua. El sistema ya lo calcula por ti automáticamente.
+        </div>
+
+        <!-- Footer -->
+        <div class="edu-modal-footer">
+          <button type="button" class="btn btn-ghost" id="eduSkip">No volver a mostrar</button>
+          <button type="button" class="btn btn-primary btn-lg" id="eduOk">Entendido, vamos al catálogo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="assets/firebase-config.js?v=12"></script>
   <script src="assets/avicola-data.js?v=12"></script>
   <script src="assets/nucleos-data.js?v=12"></script>
@@ -769,6 +1180,20 @@
     }
 
     document.getElementById("detTipo").addEventListener("change", poblarEtapasDetector);
+
+    // Si hay especie activa, pre-seleccionar tipo en detector
+    const _especieActivaInicial = (typeof window.FM_SPECIES !== "undefined") ? window.FM_SPECIES.getActiva() : null;
+    if (_especieActivaInicial && _especieActivaInicial.tipoFormulador) {
+      const detTipoSelect = document.getElementById("detTipo");
+      detTipoSelect.value = _especieActivaInicial.tipoFormulador;
+      // Si filtrado estricto, deshabilitar el cambio de tipo
+      if (_especieActivaInicial.id !== "varias") {
+        detTipoSelect.disabled = true;
+        detTipoSelect.style.opacity = "0.6";
+        detTipoSelect.style.cursor = "not-allowed";
+      }
+    }
+
     poblarEtapasDetector();
 
     // ============================================
@@ -827,10 +1252,10 @@
           </div>
 
           <div class="detector-actions">
-            <a href="formulador.html?modo=express&nucleo=${encodeURIComponent(n.id)}&tipo=${tipo}&etapa=${etapaId}" class="btn btn-primary btn-lg">
+            <button type="button" class="btn btn-primary btn-lg btn-detector-usar" data-id="${n.id}">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
               Usar en formulador
-            </a>
+            </button>
             ${result.ranking.length > 1 ? `
               <button class="btn btn-outline btn-lg" id="verAlternativas">
                 Ver ${result.ranking.length - 1} alternativas
@@ -838,15 +1263,65 @@
             ` : ''}
           </div>
         `;
+
+        // Hook al botón usar del detector
+        container.querySelector('.btn-detector-usar')?.addEventListener('click', () => {
+          const nucleoSugerido = N.getTodos().find(x => x.id === n.id);
+          if (!nucleoSugerido) return;
+          localStorage.setItem("fm_nucleo_pendiente", JSON.stringify({
+            id: nucleoSugerido.id,
+            nombre: nucleoSugerido.nombre,
+            tipo: nucleoSugerido.tipo,
+            inclusion: nucleoSugerido.inclusion,
+            precio: nucleoSugerido.precio,
+            etapa: etapaId
+          }));
+          window.fmToast(`Aplicando "${nucleoSugerido.nombre}" al formulador...`, "success");
+          setTimeout(() => location.href = `formulador.html?nucleo=${encodeURIComponent(nucleoSugerido.id)}`, 600);
+        });
       }
 
       container.classList.add("active");
     });
 
     // ============================================
-    // RENDER FILTROS
+    // ESPECIE ACTIVA (filtrado estricto)
+    // ============================================
+    let especieActiva = null;
+    if (typeof window.FM_SPECIES !== "undefined") {
+      especieActiva = window.FM_SPECIES.getActiva();
+    }
+
+    // Si hay especie activa (no "varias"), filtrar
+    const filtradoEstricto = especieActiva && especieActiva.id !== "varias" && especieActiva.tipoFormulador;
+
+    // Mostrar banner de filtrado
+    if (filtradoEstricto) {
+      filtroTipo = especieActiva.tipoFormulador; // forzar tipo
+      const banner = document.getElementById("especieFiltroBanner");
+      banner.innerHTML = `
+        <div class="especie-filtro-img">
+          <img src="${especieActiva.svg}" alt="${especieActiva.nombre}">
+        </div>
+        <div class="especie-filtro-info">
+          <strong>Mostrando solo núcleos para ${especieActiva.nombre}</strong>
+          <p>${especieActiva.descripcion}. Si necesitas otro tipo, cambia tu especie en perfil.</p>
+        </div>
+        <a href="perfil.html" class="especie-filtro-cambiar">Cambiar especie</a>
+      `;
+      banner.style.display = "flex";
+    }
+
+    // ============================================
+    // RENDER FILTROS (oculto si filtrado estricto)
     // ============================================
     function renderFiltros() {
+      // Si está filtrado estricto, esconder filtros (ya filtra automático)
+      if (filtradoEstricto) {
+        document.getElementById("filterBar").style.display = "none";
+        return;
+      }
+
       const todos = N.getTodos();
       const tipos = ["todos", ...new Set(todos.map(n => n.tipo))];
       const labels = {
@@ -874,18 +1349,25 @@
     }
 
     // ============================================
-    // RENDER GRID DE NÚCLEOS
+    // RENDER GRID DE NÚCLEOS (con filtrado por especie)
     // ============================================
     function renderGrid() {
       const todos = N.getTodos();
-      const lista = filtroTipo === "todos" ? todos : todos.filter(n => n.tipo === filtroTipo);
+      let lista;
 
-      document.getElementById("totalCount").textContent = `${lista.length} de ${todos.length} núcleos`;
+      if (filtradoEstricto) {
+        // Estricto: solo del tipo de la especie activa
+        lista = todos.filter(n => n.tipo === especieActiva.tipoFormulador);
+      } else {
+        lista = filtroTipo === "todos" ? todos : todos.filter(n => n.tipo === filtroTipo);
+      }
+
+      document.getElementById("totalCount").textContent = `${lista.length} núcleos`;
 
       const grid = document.getElementById("nucleosGrid");
 
       if (lista.length === 0) {
-        grid.innerHTML = `<p style="grid-column:1/-1;text-align:center;padding:var(--space-8);color:var(--neutral-500);">No hay núcleos en esta categoría</p>`;
+        grid.innerHTML = `<p style="grid-column:1/-1;text-align:center;padding:var(--space-8);color:var(--neutral-500);">No hay núcleos disponibles para esta especie. <button class="btn btn-primary btn-sm" onclick="document.getElementById('btnAddNucleo').click()">Crea tu primer núcleo</button></p>`;
         return;
       }
 
@@ -893,6 +1375,7 @@
         const isPropio = n.source === "propio";
         const tipoLabel = { engorda: "Engorda", ponedora: "Ponedora", reproductora: "Reproductora", pavo: "Pavo", doble_proposito: "Doble propósito" }[n.tipo];
         const etapasShort = n.etapas.length > 3 ? `${n.etapas.length} etapas` : n.etapas.join(", ");
+        const requiereExtras = n.requiere_extras && n.requiere_extras.length > 0;
 
         return `
           <div class="nucleo-card ${isPropio ? 'is-propio' : ''}" data-id="${n.id}">
@@ -907,6 +1390,9 @@
             <div class="nucleo-card-tags">
               <span class="nucleo-tag nucleo-tag-tipo">${tipoLabel}</span>
               <span class="nucleo-tag nucleo-tag-etapa">${etapasShort}</span>
+              ${requiereExtras
+                ? '<span class="nucleo-tag nucleo-tag-extras">⚠ Requiere extras</span>'
+                : '<span class="nucleo-tag nucleo-tag-listo">✓ Listo para usar</span>'}
               ${isPropio ? '<span class="nucleo-tag nucleo-tag-propio">★ Tuyo</span>' : ''}
             </div>
 
@@ -928,11 +1414,12 @@
             </div>
 
             <div class="nucleo-card-actions">
-              <a href="formulador.html?modo=express&nucleo=${encodeURIComponent(n.id)}&tipo=${n.tipo}&etapa=${n.etapas[0]}" class="btn btn-primary">
-                Usar
-              </a>
+              <button class="btn btn-primary btn-usar" data-id="${n.id}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Usar este núcleo
+              </button>
               ${isPropio ? `
-                <button class="btn btn-ghost" data-action="delete">
+                <button class="btn btn-ghost" data-action="delete" data-id="${n.id}">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg>
                 </button>
               ` : ''}
@@ -944,8 +1431,7 @@
       // Eventos de eliminar
       grid.querySelectorAll('[data-action="delete"]').forEach(btn => {
         btn.addEventListener("click", () => {
-          const card = btn.closest('.nucleo-card');
-          const id = card.dataset.id;
+          const id = btn.dataset.id;
           const propios = N.getNucleosPropios();
           const nucleo = propios.find(p => p.id === id);
           if (nucleo && confirm(`¿Eliminar "${nucleo.nombre}"?`)) {
@@ -953,6 +1439,35 @@
             renderGrid();
             window.fmToast("Núcleo eliminado", "info");
           }
+        });
+      });
+
+      // ============================================
+      // EVENTO: CLICK EN "USAR" — guarda en localStorage y redirige
+      // ============================================
+      grid.querySelectorAll('.btn-usar').forEach(btn => {
+        btn.addEventListener("click", e => {
+          e.preventDefault();
+          const id = btn.dataset.id;
+          const nucleo = N.getTodos().find(x => x.id === id);
+          if (!nucleo) return;
+
+          // Guardar en localStorage la solicitud de aplicar núcleo
+          localStorage.setItem("fm_nucleo_pendiente", JSON.stringify({
+            id: nucleo.id,
+            nombre: nucleo.nombre,
+            tipo: nucleo.tipo,
+            inclusion: nucleo.inclusion,
+            precio: nucleo.precio,
+            etapa: nucleo.etapas[0] || ""
+          }));
+
+          window.fmToast(`Aplicando "${nucleo.nombre}" a la fórmula...`, "success");
+
+          // Redirigir al formulador
+          setTimeout(() => {
+            location.href = `formulador.html?nucleo=${encodeURIComponent(nucleo.id)}`;
+          }, 600);
         });
       });
     }
@@ -1005,6 +1520,34 @@
     // INIT
     renderFiltros();
     renderGrid();
+
+    // ============================================
+    // MODAL EDUCATIVO PRIMERA VEZ
+    // ============================================
+    const eduModal = document.getElementById("eduModal");
+    const eduFlag = "fm_edu_nucleos_visto";
+
+    if (!localStorage.getItem(eduFlag)) {
+      // Primera vez — mostrar modal
+      setTimeout(() => eduModal.classList.add("active"), 600);
+    }
+
+    document.getElementById("eduOk").addEventListener("click", () => {
+      eduModal.classList.remove("active");
+      localStorage.setItem(eduFlag, "1");
+    });
+
+    document.getElementById("eduSkip").addEventListener("click", () => {
+      eduModal.classList.remove("active");
+      localStorage.setItem(eduFlag, "1");
+    });
+
+    eduModal.addEventListener("click", e => {
+      if (e.target === eduModal) {
+        eduModal.classList.remove("active");
+        localStorage.setItem(eduFlag, "1");
+      }
+    });
   </script>
 
   <script src="assets/guide-system.js?v=12"></script>

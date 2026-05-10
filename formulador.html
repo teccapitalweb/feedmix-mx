@@ -402,7 +402,7 @@
       place-items: center;
       font-weight: 800;
       font-size: 0.75rem;
-      box-shadow: 0 2px 8px rgba(245,158,11,0.3);
+      box-shadow: 0 2px 8px rgba(184,115,51,0.3);
     }
 
     .comparar-savings {
@@ -461,7 +461,7 @@
       display: grid;
       place-items: center;
       color: #C2410C;
-      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.2);
+      box-shadow: 0 8px 20px rgba(184, 115, 51, 0.2);
     }
 
     .pdf-preview-card h4 {
@@ -517,13 +517,13 @@
       font-weight: 700;
       border-radius: var(--radius);
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+      box-shadow: 0 4px 12px rgba(184, 115, 51, 0.25);
       transition: all var(--transition);
     }
 
     .btn-action-pdf:hover {
       background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
-      box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35);
+      box-shadow: 0 6px 16px rgba(184, 115, 51, 0.35);
       transform: translateY(-1px);
     }
 
@@ -540,7 +540,7 @@
       grid-template-columns: auto 1fr auto;
       gap: var(--space-4);
       align-items: center;
-      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
+      box-shadow: 0 2px 8px rgba(184, 115, 51, 0.15);
       animation: bannerIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
@@ -596,6 +596,68 @@
       }
       .nucleo-banner-icon { margin: 0 auto; }
       .nucleo-banner-actions { justify-content: center; flex-wrap: wrap; }
+    }
+
+    /* Banner cuando hay núcleo APLICADO (verde) */
+    .nucleo-banner.nucleo-banner-aplicado {
+      background: linear-gradient(135deg, #DCE9C8 0%, #E5EAD8 100%);
+      border-color: var(--success);
+      box-shadow: 0 4px 14px rgba(79, 124, 42, 0.18);
+    }
+
+    .nucleo-banner-saco {
+      width: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .nucleo-banner-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--success);
+      margin-bottom: 4px;
+      padding: 3px 10px;
+      background: white;
+      border-radius: 999px;
+      border: 1px solid var(--success);
+    }
+
+    .nucleo-banner-aplicado .nucleo-banner-content strong {
+      color: var(--primary-dark);
+      font-size: 1.0625rem;
+    }
+
+    .nucleo-banner-aplicado .nucleo-banner-content p,
+    .nucleo-banner-aplicado .nucleo-banner-content small {
+      color: var(--primary);
+    }
+
+    .btn-quitar-nucleo {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 10px;
+      background: white;
+      border: 1px solid var(--neutral-300);
+      border-radius: var(--radius);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--neutral-600);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .btn-quitar-nucleo:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+      background: var(--danger-light);
     }
 
     /* ============================================
@@ -1239,6 +1301,68 @@
     .ing-table tr.disabled td { opacity: 0.4; }
     .ing-table tr:not(.disabled):hover td { background: var(--primary-50); }
 
+    /* Botón eliminar ingrediente */
+    .btn-quitar-ing {
+      background: transparent;
+      border: 1px solid var(--neutral-200);
+      border-radius: 6px;
+      padding: 4px;
+      cursor: pointer;
+      color: var(--neutral-400);
+      transition: all var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-quitar-ing:hover {
+      border-color: var(--danger);
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+
+    /* Botón Usar valores típicos NRC */
+    .btn-typical-nrc {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      background: white;
+      border: 1.5px solid var(--accent);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-dark);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+
+    .btn-typical-nrc:hover {
+      background: var(--accent);
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(184,115,51,0.25);
+    }
+
+    /* Tooltip nativo en headers de columnas técnicas */
+    .ing-table th.th-help {
+      cursor: help;
+      position: relative;
+    }
+
+    .th-info {
+      display: inline-block;
+      font-size: 0.625rem;
+      opacity: 0.5;
+      margin-left: 2px;
+    }
+
+    .ing-table th.th-help:hover .th-info {
+      opacity: 1;
+      color: var(--accent);
+    }
+
     .ing-table .ing-cat-pill {
       display: inline-block;
       font-size: 0.625rem;
@@ -1333,7 +1457,7 @@
       position: absolute;
       top: -50px; right: -50px;
       width: 200px; height: 200px;
-      background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(184, 115, 51, 0.15) 0%, transparent 70%);
       pointer-events: none;
     }
 
@@ -1375,7 +1499,7 @@
     .tip-icon-wrapper {
       flex-shrink: 0;
       width: 28px; height: 28px;
-      background: rgba(245, 158, 11, 0.15);
+      background: rgba(184, 115, 51, 0.15);
       border-radius: 8px;
       display: grid; place-items: center;
       margin-top: 2px;
@@ -1436,7 +1560,7 @@
       position: absolute;
       top: -50px; right: -50px;
       width: 200px; height: 200px;
-      background: radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(184, 115, 51, 0.25) 0%, transparent 70%);
       border-radius: 50%;
     }
 
@@ -1561,7 +1685,9 @@
       <a href="index.html" class="brand">
         <span class="brand-mark">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2v4"/><path d="M5.5 5.5l2.8 2.8"/><path d="M18.5 5.5l-2.8 2.8"/>
+            <path d="M12 2v4"/>
+            <path d="M5.5 5.5l2.8 2.8"/>
+            <path d="M18.5 5.5l-2.8 2.8"/>
             <path d="M12 8a6 6 0 0 1 6 6c0 4-3 8-6 8s-6-4-6-8a6 6 0 0 1 6-6z"/>
             <circle cx="12" cy="14" r="1.5" fill="currentColor"/>
           </svg>
@@ -1576,6 +1702,13 @@
         <li><a href="nucleos.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>Núcleos</a></li>
         <li><a href="historial.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Historial</a></li>
         <li><a href="recomendaciones.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1M3.34 7l.7.7M20.66 7l-.7.7M21 14h-1M4 14H3M16 17a4 4 0 0 0-8 0v3h8v-3z"/></svg>Recomendaciones</a></li>
+      </ul>
+
+      <div class="sidebar-section-title">Configuración</div>
+      <ul class="sidebar-nav">
+        <li><a href="perfil.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Mi perfil</a></li>
+        <li><a href="suscripcion.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Suscripción</a></li>
+        <li><a href="https://wa.me/5212382514313?text=Hola%2C%20necesito%20ayuda%20o%20informaci%C3%B3n%20sobre%20cursos" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Soporte / Cursos</a></li>
       </ul>
     </aside>
 
@@ -1720,12 +1853,18 @@
           <div class="formulador-panel" data-panel-content="ingredientes">
           <div class="panel-container">
           <div class="fm-card">
-            <div class="fm-card-header" style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="fm-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
               <div>
                 <h3>2. Ingredientes disponibles</h3>
                 <p>Activa los que tienes en bodega · Ajusta precios actuales</p>
               </div>
-              <span class="badge badge-primary" id="ingActiveCount">0 activos</span>
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <button type="button" class="btn-typical-nrc" id="btnUseTypical" title="Pre-llena los rangos Mín/Máx % típicos según NRC para tu especie/etapa">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  Usar valores típicos NRC
+                </button>
+                <span class="badge badge-primary" id="ingActiveCount">0 activos</span>
+              </div>
             </div>
 
             <div class="search-wrapper">
@@ -1739,11 +1878,12 @@
                   <tr>
                     <th style="width:32px;"></th>
                     <th>Ingrediente</th>
-                    <th class="num" title="Energía Metabolizable">EM</th>
-                    <th class="num" title="Proteína Cruda">PC %</th>
+                    <th class="num th-help" title="Energía Metabolizable (kcal/kg) — La 'gasolina' del pollo. Ej: maíz=3350 (mucho), salvado=1900 (poco)">EM <span class="th-info">ⓘ</span></th>
+                    <th class="num th-help" title="Proteína Cruda (%) — El 'músculo' del ingrediente. Ej: maíz=8.5%, soya=47.5%, pescado=60%">PC % <span class="th-info">ⓘ</span></th>
                     <th class="num">Precio $/kg</th>
-                    <th class="num">Mín %</th>
-                    <th class="num">Máx %</th>
+                    <th class="num th-help" title="Mínimo: cuánto debe haber al menos en la fórmula. Pon 0 si no es obligatorio">Mín % <span class="th-info">ⓘ</span></th>
+                    <th class="num th-help" title="Máximo: cuánto puede haber como tope. Ej: maíz no más de 65% en ponedora">Máx % <span class="th-info">ⓘ</span></th>
+                    <th style="width:36px;"></th>
                   </tr>
                 </thead>
                 <tbody id="ingTbody"></tbody>
@@ -2064,7 +2204,13 @@
       { id: "premix",   name: "Premezcla vit/min",      cat: "aditivo",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    met: 0,    precio: 24.00, min: 0.3, max: 0.5},
       { id: "fitasa",   name: "Fitasa",                 cat: "aditivo",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    met: 0,    precio: 180.00, min: 0, max: 0.05},
       { id: "colina",   name: "Cloruro de colina 60%",  cat: "aditivo",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    met: 0,    precio: 28.00, min: 0, max: 0.2},
-      { id: "coccid",   name: "Coccidiostato",          cat: "aditivo",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    met: 0,    precio: 75.00, min: 0, max: 0.1}
+      { id: "coccid",   name: "Coccidiostato",          cat: "aditivo",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    met: 0,    precio: 75.00, min: 0, max: 0.1},
+      // ============ NUEVOS ingredientes mexicanos comunes ============
+      { id: "gluten",   name: "Gluten meal de maíz 60%", cat: "proteina",     em: 3720, pc: 60.0, ca: 0.05, p: 0.50, lys: 1.00, met: 1.40, precio: 22.00, min: 0, max: 6 },
+      { id: "harpluma", name: "Harina de pluma hidrolizada", cat: "proteina", em: 2700, pc: 80.0, ca: 0.30, p: 0.60, lys: 1.80, met: 0.60, precio: 14.50, min: 0, max: 5 },
+      { id: "melaza",   name: "Melaza de caña",          cat: "energetico",   em: 2200, pc: 4.0,  ca: 1.00, p: 0.10, lys: 0,    met: 0,    precio: 5.50, min: 0, max: 5 },
+      { id: "grasaa",   name: "Grasa amarilla",          cat: "energetico",   em: 8400, pc: 0,    ca: 0,    p: 0,    lys: 0,    met: 0,    precio: 18.00, min: 0, max: 5 },
+      { id: "bicarb",   name: "Bicarbonato de sodio",    cat: "mineral",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    met: 0,    precio: 12.00, min: 0, max: 0.4 }
     ];
 
     // ============================================
@@ -2340,7 +2486,7 @@
 
       const introHtml = etapa?.descripcion ? `
         <li>
-          <span class="tip-icon-wrapper" style="background:rgba(245,158,11,0.25);">${pinIcon}</span>
+          <span class="tip-icon-wrapper" style="background:rgba(184,115,51,0.25);">${pinIcon}</span>
           <span><strong style="color:white;font-weight:700;">${etapa.descripcion}</strong></span>
         </li>
       ` : "";
@@ -2365,6 +2511,7 @@
             <div style="font-weight:600;color:var(--neutral-900);">
               ${i.name}
               <span class="ing-cat-pill pill-${i.cat}">${i.cat}</span>
+              ${i.isNucleo ? '<span class="ing-cat-pill" style="background:var(--success-light);color:var(--primary-dark);">núcleo</span>' : ''}
             </div>
           </td>
           <td class="num">${i.em || '—'}</td>
@@ -2372,12 +2519,20 @@
           <td class="num"><input type="number" step="0.01" class="ing-input" data-action="precio" value="${i.precio}"></td>
           <td class="num"><input type="number" step="0.1" class="ing-input" data-action="min" value="${i.min}"></td>
           <td class="num"><input type="number" step="0.1" class="ing-input" data-action="max" value="${i.max}"></td>
+          <td class="num">
+            <button type="button" class="btn-quitar-ing" data-action="delete" title="Quitar del catálogo">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </td>
         </tr>
       `).join("");
 
       tbody.querySelectorAll("tr").forEach(tr => {
         const id = tr.dataset.id;
         const ing = state.ingredientes.find(i => i.id === id);
+        if (!ing) return;
 
         tr.querySelector('[data-action="toggle"]').addEventListener("change", (e) => {
           ing.active = e.target.checked;
@@ -2390,6 +2545,16 @@
           tr.querySelector(`[data-action="${field}"]`).addEventListener("input", (e) => {
             ing[field] = parseFloat(e.target.value) || 0;
           });
+        });
+
+        // Botón eliminar
+        tr.querySelector('[data-action="delete"]').addEventListener("click", () => {
+          if (!confirm(`¿Quitar "${ing.name}" del catálogo? Puedes restaurarlo después con "Restaurar valores" o agregando ingredientes manualmente.`)) return;
+          state.ingredientes = state.ingredientes.filter(x => x.id !== id);
+          renderIngredientes(document.getElementById("searchIng").value);
+          updateActiveCount();
+          actualizarValidaciones();
+          if (window.fmToast) window.fmToast(`"${ing.name}" eliminado del catálogo`, "info");
         });
       });
 
@@ -3371,6 +3536,199 @@
     renderIngredientes();
     actualizarValidaciones();
     actualizarVolumenPreview();
+
+    // ============================================
+    // APLICAR NÚCLEO PENDIENTE (desde nucleos.html)
+    // ============================================
+    function aplicarNucleoPendiente() {
+      const pendienteStr = localStorage.getItem("fm_nucleo_pendiente");
+      if (!pendienteStr) return;
+
+      try {
+        const pendiente = JSON.parse(pendienteStr);
+        localStorage.removeItem("fm_nucleo_pendiente"); // consumir
+
+        // Buscar si el ingrediente "nucleo" ya existe en INGREDIENTES, si no, agregarlo
+        const nucleoIngId = "nucleo_" + pendiente.id;
+        let nucleoIng = state.ingredientes.find(i => i.id === nucleoIngId);
+
+        if (!nucleoIng) {
+          nucleoIng = {
+            id: nucleoIngId,
+            name: pendiente.nombre,
+            cat: "aditivo",
+            em: 0, pc: 0, ca: 0, p: 0, lys: 0, met: 0,
+            precio: pendiente.precio,
+            min: pendiente.inclusion,
+            max: pendiente.inclusion,
+            active: true,
+            isNucleo: true
+          };
+          state.ingredientes.unshift(nucleoIng);
+        } else {
+          nucleoIng.active = true;
+          nucleoIng.min = pendiente.inclusion;
+          nucleoIng.max = pendiente.inclusion;
+          nucleoIng.precio = pendiente.precio;
+        }
+
+        // Re-render
+        renderIngredientes();
+        actualizarValidaciones();
+
+        // Toast de confirmación grande
+        if (window.fmToast) {
+          window.fmToast(`✓ Núcleo "${pendiente.nombre}" agregado a la fórmula al ${pendiente.inclusion}%. Click en Optimizar.`, "success");
+        }
+
+        // Banner visual prominente
+        mostrarBannerNucleoAplicado(pendiente);
+      } catch (e) {
+        console.error("Error aplicando núcleo pendiente:", e);
+      }
+    }
+
+    function mostrarBannerNucleoAplicado(pendiente) {
+      const banner = document.getElementById("nucleoSugerencia");
+      if (!banner) return;
+
+      // SVG simulando un saco de núcleo
+      const sacoSvg = `
+        <svg viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg" style="width:60px;height:75px;">
+          <defs>
+            <linearGradient id="sacoGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#FAF7F0"/>
+              <stop offset="100%" stop-color="#E5EAD8"/>
+            </linearGradient>
+          </defs>
+          <path d="M 12 18 L 8 95 Q 8 100 14 100 L 66 100 Q 72 100 72 95 L 68 18 Q 68 12 60 12 L 20 12 Q 12 12 12 18 Z" fill="url(#sacoGrad)" stroke="#3F4F2E" stroke-width="2"/>
+          <rect x="20" y="25" width="40" height="35" rx="2" fill="#3F4F2E"/>
+          <text x="40" y="40" text-anchor="middle" font-size="9" font-weight="800" fill="#D4925A" font-family="sans-serif">FEEDMIX</text>
+          <text x="40" y="52" text-anchor="middle" font-size="8" font-weight="700" fill="white" font-family="sans-serif">${pendiente.inclusion}%</text>
+          <line x1="20" y1="68" x2="60" y2="68" stroke="#5A6E45" stroke-width="0.8"/>
+          <text x="40" y="78" text-anchor="middle" font-size="6" fill="#5A6E45" font-family="sans-serif">25 KG</text>
+          <line x1="20" y1="14" x2="60" y2="14" stroke="#3F4F2E" stroke-width="3"/>
+        </svg>
+      `;
+
+      banner.innerHTML = `
+        <div class="nucleo-banner-saco">${sacoSvg}</div>
+        <div class="nucleo-banner-content">
+          <span class="nucleo-banner-eyebrow">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Modo núcleo activo
+          </span>
+          <strong>${pendiente.nombre}</strong>
+          <p>Inclusión fija <strong>${pendiente.inclusion}%</strong> (${pendiente.inclusion * 10} kg/ton) · $${pendiente.precio.toFixed(2)}/kg</p>
+          <small>👉 Solo agrega maíz, soya y dale Optimizar. El sistema respetará el núcleo automáticamente.</small>
+        </div>
+        <div class="nucleo-banner-actions">
+          <button type="button" class="btn btn-primary btn-sm" id="btnOptimizeFromBanner">⚡ Optimizar ahora</button>
+          <button type="button" class="btn-quitar-nucleo" id="btnQuitarNucleo" title="Quitar núcleo">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Quitar núcleo
+          </button>
+        </div>
+      `;
+      banner.classList.add("nucleo-banner-aplicado");
+      banner.style.display = "grid";
+
+      document.getElementById("btnOptimizeFromBanner")?.addEventListener("click", () => {
+        document.getElementById("btnOptimize").click();
+      });
+
+      document.getElementById("btnQuitarNucleo")?.addEventListener("click", () => {
+        if (!confirm("¿Quitar el núcleo de esta fórmula?")) return;
+        // Quitar ingredientes que sean nucleo
+        state.ingredientes = state.ingredientes.filter(i => !i.isNucleo);
+        renderIngredientes();
+        actualizarValidaciones();
+        banner.style.display = "none";
+        if (window.fmToast) window.fmToast("Núcleo quitado de la fórmula", "info");
+      });
+    }
+
+    aplicarNucleoPendiente();
+
+    // ============================================
+    // BOTÓN: Usar valores típicos NRC
+    // ============================================
+    // Rangos típicos de inclusión por ingrediente y especie
+    const TYPICAL_RANGES = {
+      engorda: {
+        maiz: [40, 65], sorgo: [0, 40], trigo: [0, 25], cebada: [0, 10],
+        soya48: [20, 40], soya44: [0, 35], harpez: [0, 5], harcarn: [0, 5],
+        canola: [0, 8], ddgs: [0, 8], salv: [0, 5], alfa: [0, 3],
+        aceite: [1, 5], sebo: [0, 4], grasaa: [0, 4], melaza: [0, 3],
+        gluten: [0, 5], harpluma: [0, 3],
+        carb: [0.8, 2], fosf: [0.5, 2], fosbi: [0.5, 2],
+        sal: [0.2, 0.4], bicarb: [0, 0.3],
+        metio: [0.1, 0.35], lisina: [0.1, 0.4], treo: [0, 0.2],
+        premix: [0.3, 0.5], fitasa: [0, 0.05], colina: [0, 0.15], coccid: [0, 0.05]
+      },
+      ponedora: {
+        maiz: [45, 65], sorgo: [0, 35], trigo: [0, 20], cebada: [0, 10],
+        soya48: [15, 28], soya44: [0, 25], harpez: [0, 3], harcarn: [0, 3],
+        canola: [0, 6], ddgs: [0, 8], salv: [0, 8], alfa: [0, 4],
+        aceite: [0, 3], sebo: [0, 2], grasaa: [0, 2], melaza: [0, 4],
+        gluten: [0, 4], harpluma: [0, 2],
+        carb: [7, 10.5], fosf: [0.3, 1.2], fosbi: [0.3, 1.2],
+        sal: [0.25, 0.4], bicarb: [0, 0.3],
+        metio: [0.05, 0.25], lisina: [0.05, 0.3], treo: [0, 0.15],
+        premix: [0.3, 0.5], fitasa: [0, 0.05], colina: [0, 0.15], coccid: [0, 0]
+      },
+      reproductora: {
+        maiz: [50, 65], sorgo: [0, 30], trigo: [0, 20], cebada: [0, 8],
+        soya48: [12, 22], soya44: [0, 20], harpez: [0, 2], harcarn: [0, 2],
+        canola: [0, 5], ddgs: [0, 6], salv: [0, 8], alfa: [0, 5],
+        aceite: [1, 3], sebo: [0, 2], grasaa: [0, 2], melaza: [0, 3],
+        gluten: [0, 3], harpluma: [0, 2],
+        carb: [3, 5], fosf: [0.5, 1.5], fosbi: [0.5, 1.5],
+        sal: [0.25, 0.4], bicarb: [0, 0.2],
+        metio: [0.05, 0.2], lisina: [0.05, 0.25], treo: [0, 0.1],
+        premix: [0.3, 0.5], fitasa: [0, 0.05], colina: [0, 0.15], coccid: [0, 0]
+      },
+      pavo: {
+        maiz: [35, 55], sorgo: [0, 30], trigo: [0, 20], cebada: [0, 5],
+        soya48: [25, 45], soya44: [0, 40], harpez: [0, 6], harcarn: [0, 4],
+        canola: [0, 8], ddgs: [0, 5], salv: [0, 4], alfa: [0, 3],
+        aceite: [2, 6], sebo: [0, 3], grasaa: [0, 3], melaza: [0, 2],
+        gluten: [0, 6], harpluma: [0, 3],
+        carb: [1.5, 3], fosf: [0.8, 1.8], fosbi: [0.8, 1.8],
+        sal: [0.25, 0.4], bicarb: [0, 0.2],
+        metio: [0.2, 0.45], lisina: [0.2, 0.5], treo: [0, 0.2],
+        premix: [0.4, 0.6], fitasa: [0, 0.05], colina: [0, 0.2], coccid: [0, 0.05]
+      },
+      doble_proposito: {
+        maiz: [50, 70], sorgo: [0, 40], trigo: [0, 25], cebada: [0, 15],
+        soya48: [10, 22], soya44: [0, 22], harpez: [0, 3], harcarn: [0, 3],
+        canola: [0, 6], ddgs: [0, 10], salv: [0, 12], alfa: [0, 8],
+        aceite: [0, 2], sebo: [0, 2], grasaa: [0, 2], melaza: [0, 5],
+        gluten: [0, 4], harpluma: [0, 3],
+        carb: [2, 8], fosf: [0.3, 1], fosbi: [0.3, 1],
+        sal: [0.25, 0.4], bicarb: [0, 0.2],
+        metio: [0, 0.2], lisina: [0, 0.25], treo: [0, 0.1],
+        premix: [0.3, 0.5], fitasa: [0, 0.05], colina: [0, 0.15], coccid: [0, 0]
+      }
+    };
+
+    document.getElementById("btnUseTypical")?.addEventListener("click", () => {
+      const tipo = state.tipo || "engorda";
+      const rangos = TYPICAL_RANGES[tipo] || TYPICAL_RANGES.engorda;
+      let aplicados = 0;
+      state.ingredientes.forEach(ing => {
+        if (rangos[ing.id]) {
+          ing.min = rangos[ing.id][0];
+          ing.max = rangos[ing.id][1];
+          aplicados++;
+        }
+      });
+      renderIngredientes(document.getElementById("searchIng").value);
+      if (window.fmToast) {
+        const tipoNombre = { engorda: "Engorda", ponedora: "Ponedora", reproductora: "Reproductora", pavo: "Pavo", doble_proposito: "Doble propósito" }[tipo] || tipo;
+        window.fmToast(`✨ Valores NRC aplicados a ${aplicados} ingredientes (${tipoNombre})`, "success");
+      }
+    });
   </script>
 
   <!-- Tabs principales del formulador (Configurar / Ingredientes / Resultado) -->

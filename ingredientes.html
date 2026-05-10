@@ -69,7 +69,7 @@
       position: absolute;
       top: -100px; right: -100px;
       width: 300px; height: 300px;
-      background: radial-gradient(circle, rgba(245,158,11,0.2) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(184,115,51,0.2) 0%, transparent 70%);
       pointer-events: none;
     }
 
@@ -79,8 +79,8 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(245, 158, 11, 0.18);
-      border: 1px solid rgba(245, 158, 11, 0.35);
+      background: rgba(184, 115, 51, 0.18);
+      border: 1px solid rgba(184, 115, 51, 0.35);
       border-radius: var(--radius-full);
       padding: 4px 12px;
       font-size: 0.6875rem;
@@ -508,6 +508,473 @@
       color: #451A03;
       font-weight: 800;
     }
+    /* ============================================
+       BLOQUE 1: Educación de columnas
+       ============================================ */
+
+    /* Leyenda permanente */
+    .leyenda-cols {
+      background: linear-gradient(135deg, #FAF7F0 0%, #F4F6F0 100%);
+      border: 1.5px solid var(--primary-100);
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
+      margin-bottom: 16px;
+    }
+
+    .leyenda-cols-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.875rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin-bottom: 12px;
+    }
+
+    .leyenda-cols-title svg {
+      color: var(--accent);
+    }
+
+    .leyenda-items {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 900px) {
+      .leyenda-items { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 540px) {
+      .leyenda-items { grid-template-columns: 1fr; }
+    }
+
+    .leyenda-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .leyenda-item strong {
+      font-size: 0.8125rem;
+      font-weight: 800;
+      color: var(--accent-dark);
+    }
+
+    .leyenda-item span {
+      font-size: 0.75rem;
+      color: var(--neutral-600);
+      line-height: 1.3;
+    }
+
+    .btn-leyenda-mas {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: white;
+      border: 1px solid var(--primary-100);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .btn-leyenda-mas:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Barra de modo experto */
+    .modo-experto-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--neutral-50);
+      border: 1.5px solid var(--neutral-200);
+      border-radius: var(--radius-lg);
+      margin-bottom: 16px;
+      transition: all var(--transition);
+    }
+
+    .modo-experto-bar.activo {
+      background: linear-gradient(135deg, #FEF3C7 0%, #FFEEBA 100%);
+      border-color: var(--accent);
+    }
+
+    .modo-experto-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .modo-experto-info > svg {
+      flex-shrink: 0;
+      color: var(--neutral-500);
+    }
+
+    .modo-experto-bar.activo .modo-experto-info > svg {
+      color: var(--accent-dark);
+    }
+
+    .modo-experto-info strong {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 800;
+      color: var(--neutral-900);
+      margin-bottom: 2px;
+    }
+
+    .modo-experto-info small {
+      font-size: 0.75rem;
+      color: var(--neutral-600);
+      line-height: 1.4;
+    }
+
+    .btn-modo-experto {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: white;
+      border: 1px solid var(--neutral-300);
+      border-radius: var(--radius);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--neutral-700);
+      cursor: pointer;
+      transition: all var(--transition);
+      flex-shrink: 0;
+    }
+
+    .btn-modo-experto:hover {
+      border-color: var(--accent);
+      color: var(--accent-dark);
+      background: #FEF3C7;
+    }
+
+    .modo-experto-bar.activo .btn-modo-experto {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    /* Headers con tooltip — botones */
+    .th-help-btn {
+      background: transparent;
+      border: none;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      color: inherit;
+      cursor: help;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .th-help-btn:hover {
+      color: var(--accent);
+    }
+
+    .th-info {
+      font-size: 0.625rem;
+      opacity: 0.5;
+    }
+
+    .th-help-btn:hover .th-info {
+      opacity: 1;
+    }
+
+    /* Inputs bloqueados */
+    .input-lock-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .lock-icon {
+      position: absolute;
+      left: 8px;
+      font-size: 0.75rem;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0.5;
+    }
+
+    .editable-input.campo-bloqueado {
+      background: var(--neutral-100);
+      color: var(--neutral-500);
+      cursor: not-allowed;
+      padding-left: 26px;
+    }
+
+    .editable-input.campo-bloqueado:focus {
+      outline: none;
+      border-color: var(--neutral-300);
+    }
+
+    /* Modo experto activo: inputs amarillos */
+    .modo-experto-bar.activo ~ * .editable-input:not(.precio):not(.campo-bloqueado) {
+      background: #FFFBEB;
+      border-color: #FCD34D;
+    }
+
+    /* Badge análisis lab */
+    .badge-lab {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.625rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+      color: #1E40AF;
+      border-radius: 999px;
+      letter-spacing: 0.04em;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    tr.con-lab {
+      background: linear-gradient(90deg, rgba(59, 130, 246, 0.04) 0%, transparent 50%);
+    }
+
+    /* Iconos de categoría */
+    .cat-pill {
+      display: inline-grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      flex-shrink: 0;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    .cat-cereal { background: #DCE9C8; }
+    .cat-proteina { background: #FED7AA; }
+    .cat-energia { background: #FEF3C7; }
+    .cat-mineral { background: #E5E5E5; }
+    .cat-aa { background: #DBEAFE; }
+    .cat-aditivo { background: #E9D5FF; }
+    .cat-subprod { background: #D1FAE5; }
+
+    .ing-name {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+      font-weight: 600;
+    }
+
+    /* Botón quitar */
+    .btn-quitar-tabla {
+      background: transparent;
+      border: 1px solid var(--neutral-200);
+      border-radius: 6px;
+      padding: 5px;
+      cursor: pointer;
+      color: var(--neutral-400);
+      transition: all var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-quitar-tabla:hover {
+      border-color: var(--danger);
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+
+    /* ============================================
+       MODAL EDUCATIVO COLUMNAS — primera vez
+       ============================================ */
+    .col-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(42, 53, 32, 0.7);
+      backdrop-filter: blur(10px);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .col-modal-backdrop.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .col-modal {
+      background: white;
+      border-radius: 24px;
+      max-width: 800px;
+      width: 100%;
+      max-height: 92vh;
+      overflow-y: auto;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+      transform: translateY(20px) scale(0.96);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .col-modal-backdrop.active .col-modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .col-modal-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      padding: 36px 36px 24px;
+      border-radius: 24px 24px 0 0;
+      color: white;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .col-modal-header::before {
+      content: "";
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(184,115,51,0.3) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .col-modal-header > * { position: relative; z-index: 1; }
+
+    .col-modal-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(212,146,90,0.25);
+      border: 1px solid rgba(212,146,90,0.4);
+      border-radius: 999px;
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #D4925A;
+      margin-bottom: 12px;
+    }
+
+    .col-modal-header h2 {
+      color: white;
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .col-modal-header p {
+      color: rgba(255,255,255,0.85);
+      font-size: 0.9375rem;
+    }
+
+    .col-modal-body {
+      padding: 28px 36px;
+    }
+
+    .col-explicacion {
+      display: flex;
+      gap: 16px;
+      padding: 16px;
+      background: var(--neutral-50);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      align-items: flex-start;
+    }
+
+    .col-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: white;
+    }
+
+    .col-icon-em { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+    .col-icon-pc { background: linear-gradient(135deg, #B87333 0%, #8B5024 100%); }
+    .col-icon-ca { background: linear-gradient(135deg, #94A3B8 0%, #475569 100%); }
+    .col-icon-p { background: linear-gradient(135deg, #5A6E45 0%, #3F4F2E 100%); }
+    .col-icon-lys { background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%); }
+
+    .col-explicacion-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .col-explicacion h4 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--neutral-900);
+      margin-bottom: 4px;
+    }
+
+    .col-explicacion p {
+      font-size: 0.8125rem;
+      color: var(--neutral-700);
+      line-height: 1.5;
+      margin-bottom: 6px;
+    }
+
+    .col-ejemplo {
+      background: white;
+      border: 1px solid var(--neutral-200);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      color: var(--neutral-600);
+      font-family: var(--font-mono, monospace);
+    }
+
+    .col-ejemplo strong {
+      color: var(--accent-dark);
+    }
+
+    .col-modal-footer {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      padding-top: 16px;
+      border-top: 1px solid var(--neutral-100);
+    }
+
+    .col-modal-footer .btn-ghost {
+      background: transparent;
+      border: none;
+      color: var(--neutral-500);
+      padding: 8px 14px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .col-modal-footer .btn-ghost:hover {
+      color: var(--neutral-900);
+      background: var(--neutral-50);
+    }
+
   </style>
 </head>
 <body>
@@ -518,7 +985,9 @@
       <a href="index.html" class="brand">
         <span class="brand-mark">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2v4"/><path d="M5.5 5.5l2.8 2.8"/><path d="M18.5 5.5l-2.8 2.8"/>
+            <path d="M12 2v4"/>
+            <path d="M5.5 5.5l2.8 2.8"/>
+            <path d="M18.5 5.5l-2.8 2.8"/>
             <path d="M12 8a6 6 0 0 1 6 6c0 4-3 8-6 8s-6-4-6-8a6 6 0 0 1 6-6z"/>
             <circle cx="12" cy="14" r="1.5" fill="currentColor"/>
           </svg>
@@ -529,7 +998,7 @@
       <ul class="sidebar-nav">
         <li><a href="panel.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Panel</a></li>
         <li><a href="formulador.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>Formulador</a></li>
-        
+        <li><a href="ingredientes.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Ingredientes</a></li>
         <li><a href="nucleos.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>Núcleos</a></li>
         <li><a href="historial.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Historial</a></li>
         <li><a href="recomendaciones.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1M3.34 7l.7.7M20.66 7l-.7.7M21 14h-1M4 14H3M16 17a4 4 0 0 0-8 0v3h8v-3z"/></svg>Recomendaciones</a></li>
@@ -537,18 +1006,9 @@
 
       <div class="sidebar-section-title">Configuración</div>
       <ul class="sidebar-nav">
-        <li><a href="perfil.html">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          Mi perfil
-        </a></li>
-        <li><a href="suscripcion.html">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          Suscripción
-        </a></li>
-        <li><a href="https://wa.me/5212382514313?text=Hola%2C%20necesito%20ayuda%20o%20informaci%C3%B3n%20sobre%20cursos" target="_blank">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          Soporte / Cursos
-        </a></li>
+        <li><a href="perfil.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Mi perfil</a></li>
+        <li><a href="suscripcion.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Suscripción</a></li>
+        <li><a href="https://wa.me/5212382514313?text=Hola%2C%20necesito%20ayuda%20o%20informaci%C3%B3n%20sobre%20cursos" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Soporte / Cursos</a></li>
       </ul>
     </aside>
 
@@ -572,6 +1032,55 @@
       </div>
 
       <div class="app-content">
+
+        <!-- LEYENDA PERMANENTE (siempre visible) -->
+        <div class="leyenda-cols">
+          <div class="leyenda-cols-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            ¿Qué significa cada columna?
+          </div>
+          <div class="leyenda-items">
+            <div class="leyenda-item">
+              <strong>EM</strong>
+              <span>Energía (kcal/kg) — la "gasolina" del pollo</span>
+            </div>
+            <div class="leyenda-item">
+              <strong>PC %</strong>
+              <span>Proteína cruda — el "músculo"</span>
+            </div>
+            <div class="leyenda-item">
+              <strong>Ca %</strong>
+              <span>Calcio — para huesos y cáscara</span>
+            </div>
+            <div class="leyenda-item">
+              <strong>P disp %</strong>
+              <span>Fósforo asimilable — huesos y patas</span>
+            </div>
+            <div class="leyenda-item">
+              <strong>Lys %</strong>
+              <span>Aminoácido clave para crecimiento</span>
+            </div>
+          </div>
+          <button type="button" class="btn-leyenda-mas" id="btnLeyendaMas">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Ver guía completa con ejemplos
+          </button>
+        </div>
+
+        <!-- BARRA DE MODO EXPERTO -->
+        <div class="modo-experto-bar" id="modoExpertoBar">
+          <div class="modo-experto-info">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" id="modoIcon"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <div>
+              <strong id="modoTexto">Modo seguro activo</strong>
+              <small id="modoSubtexto">Los valores nutricionales (EM, PC, Ca, P, Lys) están bloqueados — solo edita precios</small>
+            </div>
+          </div>
+          <button type="button" class="btn-modo-experto" id="btnModoExperto">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+            <span>Activar modo experto</span>
+          </button>
+        </div>
 
         <!-- BANNER GUÍA (solo primera vez) -->
         <div class="tour-banner" id="tourBanner" style="display:none;">
@@ -645,11 +1154,31 @@
                 <tr>
                   <th>Ingrediente</th>
                   <th>Origen</th>
-                  <th class="num" title="Energía Metabolizable kcal/kg">EM</th>
-                  <th class="num">PC %</th>
-                  <th class="num">Ca %</th>
-                  <th class="num">P disp %</th>
-                  <th class="num">Lys dig %</th>
+                  <th class="num">
+                    <button type="button" class="th-help-btn" data-tip="em" title="Energía Metabolizable (kcal/kg) — La 'gasolina' del pollo. Maíz=3350, salvado=1900. Click para más info">
+                      EM <span class="th-info">ⓘ</span>
+                    </button>
+                  </th>
+                  <th class="num">
+                    <button type="button" class="th-help-btn" data-tip="pc" title="Proteína Cruda (%) — El 'músculo'. Maíz=8.5%, soya=47.5%, pescado=60%. Click para más info">
+                      PC % <span class="th-info">ⓘ</span>
+                    </button>
+                  </th>
+                  <th class="num">
+                    <button type="button" class="th-help-btn" data-tip="ca" title="Calcio (%) — Para huesos y cáscara. Maíz casi no tiene, carbonato=38%. Click para más info">
+                      Ca % <span class="th-info">ⓘ</span>
+                    </button>
+                  </th>
+                  <th class="num">
+                    <button type="button" class="th-help-btn" data-tip="p" title="Fósforo Disponible (%) — Trabaja con calcio para huesos. Click para más info">
+                      P disp % <span class="th-info">ⓘ</span>
+                    </button>
+                  </th>
+                  <th class="num">
+                    <button type="button" class="th-help-btn" data-tip="lys" title="Lisina Digestible (%) — Aminoácido limitante para crecimiento. Click para más info">
+                      Lys dig % <span class="th-info">ⓘ</span>
+                    </button>
+                  </th>
                   <th class="num">Precio MXN/kg</th>
                   <th></th>
                 </tr>
@@ -728,6 +1257,78 @@
     </div>
   </div>
 
+  <!-- ============================================
+       MODAL EDUCATIVO COLUMNAS (primera vez)
+       ============================================ -->
+  <div class="col-modal-backdrop" id="colModal">
+    <div class="col-modal">
+      <div class="col-modal-header">
+        <span class="col-modal-eyebrow">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2z"/></svg>
+          Antes de empezar
+        </span>
+        <h2>¿Qué significan EM, PC, Ca, P, Lys?</h2>
+        <p>Estos son los 5 nutrientes que importan al formular alimento. Te lo explico rápido.</p>
+      </div>
+      <div class="col-modal-body">
+
+        <div class="col-explicacion">
+          <div class="col-icon col-icon-em">EM</div>
+          <div class="col-explicacion-content">
+            <h4>Energía Metabolizable (kcal/kg)</h4>
+            <p>La "gasolina" del pollo. Mide cuánta energía aprovecha del ingrediente. Sin energía no crece.</p>
+            <div class="col-ejemplo">📊 <strong>Maíz=3,350</strong> · Aceite=8,800 · Salvado=1,900 · Carbonato=0</div>
+          </div>
+        </div>
+
+        <div class="col-explicacion">
+          <div class="col-icon col-icon-pc">PC</div>
+          <div class="col-explicacion-content">
+            <h4>Proteína Cruda (%)</h4>
+            <p>El "músculo" del ingrediente. Los pollos en crecimiento la necesitan para hacer carne.</p>
+            <div class="col-ejemplo">📊 Maíz=8.5% · <strong>Pasta soya=47.5%</strong> · Pescado=60% · Aceite=0%</div>
+          </div>
+        </div>
+
+        <div class="col-explicacion">
+          <div class="col-icon col-icon-ca">Ca</div>
+          <div class="col-explicacion-content">
+            <h4>Calcio (%)</h4>
+            <p>Para hacer huesos y la cáscara del huevo. Sin calcio = patas chuecas y huevos rotos.</p>
+            <div class="col-ejemplo">📊 Maíz=0.02% · Soya=0.32% · <strong>Carbonato=38%</strong></div>
+          </div>
+        </div>
+
+        <div class="col-explicacion">
+          <div class="col-icon col-icon-p">P</div>
+          <div class="col-explicacion-content">
+            <h4>Fósforo Disponible (%)</h4>
+            <p>Trabaja con el calcio para huesos. "Disponible" = el que el pollo SÍ puede asimilar.</p>
+            <div class="col-ejemplo">📊 Maíz=0.08% · Soya=0.32% · <strong>Fosfato MCP=21%</strong></div>
+          </div>
+        </div>
+
+        <div class="col-explicacion">
+          <div class="col-icon col-icon-lys">Lys</div>
+          <div class="col-explicacion-content">
+            <h4>Lisina Digestible (%)</h4>
+            <p>Aminoácido CLAVE. Si falta, aunque haya mucha proteína, el pollo no crece. Es el "limitante".</p>
+            <div class="col-ejemplo">📊 Maíz=0.20% · Soya=2.85% · <strong>L-Lisina HCl=78%</strong></div>
+          </div>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#FAF7F0 0%,#F4F6F0 100%);border-left:4px solid var(--accent);padding:14px 16px;border-radius:8px;margin:16px 0;font-size:0.875rem;color:var(--neutral-700);line-height:1.5;">
+          <strong style="color:var(--accent-dark);font-weight:800;">💡 Tip:</strong> Estos valores ya vienen <strong>precargados con datos NRC</strong> (referencia mundial). <strong>Solo necesitas actualizar el precio</strong> cada semana. Si tu maíz local viene con análisis bromatológico, activa el "Modo experto" para editarlos.
+        </div>
+
+        <div class="col-modal-footer">
+          <button type="button" class="btn-ghost" id="colSkip">No volver a mostrar</button>
+          <button type="button" class="btn btn-primary btn-lg" id="colOk">Entendido, continuar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="assets/firebase-config.js?v=12"></script>
   <script type="module">
     import "./assets/shared.js?v=12";
@@ -759,7 +1360,13 @@
       { id: "treo",     name: "L-Treonina",             cat: "Aminoácido",   em: 3700, pc: 73.0, ca: 0,    p: 0,    lys: 0,    precio: 62.00 },
       { id: "premix",   name: "Premezcla vit/min",      cat: "Aditivo",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    precio: 24.00 },
       { id: "fitasa",   name: "Fitasa",                 cat: "Aditivo",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    precio: 180.00 },
-      { id: "colina",   name: "Cloruro de colina 60%",  cat: "Aditivo",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    precio: 28.00 }
+      { id: "colina",   name: "Cloruro de colina 60%",  cat: "Aditivo",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    precio: 28.00 },
+      // ============ NUEVOS — comunes en México ============
+      { id: "gluten",   name: "Gluten meal de maíz 60%", cat: "Proteína",     em: 3720, pc: 60.0, ca: 0.05, p: 0.50, lys: 1.00, precio: 22.00 },
+      { id: "harpluma", name: "Harina de pluma hidrolizada", cat: "Proteína", em: 2700, pc: 80.0, ca: 0.30, p: 0.60, lys: 1.80, precio: 14.50 },
+      { id: "melaza",   name: "Melaza de caña",          cat: "Energético",   em: 2200, pc: 4.0,  ca: 1.00, p: 0.10, lys: 0,    precio: 5.50 },
+      { id: "grasaa",   name: "Grasa amarilla",          cat: "Energético",   em: 8400, pc: 0,    ca: 0,    p: 0,    lys: 0,    precio: 18.00 },
+      { id: "bicarb",   name: "Bicarbonato de sodio",    cat: "Mineral",      em: 0,    pc: 0,    ca: 0,    p: 0,    lys: 0,    precio: 12.00 }
     ];
 
     let ingredientes = JSON.parse(localStorage.getItem("fm_ing")) || PRECARGADOS.map(i => ({ ...i, source: "precargado" }));
@@ -771,15 +1378,75 @@
     // ============================================
     // RENDER TABLA
     // ============================================
+    // Estado de modo experto
+    let modoExperto = localStorage.getItem("fm_modo_experto") === "1";
+    actualizarModoExperto();
+
+    function actualizarModoExperto() {
+      const bar = document.getElementById("modoExpertoBar");
+      const txt = document.getElementById("modoTexto");
+      const sub = document.getElementById("modoSubtexto");
+      const btn = document.getElementById("btnModoExperto");
+      const icon = document.getElementById("modoIcon");
+
+      if (modoExperto) {
+        bar.classList.add("activo");
+        txt.textContent = "🔓 Modo experto activo";
+        sub.textContent = "Ahora puedes editar EM, PC, Ca, P, Lys. Solo cámbialos si tienes análisis bromatológico de tu lote.";
+        btn.querySelector("span").textContent = "Volver a modo seguro";
+        icon.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>';
+      } else {
+        bar.classList.remove("activo");
+        txt.textContent = "🔒 Modo seguro activo";
+        sub.textContent = 'Los valores nutricionales (EM, PC, Ca, P, Lys) están bloqueados — solo edita precios';
+        btn.querySelector("span").textContent = "Activar modo experto";
+        icon.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>';
+      }
+
+      // Re-render para aplicar candados
+      if (typeof render === 'function') render(document.getElementById("searchInput")?.value || "");
+    }
+
+    document.getElementById("btnModoExperto").addEventListener("click", () => {
+      if (!modoExperto) {
+        if (!confirm("⚠️ ATENCIÓN\n\nVas a activar el MODO EXPERTO. Esto te permite editar valores nutricionales (EM, PC, Ca, P, Lys).\n\nSOLO debes cambiar estos valores si tienes:\n• Análisis bromatológico oficial de tu lote\n• Conocimiento de nutrición animal\n\nUn cambio incorrecto puede arruinar tus fórmulas.\n\n¿Continuar?")) return;
+      }
+      modoExperto = !modoExperto;
+      localStorage.setItem("fm_modo_experto", modoExperto ? "1" : "0");
+      actualizarModoExperto();
+      window.fmToast(modoExperto ? "🔓 Modo experto activado" : "🔒 Modo seguro activado", "info");
+    });
+
     function render(filter = "") {
       const f = filter.toLowerCase();
       const list = ingredientes.filter(i => i.name.toLowerCase().includes(f) || i.cat.toLowerCase().includes(f));
       document.getElementById("totalCount").textContent = `${list.length} de ${ingredientes.length} ingredientes`;
 
-      document.getElementById("tbody").innerHTML = list.map(i => `
-        <tr data-id="${i.id}">
+      // Helper categoría → icono SVG + color
+      const catIcon = (cat) => {
+        const c = (cat || "").toLowerCase();
+        if (c.includes("cereal")) return '<span class="cat-pill cat-cereal" title="Cereal">🌾</span>';
+        if (c.includes("prote")) return '<span class="cat-pill cat-proteina" title="Proteína">🫘</span>';
+        if (c.includes("ener")) return '<span class="cat-pill cat-energia" title="Energético">⚡</span>';
+        if (c.includes("min")) return '<span class="cat-pill cat-mineral" title="Mineral">⚪</span>';
+        if (c.includes("aa") || c.includes("amin")) return '<span class="cat-pill cat-aa" title="Aminoácido">💊</span>';
+        if (c.includes("adit")) return '<span class="cat-pill cat-aditivo" title="Aditivo">✨</span>';
+        if (c.includes("subprod")) return '<span class="cat-pill cat-subprod" title="Subproducto">🌱</span>';
+        return '<span class="cat-pill" title="Otro">●</span>';
+      };
+
+      document.getElementById("tbody").innerHTML = list.map(i => {
+        const tieneLab = i.analisisLab === true;
+        const lockClass = modoExperto ? '' : 'campo-bloqueado';
+        const disabledAttr = modoExperto ? '' : 'disabled';
+        return `
+        <tr data-id="${i.id}" ${tieneLab ? 'class="con-lab"' : ''}>
           <td>
-            <div class="ing-name">${i.name}</div>
+            <div class="ing-name">
+              ${catIcon(i.cat)}
+              ${i.name}
+              ${tieneLab ? '<span class="badge-lab" title="Editado con análisis de laboratorio">🔬 Análisis lab</span>' : ''}
+            </div>
             <div class="ing-cat">${i.cat}</div>
           </td>
           <td>
@@ -788,39 +1455,54 @@
             </span>
           </td>
           <td class="num">
-            <input type="number" class="editable-input" value="${i.em}" data-action="em" data-orig="${i.em}" min="0">
+            <div class="input-lock-wrap">
+              ${!modoExperto ? '<span class="lock-icon">🔒</span>' : ''}
+              <input type="number" class="editable-input ${lockClass}" value="${i.em}" data-action="em" min="0" ${disabledAttr}>
+            </div>
           </td>
           <td class="num">
-            <input type="number" step="0.1" class="editable-input" value="${i.pc.toFixed(1)}" data-action="pc" min="0">
+            <div class="input-lock-wrap">
+              ${!modoExperto ? '<span class="lock-icon">🔒</span>' : ''}
+              <input type="number" step="0.1" class="editable-input ${lockClass}" value="${i.pc.toFixed(1)}" data-action="pc" min="0" ${disabledAttr}>
+            </div>
           </td>
           <td class="num">
-            <input type="number" step="0.01" class="editable-input" value="${i.ca.toFixed(2)}" data-action="ca" min="0">
+            <div class="input-lock-wrap">
+              ${!modoExperto ? '<span class="lock-icon">🔒</span>' : ''}
+              <input type="number" step="0.01" class="editable-input ${lockClass}" value="${i.ca.toFixed(2)}" data-action="ca" min="0" ${disabledAttr}>
+            </div>
           </td>
           <td class="num">
-            <input type="number" step="0.01" class="editable-input" value="${i.p.toFixed(2)}" data-action="p" min="0">
+            <div class="input-lock-wrap">
+              ${!modoExperto ? '<span class="lock-icon">🔒</span>' : ''}
+              <input type="number" step="0.01" class="editable-input ${lockClass}" value="${i.p.toFixed(2)}" data-action="p" min="0" ${disabledAttr}>
+            </div>
           </td>
           <td class="num">
-            <input type="number" step="0.01" class="editable-input" value="${i.lys.toFixed(2)}" data-action="lys" min="0">
+            <div class="input-lock-wrap">
+              ${!modoExperto ? '<span class="lock-icon">🔒</span>' : ''}
+              <input type="number" step="0.01" class="editable-input ${lockClass}" value="${i.lys.toFixed(2)}" data-action="lys" min="0" ${disabledAttr}>
+            </div>
           </td>
           <td class="num">
             <input type="number" step="0.01" class="editable-input precio" value="${i.precio.toFixed(2)}" data-action="precio" min="0">
           </td>
           <td>
             <div class="ing-actions">
-              ${i.source === 'propio' ? `
-                <button class="danger" data-action="delete" title="Eliminar">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-                </button>
-              ` : ''}
+              <button class="btn-quitar-tabla" data-action="delete" title="${i.source === 'propio' ? 'Eliminar' : 'Quitar del catálogo'}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
             </div>
           </td>
         </tr>
-      `).join("");
+      `;
+      }).join("");
 
       // EVENTOS — todos los campos editables
       document.querySelectorAll("#tbody tr").forEach(tr => {
         const id = tr.dataset.id;
         const ing = ingredientes.find(x => x.id === id);
+        if (!ing) return;
 
         ["em", "pc", "ca", "p", "lys", "precio"].forEach(field => {
           const input = tr.querySelector(`[data-action="${field}"]`);
@@ -828,7 +1510,12 @@
           input.addEventListener("change", (e) => {
             const newVal = parseFloat(e.target.value) || 0;
             ing[field] = newVal;
+            // Si cambió un valor nutricional, marcar como con análisis lab
+            if (field !== 'precio' && modoExperto) {
+              ing.analisisLab = true;
+            }
             save();
+            render(document.getElementById("searchInput").value);
             const fieldNames = {
               em: "EM", pc: "PC", ca: "Ca", p: "P disp", lys: "Lys dig", precio: "Precio"
             };
@@ -837,11 +1524,14 @@
         });
 
         tr.querySelector('[data-action="delete"]')?.addEventListener("click", () => {
-          if (confirm(`¿Eliminar "${ing.name}" de tu catálogo?`)) {
+          const msg = ing.source === 'propio'
+            ? `¿Eliminar "${ing.name}" de tu catálogo?`
+            : `¿Quitar "${ing.name}" del catálogo? Puedes restaurarlo con "Restaurar valores".`;
+          if (confirm(msg)) {
             ingredientes = ingredientes.filter(x => x.id !== id);
             save();
             render(document.getElementById("searchInput").value);
-            window.fmToast("Ingrediente eliminado", "info");
+            window.fmToast(`"${ing.name}" eliminado`, "info");
           }
         });
       });
@@ -1015,6 +1705,39 @@
     // INIT
     // ============================================
     render();
+
+    // ============================================
+    // MODAL EDUCATIVO COLUMNAS — primera vez
+    // ============================================
+    const colModal = document.getElementById("colModal");
+    const COL_KEY = "fm_edu_columnas_visto";
+
+    function abrirColModal() {
+      colModal.classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+
+    function cerrarColModal() {
+      colModal.classList.remove("active");
+      document.body.style.overflow = "";
+      localStorage.setItem(COL_KEY, "1");
+    }
+
+    if (!localStorage.getItem(COL_KEY)) {
+      setTimeout(abrirColModal, 1200);
+    }
+
+    document.getElementById("colOk").addEventListener("click", cerrarColModal);
+    document.getElementById("colSkip").addEventListener("click", cerrarColModal);
+    colModal.addEventListener("click", e => { if (e.target === colModal) cerrarColModal(); });
+
+    // Click en cualquier ⓘ del header → abre modal
+    document.querySelectorAll(".th-help-btn").forEach(btn => {
+      btn.addEventListener("click", abrirColModal);
+    });
+
+    // Botón "Ver guía completa con ejemplos"
+    document.getElementById("btnLeyendaMas").addEventListener("click", abrirColModal);
 
     // Mostrar banner solo si es primera vez
     if (!localStorage.getItem(TOUR_KEY)) {

@@ -303,6 +303,181 @@ window.FM_NUCLEOS = {
       },
       aditivos: ["DL-Met (alta inclusión)", "L-Lys", "L-Thr", "L-Val", "Vitaminas", "Minerales"],
       requiere_extras: []
+    },
+
+    // ============ NUEVOS — engorda México ============
+    {
+      id: "purina-engorda-3",
+      nombre: "Purina Premier Engorda 3%",
+      marca: "Purina México",
+      tipo: "engorda",
+      etapas: ["iniciador", "crecimiento", "finalizador"],
+      inclusion: 3.0,
+      precio: 35.50,
+      descripcion: "Premezcla Purina ampliamente disponible en sur y centro de México. Buena relación calidad-precio.",
+      aportes: {
+        em: 0, pc: 18.0, ca: 21.5, p: 12.0, lys: 6.2, met: 4.0, na: 4.2
+      },
+      aditivos: ["Vitaminas", "Minerales traza", "Coccidiostato", "Antioxidante"],
+      requiere_extras: []
+    },
+    {
+      id: "apc-prematix",
+      nombre: "APC Prematix Pollo 2.5%",
+      marca: "APC México",
+      tipo: "engorda",
+      etapas: ["preiniciador", "iniciador", "crecimiento", "finalizador"],
+      inclusion: 2.5,
+      precio: 41.00,
+      descripcion: "Premezcla APC con plasma porcino para mejorar inmunidad en primera semana.",
+      aportes: {
+        em: 0, pc: 19.0, ca: 22.5, p: 12.5, lys: 6.8, met: 4.3, na: 4.5
+      },
+      aditivos: ["Plasma porcino", "Vitaminas", "Minerales", "Coccidiostato", "Probióticos"],
+      requiere_extras: []
+    },
+    {
+      id: "novus-mhi",
+      nombre: "Novus Núcleo MHA 2%",
+      marca: "Novus International",
+      tipo: "engorda",
+      etapas: ["preiniciador", "iniciador", "crecimiento", "finalizador"],
+      inclusion: 2.0,
+      precio: 55.00,
+      descripcion: "Núcleo Novus con MHA (Metionina hidroxianáloga) — más eficiente que DL-Met estándar.",
+      aportes: {
+        em: 0, pc: 18.0, ca: 24.0, p: 13.0, lys: 7.5, met: 6.5, na: 4.5
+      },
+      aditivos: ["MHA (Met líquida)", "Vitaminas", "Minerales orgánicos", "Mintrex"],
+      requiere_extras: []
+    },
+
+    // ============ NUEVOS — postura México ============
+    {
+      id: "purina-postura-25",
+      nombre: "Purina Hi-Pro Postura 2.5%",
+      marca: "Purina México",
+      tipo: "ponedora",
+      etapas: ["fase1", "fase2"],
+      inclusion: 2.5,
+      precio: 33.50,
+      descripcion: "Premezcla Purina para postura comercial. Disponible en presentaciones de 25 kg.",
+      aportes: {
+        em: 0, pc: 14.0, ca: 88.0, p: 13.5, lys: 5.0, met: 3.5, na: 4.0
+      },
+      aditivos: ["Vitaminas", "Carbonato fino+grueso", "Pigmento amarillo", "DL-Met"],
+      requiere_extras: []
+    },
+    {
+      id: "yara-postura-2",
+      nombre: "Yara Premix Postura 2%",
+      marca: "Yara Animal Nutrition",
+      tipo: "ponedora",
+      etapas: ["fase1", "fase2", "fase3"],
+      inclusion: 2.0,
+      precio: 38.00,
+      descripcion: "Premezcla Yara con minerales orgánicos para huevo de cáscara firme. Calidad europea.",
+      aportes: {
+        em: 0, pc: 13.5, ca: 96.0, p: 14.5, lys: 4.8, met: 3.6, na: 4.2
+      },
+      aditivos: ["Vitaminas premium", "Minerales orgánicos", "Carbonato calcio premium", "Pigmento natural"],
+      requiere_extras: []
+    },
+    {
+      id: "elanco-coban-postura",
+      nombre: "Elanco Postura Plus 2.5%",
+      marca: "Elanco México",
+      tipo: "ponedora",
+      etapas: ["fase1", "fase2"],
+      inclusion: 2.5,
+      precio: 36.50,
+      descripcion: "Premezcla Elanco con probióticos y enzimas para mejor aprovechamiento del calcio.",
+      aportes: {
+        em: 0, pc: 14.5, ca: 92.0, p: 14.0, lys: 5.2, met: 3.7, na: 4.2
+      },
+      aditivos: ["Vitaminas", "Probiótico Bacillus", "Fitasa", "Carbonato premium", "Pigmento marigold"],
+      requiere_extras: []
+    },
+    {
+      id: "phileo-postura",
+      nombre: "Phileo Lallemand Layer 2%",
+      marca: "Phileo Lallemand",
+      tipo: "ponedora",
+      etapas: ["fase1", "fase2", "fase3"],
+      inclusion: 2.0,
+      precio: 44.00,
+      descripcion: "Premium con levadura de cervecería viva para inmunidad intestinal. Top de gama.",
+      aportes: {
+        em: 0, pc: 13.0, ca: 100.0, p: 15.0, lys: 4.5, met: 3.4, na: 4.0
+      },
+      aditivos: ["Levadura viva", "Pared celular MOS", "Vitaminas", "Minerales orgánicos"],
+      requiere_extras: []
+    },
+
+    // ============ NUEVOS — reproductora ============
+    {
+      id: "cargill-breeder",
+      nombre: "Cargill Breeder 2.5%",
+      marca: "Cargill Animal Nutrition",
+      tipo: "reproductora",
+      etapas: ["rep-pico", "rep-media", "rep-final"],
+      inclusion: 2.5,
+      precio: 48.00,
+      descripcion: "Premezcla Cargill diseñada para máxima fertilidad y calidad embrionaria.",
+      aportes: {
+        em: 0, pc: 15.0, ca: 78.0, p: 12.5, lys: 4.8, met: 3.5, na: 4.2
+      },
+      aditivos: ["Vit E alta", "Selenio orgánico", "Carotenoides", "Carbonato", "Omega-3 (DHA)"],
+      requiere_extras: []
+    },
+    {
+      id: "delacon-breeder",
+      nombre: "Delacon Phytogenics Breeder 2%",
+      marca: "Delacon",
+      tipo: "reproductora",
+      etapas: ["rep-pico", "rep-media", "rep-final"],
+      inclusion: 2.0,
+      precio: 56.00,
+      descripcion: "Núcleo con fitogénicos para reducir antibióticos en reproductora. Tendencia europea.",
+      aportes: {
+        em: 0, pc: 14.0, ca: 82.0, p: 13.0, lys: 4.5, met: 3.3, na: 4.0
+      },
+      aditivos: ["Aceites esenciales (orégano, tomillo)", "Vit E", "Selenio orgánico", "Carbonato"],
+      requiere_extras: []
+    },
+
+    // ============ NUEVOS — pavo ============
+    {
+      id: "novus-pavo",
+      nombre: "Novus Turkey Premier 2.5%",
+      marca: "Novus International",
+      tipo: "pavo",
+      etapas: ["pavo-preini", "pavo-ini", "pavo-crec"],
+      inclusion: 2.5,
+      precio: 52.00,
+      descripcion: "Premezcla Novus para pavo con MHA y mineral orgánico. Ideal para alta densidad nutricional.",
+      aportes: {
+        em: 0, pc: 23.0, ca: 27.0, p: 14.5, lys: 9.0, met: 6.0, na: 4.5
+      },
+      aditivos: ["MHA", "Mintrex Mn alto", "Vitaminas", "Coccidiostato"],
+      requiere_extras: []
+    },
+
+    // ============ NUEVOS — doble propósito ============
+    {
+      id: "premix-criollo-economico",
+      nombre: "Premix Rural Criolla 5%",
+      marca: "Distribución regional",
+      tipo: "doble_proposito",
+      etapas: ["dp-ini", "dp-crec", "dp-post", "dp-mant"],
+      inclusion: 5.0,
+      precio: 22.00,
+      descripcion: "Núcleo económico para sistemas rústicos y traspatio. Fórmula simple, alta inclusión.",
+      aportes: {
+        em: 800, pc: 16.0, ca: 50.0, p: 9.0, lys: 3.5, met: 2.5, na: 3.0
+      },
+      aditivos: ["Vitaminas básicas", "Minerales traza", "Carbonato"],
+      requiere_extras: []
     }
   ],
 

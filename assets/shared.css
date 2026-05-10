@@ -637,11 +637,25 @@ section {
 .app-sidebar {
   background: white;
   border-right: 1px solid var(--neutral-200);
-  padding: var(--space-6);
+  padding: var(--space-5) var(--space-4);
   position: sticky;
   top: 0;
   height: 100vh;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Custom scrollbar más sutil */
+.app-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+.app-sidebar::-webkit-scrollbar-thumb {
+  background: var(--neutral-200);
+  border-radius: 4px;
+}
+.app-sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--neutral-300);
 }
 
 .app-main {
@@ -667,18 +681,19 @@ section {
   margin: 0 auto;
 }
 
-.sidebar-nav { list-style: none; margin-top: var(--space-8); }
-.sidebar-nav li { margin-bottom: var(--space-1); }
+.sidebar-nav { list-style: none; margin-top: var(--space-4); }
+.sidebar-nav li { margin-bottom: 2px; }
 .sidebar-nav a {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: 0.625rem 0.875rem;
+  padding: 0.5rem 0.75rem;
   border-radius: var(--radius);
   color: var(--neutral-600);
   font-weight: 500;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   transition: all var(--transition);
+  white-space: nowrap;
 }
 
 .sidebar-nav a:hover {
@@ -693,8 +708,8 @@ section {
 }
 
 .sidebar-nav a svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
   stroke-width: 1.8;
 }
@@ -705,7 +720,7 @@ section {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--neutral-400);
-  margin: var(--space-6) 0 var(--space-3) 0.875rem;
+  margin: var(--space-4) 0 var(--space-2) 0.75rem;
 }
 
 @media (max-width: 900px) {

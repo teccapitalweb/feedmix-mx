@@ -503,21 +503,20 @@ window.FM_SPECIES = {
       }
 
       /* ============================================
-         BANNER DE MODO ACTIVO (en sidebar)
+         BANNER DE MODO ACTIVO (en sidebar) — compacto
          ============================================ */
       .fm-mode-banner {
         display: flex;
         align-items: center;
-        gap: 10px;
-        padding: 10px 12px;
+        gap: 8px;
+        padding: 8px 10px;
         background: var(--mode-bg, #F1F5F9);
         border: 1.5px solid color-mix(in srgb, var(--mode-color, #1B4D7C) 30%, transparent);
-        border-radius: 12px;
+        border-radius: 10px;
         cursor: pointer;
         transition: all 0.2s;
         font-family: inherit;
-        margin: 12px 16px 16px;
-        width: calc(100% - 32px);
+        margin: 8px 0 4px;
         text-align: left;
       }
 
@@ -528,13 +527,13 @@ window.FM_SPECIES = {
       }
 
       .fm-mode-icon {
-        width: 36px;
-        height: 36px;
+        width: 30px;
+        height: 30px;
         background: white;
-        border-radius: 10px;
+        border-radius: 8px;
         display: grid;
         place-items: center;
-        font-size: 1.25rem;
+        font-size: 1rem;
         box-shadow: 0 2px 4px rgba(0,0,0,0.08);
         flex-shrink: 0;
         overflow: hidden;
@@ -549,13 +548,13 @@ window.FM_SPECIES = {
       .fm-mode-text {
         display: flex;
         flex-direction: column;
-        line-height: 1.15;
+        line-height: 1.1;
         flex: 1;
         min-width: 0;
       }
 
       .fm-mode-text strong {
-        font-size: 0.8125rem;
+        font-size: 0.75rem;
         font-weight: 700;
         color: var(--mode-color, #0F172A);
         white-space: nowrap;
@@ -564,7 +563,7 @@ window.FM_SPECIES = {
       }
 
       .fm-mode-text small {
-        font-size: 0.6875rem;
+        font-size: 0.625rem;
         color: #64748B;
       }
 
@@ -572,6 +571,8 @@ window.FM_SPECIES = {
         flex-shrink: 0;
         color: var(--mode-color, #64748B);
         opacity: 0.6;
+        width: 12px;
+        height: 12px;
       }
     `;
   }
