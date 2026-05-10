@@ -1939,6 +1939,143 @@
     .result-row.unmet strong { color: var(--danger); }
     .result-row.partial strong { color: var(--warning); }
 
+    /* ============ AMINOGRAMA COMPLETO ============ */
+    .aminograma-limitante-badge {
+      background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+      border-left: 4px solid #DC2626;
+      border-radius: var(--radius);
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-4);
+      display: flex; align-items: center; gap: var(--space-3);
+    }
+    .aminograma-limitante-badge .lim-icon {
+      font-size: 2rem; flex-shrink: 0;
+    }
+    .aminograma-limitante-badge .lim-content {
+      flex: 1;
+    }
+    .aminograma-limitante-badge .lim-title {
+      font-weight: 700; font-size: 0.875rem; color: #991B1B;
+      margin-bottom: 2px;
+    }
+    .aminograma-limitante-badge .lim-detail {
+      font-size: 0.75rem; color: #7F1D1D; line-height: 1.4;
+    }
+    .aminograma-row {
+      display: grid;
+      grid-template-columns: 64px 1fr 1fr 60px;
+      gap: var(--space-2);
+      align-items: center;
+      padding: 0.6rem 0;
+      border-bottom: 1px dashed var(--neutral-100);
+      font-size: 0.8125rem;
+    }
+    .aminograma-row:last-child { border-bottom: none; }
+    .aminograma-row .aa-label {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .aminograma-row .aa-sym {
+      display: inline-block;
+      width: 32px; text-align: center;
+      font-family: var(--font-mono);
+      font-weight: 700; font-size: 0.6875rem;
+      padding: 2px 0;
+      border-radius: 4px;
+      color: white;
+    }
+    .aminograma-row .aa-name {
+      font-size: 0.75rem; color: var(--neutral-600);
+    }
+    .aminograma-row .aa-vals {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--neutral-700);
+    }
+    .aminograma-row .aa-vals strong { color: var(--neutral-900); }
+    .aminograma-row .aa-bar {
+      height: 10px;
+      background: var(--neutral-100);
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+    }
+    .aminograma-row .aa-bar-fill {
+      height: 100%;
+      border-radius: 5px;
+      transition: width 0.4s ease-out;
+    }
+    .aminograma-row .aa-bar-fill.deficit { background: linear-gradient(90deg, #DC2626, #EF4444); }
+    .aminograma-row .aa-bar-fill.partial { background: linear-gradient(90deg, #F59E0B, #FBBF24); }
+    .aminograma-row .aa-bar-fill.ok      { background: linear-gradient(90deg, #10B981, #34D399); }
+    .aminograma-row .aa-bar-fill.exceso  { background: linear-gradient(90deg, #3B82F6, #60A5FA); }
+    .aminograma-row .aa-cob {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.8125rem;
+      text-align: right;
+    }
+    .aminograma-row .aa-cob.deficit { color: #DC2626; }
+    .aminograma-row .aa-cob.partial { color: #D97706; }
+    .aminograma-row .aa-cob.ok      { color: #059669; }
+    .aminograma-row .aa-cob.exceso  { color: #2563EB; }
+    .aminograma-row.limitante {
+      background: rgba(254, 226, 226, 0.4);
+      border-left: 3px solid #DC2626;
+      padding-left: 6px; margin-left: -6px;
+    }
+    .aminograma-footer {
+      margin-top: var(--space-3);
+      padding: var(--space-2) var(--space-3);
+      background: var(--neutral-50);
+      border-radius: var(--radius);
+      color: var(--neutral-600);
+      font-size: 0.75rem;
+      line-height: 1.5;
+    }
+
+    /* ============ ALERTAS INTELIGENTES ============ */
+    .alerta-card {
+      display: flex; gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius);
+      margin-bottom: var(--space-2);
+      border-left: 4px solid;
+    }
+    .alerta-card.alta {
+      background: #FEE2E2; border-left-color: #DC2626;
+    }
+    .alerta-card.media {
+      background: #FEF3C7; border-left-color: #F59E0B;
+    }
+    .alerta-card.baja {
+      background: #DBEAFE; border-left-color: #3B82F6;
+    }
+    .alerta-card.info {
+      background: #E0F2FE; border-left-color: #0284C7;
+    }
+    .alerta-icono {
+      font-size: 1.5rem; flex-shrink: 0; line-height: 1;
+    }
+    .alerta-body { flex: 1; }
+    .alerta-titulo {
+      font-weight: 700; font-size: 0.875rem;
+      color: var(--neutral-900); margin-bottom: 4px;
+    }
+    .alerta-mensaje {
+      font-size: 0.8125rem; color: var(--neutral-700);
+      line-height: 1.5; margin-bottom: 6px;
+    }
+    .alerta-recomendacion {
+      font-size: 0.75rem; color: var(--neutral-600);
+      line-height: 1.5;
+      padding: 6px 8px;
+      background: rgba(255,255,255,0.6);
+      border-radius: 6px;
+    }
+    .alerta-recomendacion::before {
+      content: "💡 ";
+    }
+
     .result-empty {
       padding: var(--space-10) var(--space-5);
       text-align: center;
@@ -2375,6 +2512,22 @@
 
                     <div class="section-title" style="margin-top:var(--space-5);">🧬 Perfil nutricional vs requerimientos</div>
                     <div id="resPerfil"></div>
+
+                    <!-- ============ AMINOGRAMA COMPLETO (8 AA) ============ -->
+                    <div id="aminogramaCard" style="display:none; margin-top:var(--space-5);">
+                      <div class="section-title">🧪 Aminograma completo (8 aminoácidos esenciales)</div>
+                      <div id="aminogramaLimitanteBadge" style="display:none;"></div>
+                      <div id="aminogramaGrid"></div>
+                      <div class="aminograma-footer">
+                        <small>💡 <strong>AA limitante</strong> = el aminoácido con menor cobertura; aunque los demás sobren, este limita el crecimiento. La proteína ideal busca que TODOS estén cubiertos sin excesos.</small>
+                      </div>
+                    </div>
+
+                    <!-- ============ ALERTAS INTELIGENTES ============ -->
+                    <div id="alertasInteligentes" style="display:none; margin-top:var(--space-5);">
+                      <div class="section-title">⚠️ Alertas inteligentes</div>
+                      <div id="alertasGrid"></div>
+                    </div>
                   </div>
 
                   <!-- TAB: SACOS -->
@@ -2559,12 +2712,13 @@
     </div>
   </div>
 
-  <script src="assets/firebase-config.js?v=15"></script>
-  <script src="assets/avicola-data.js?v=15"></script>
-  <script src="assets/nucleos-data.js?v=15"></script>
-  <script src="assets/consumo-data.js?v=15"></script>
-  <script src="assets/solver-v2.js?v=15"></script>
-  <script src="assets/species-system.js?v=15"></script>
+  <script src="assets/firebase-config.js?v=16"></script>
+  <script src="assets/avicola-data.js?v=16"></script>
+  <script src="assets/nucleos-data.js?v=16"></script>
+  <script src="assets/consumo-data.js?v=16"></script>
+  <script src="assets/aminogramas-data.js?v=16"></script>
+  <script src="assets/solver-v2.js?v=16"></script>
+  <script src="assets/species-system.js?v=16"></script>
   <script type="module">
     import "./assets/shared.js?v=12";
     await window.fmAuthGuard({ requireAuth: true });
@@ -4115,6 +4269,100 @@
         `;
       }).join("");
 
+      // ============================================
+      // AMINOGRAMA COMPLETO + ALERTAS INTELIGENTES (v19)
+      // ============================================
+      try {
+        if (window.FM_AMINO && result.formula && result.formula.length > 0) {
+          // 1. Calcular aportes de los 8 AA
+          const aporteAA = window.FM_AMINO.calcularAportes(result.formula);
+
+          // 2. Obtener etapa actual para reqs completos
+          const etapaActual = window.FM_AVICOLA.ETAPAS_BASE[state.tipo].find(e => e.id === state.etapaId);
+          const reqAA = window.FM_AMINO.getRequerimientoCompleto(state.etapaId, etapaActual.req);
+
+          // 3. Detectar limitante
+          const limitante = window.FM_AMINO.detectarLimitante(aporteAA, reqAA);
+
+          // 4. Render tabla del aminograma
+          const aminoCard = document.getElementById("aminogramaCard");
+          aminoCard.style.display = "block";
+
+          // Badge del AA limitante
+          const badgeEl = document.getElementById("aminogramaLimitanteBadge");
+          if (limitante && limitante.cobertura < 95) {
+            badgeEl.innerHTML =
+              '<div class="aminograma-limitante-badge">' +
+                '<div class="lim-icon">🧪</div>' +
+                '<div class="lim-content">' +
+                  '<div class="lim-title">AA LIMITANTE: ' + limitante.nombre + ' (' + limitante.simbolo + ')</div>' +
+                  '<div class="lim-detail">Cobertura ' + limitante.cobertura.toFixed(1) + '% — déficit ' + limitante.deficit.toFixed(2) + '%. Este AA limita el crecimiento aun con los demás cubiertos.</div>' +
+                '</div>' +
+              '</div>';
+            badgeEl.style.display = "block";
+          } else {
+            badgeEl.style.display = "none";
+          }
+
+          // Grid de los 8 AA
+          const gridEl = document.getElementById("aminogramaGrid");
+          gridEl.innerHTML = window.FM_AMINO.AA_LIST.map(aa => {
+            const ap = aporteAA[aa.key] || 0;
+            const rq = reqAA[aa.key] || 0;
+            const cob = rq > 0 ? (ap / rq) * 100 : 0;
+            let cls = "ok";
+            if (cob < 90) cls = "deficit";
+            else if (cob < 100) cls = "partial";
+            else if (cob > 115) cls = "exceso";
+            const barWidth = Math.min(cob, 150); // cap visual a 150%
+            const esLim = limitante && limitante.key === aa.key && cob < 95;
+            return (
+              '<div class="aminograma-row' + (esLim ? ' limitante' : '') + '">' +
+                '<div class="aa-label">' +
+                  '<span class="aa-sym" style="background:' + aa.color + '">' + aa.simbolo + '</span>' +
+                '</div>' +
+                '<div>' +
+                  '<div class="aa-name">' + aa.nombre + '</div>' +
+                  '<div class="aa-vals"><strong>' + ap.toFixed(2) + '%</strong> / req ' + rq.toFixed(2) + '%</div>' +
+                '</div>' +
+                '<div class="aa-bar"><div class="aa-bar-fill ' + cls + '" style="width:' + barWidth + '%"></div></div>' +
+                '<div class="aa-cob ' + cls + '">' + cob.toFixed(0) + '%</div>' +
+              '</div>'
+            );
+          }).join("");
+
+          // 5. Alertas inteligentes
+          const alertas = window.FM_AMINO.generarAlertas(
+            aporteAA, perfil, reqAA, state.tipo, state.etapaId, null
+          );
+
+          const alertasContainer = document.getElementById("alertasInteligentes");
+          const alertasGrid = document.getElementById("alertasGrid");
+
+          if (alertas && alertas.length > 0) {
+            alertasGrid.innerHTML = alertas.map(a => (
+              '<div class="alerta-card ' + a.severidad + '">' +
+                '<div class="alerta-icono">' + a.icono + '</div>' +
+                '<div class="alerta-body">' +
+                  '<div class="alerta-titulo">' + a.titulo + '</div>' +
+                  '<div class="alerta-mensaje">' + a.mensaje + '</div>' +
+                  '<div class="alerta-recomendacion">' + a.recomendacion + '</div>' +
+                '</div>' +
+              '</div>'
+            )).join("");
+            alertasContainer.style.display = "block";
+          } else {
+            alertasContainer.style.display = "none";
+          }
+
+          // 6. Guardar en window para que el PDF pueda usarlos
+          window._aminogramaData = { aporteAA: aporteAA, reqAA: reqAA, limitante: limitante, alertas: alertas };
+        }
+      } catch (e) {
+        console.warn("Error renderizando aminograma:", e);
+        // No bloquear el resto del flujo si algo falla
+      }
+
       actualizarValidaciones();
       window.fmToast("Fórmula optimizada exitosamente", "success");
     });
@@ -4723,6 +4971,215 @@
           doc.text(d[1], x, y + 15);
         });
         y += 26;
+      }
+
+      // ============================================
+      // PÁGINA NUEVA: AMINOGRAMA COMPLETO + ALERTAS INTELIGENTES (v19)
+      // (solo si hay datos de aminograma calculados)
+      // ============================================
+      if (window._aminogramaData && window.FM_AMINO) {
+        doc.addPage();
+        let ya = M;
+
+        // Banda superior verde olivo
+        doc.setFillColor.apply(doc, PRIMARY);
+        doc.rect(0, 0, W, 18, "F");
+        doc.setFillColor.apply(doc, ACCENT);
+        doc.rect(0, 18, W, 1.4, "F");
+
+        // Título
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(15);
+        doc.setFont("helvetica", "bold");
+        doc.text("AMINOGRAMA COMPLETO Y ALERTAS INTELIGENTES", W / 2, 11, { align: "center" });
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "normal");
+        doc.text("Los 8 aminoácidos esenciales con detección del AA limitante", W / 2, 16, { align: "center" });
+
+        ya = 26;
+        doc.setTextColor.apply(doc, TEXT);
+
+        const ad = window._aminogramaData;
+        const aporteAA = ad.aporteAA;
+        const reqAA = ad.reqAA;
+        const limitante = ad.limitante;
+        const alertasArr = ad.alertas || [];
+
+        // Sección 1: Banner con AA limitante (si aplica)
+        if (limitante && limitante.cobertura < 95) {
+          doc.setFillColor(254, 226, 226);
+          doc.setDrawColor(220, 38, 38);
+          doc.setLineWidth(0.8);
+          doc.roundedRect(M, ya, W - 2 * M, 16, 2, 2, "FD");
+          doc.setLineWidth(0.2);
+
+          doc.setTextColor.apply(doc, DANGER);
+          doc.setFontSize(11);
+          doc.setFont("helvetica", "bold");
+          doc.text("AA LIMITANTE DETECTADO: " + limitante.nombre.toUpperCase() + " (" + limitante.simbolo + ")", M + 4, ya + 7);
+
+          doc.setTextColor(127, 29, 29);
+          doc.setFontSize(8.5);
+          doc.setFont("helvetica", "normal");
+          doc.text("Cobertura " + limitante.cobertura.toFixed(1) + "% — Déficit: " + limitante.deficit.toFixed(2) + "% del requerimiento. Este AA limita el crecimiento.", M + 4, ya + 13);
+
+          ya += 22;
+          doc.setTextColor.apply(doc, TEXT);
+        }
+
+        // Sección 2: Tabla del aminograma
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor.apply(doc, PRIMARY_DARK);
+        doc.text("Perfil aminoacídico vs requerimiento", M, ya);
+        ya += 6;
+
+        // Encabezados de tabla
+        doc.setFillColor.apply(doc, LIGHT);
+        doc.setDrawColor.apply(doc, BORDER);
+        doc.roundedRect(M, ya, W - 2 * M, 8, 1, 1, "FD");
+
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor.apply(doc, MUTED);
+        doc.text("AMINOÁCIDO", M + 4, ya + 5.5);
+        doc.text("APORTE", M + 75, ya + 5.5, { align: "right" });
+        doc.text("REQ", M + 105, ya + 5.5, { align: "right" });
+        doc.text("COBERTURA", M + 135, ya + 5.5, { align: "right" });
+        doc.text("ESTADO", W - M - 4, ya + 5.5, { align: "right" });
+        ya += 10;
+
+        // Filas de los 8 AA
+        doc.setTextColor.apply(doc, TEXT);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(9);
+
+        window.FM_AMINO.AA_LIST.forEach(function(aa, idx) {
+          const ap = aporteAA[aa.key] || 0;
+          const rq = reqAA[aa.key] || 0;
+          const cob = rq > 0 ? (ap / rq) * 100 : 0;
+
+          let estado = "OK";
+          let color = SUCCESS;
+          if (cob < 90) { estado = "DÉFICIT"; color = DANGER; }
+          else if (cob < 100) { estado = "PARCIAL"; color = WARN; }
+          else if (cob > 115) { estado = "EXCESO"; color = [37, 99, 235]; }
+
+          // Sombreado alterno
+          if (idx % 2 === 0) {
+            doc.setFillColor(250, 250, 250);
+            doc.rect(M, ya - 3, W - 2 * M, 8, "F");
+          }
+
+          // Resaltar limitante
+          const esLim = limitante && limitante.key === aa.key && cob < 95;
+          if (esLim) {
+            doc.setFillColor(254, 226, 226);
+            doc.rect(M, ya - 3, W - 2 * M, 8, "F");
+            doc.setFont("helvetica", "bold");
+          }
+
+          doc.setTextColor.apply(doc, TEXT);
+          doc.text(aa.nombre + " (" + aa.simbolo + ")", M + 4, ya + 2);
+          doc.text(ap.toFixed(2) + "%", M + 75, ya + 2, { align: "right" });
+          doc.text(rq.toFixed(2) + "%", M + 105, ya + 2, { align: "right" });
+
+          // Barra de cobertura
+          const barX = M + 113;
+          const barW = 18;
+          doc.setFillColor(230, 230, 230);
+          doc.rect(barX, ya, barW, 3, "F");
+          const fillW = Math.min(cob, 150) / 150 * barW;
+          doc.setFillColor.apply(doc, color);
+          doc.rect(barX, ya, fillW, 3, "F");
+          doc.text(cob.toFixed(0) + "%", M + 135, ya + 2, { align: "right" });
+
+          // Estado
+          doc.setTextColor.apply(doc, color);
+          doc.setFont("helvetica", "bold");
+          doc.text(estado, W - M - 4, ya + 2, { align: "right" });
+          doc.setFont("helvetica", "normal");
+          doc.setTextColor.apply(doc, TEXT);
+
+          ya += 8;
+        });
+
+        ya += 4;
+
+        // Sección 3: Nota técnica del aminograma
+        doc.setFillColor(245, 248, 240);
+        doc.roundedRect(M, ya, W - 2 * M, 16, 2, 2, "F");
+        doc.setFontSize(7.5);
+        doc.setTextColor.apply(doc, MUTED);
+        doc.setFont("helvetica", "italic");
+        const notaAmino =
+          "Aminoácidos totales (no digestibles). El AA limitante determina el crecimiento aun si los demás están en exceso: " +
+          "concepto de la proteína ideal (Rostagno 2017, NRC 1994). Para corregir un déficit, prefiere agregar el AA sintético " +
+          "específico (DL-Met, L-Lys-HCl, L-Thr) que aumentar proteína total — es más económico y reduce desperdicio nitrogenado.";
+        const lineasNota = doc.splitTextToSize(notaAmino, W - 2 * M - 8);
+        doc.text(lineasNota, M + 4, ya + 5);
+        ya += 22;
+
+        // Sección 4: Alertas inteligentes (si hay)
+        if (alertasArr.length > 0) {
+          if (ya > H - 70) { doc.addPage(); ya = M; }
+
+          doc.setFontSize(11);
+          doc.setFont("helvetica", "bold");
+          doc.setTextColor.apply(doc, PRIMARY_DARK);
+          doc.text("Alertas inteligentes", M, ya);
+          ya += 6;
+
+          alertasArr.forEach(function(alerta) {
+            // Detectar si hay espacio
+            if (ya > H - 35) { doc.addPage(); ya = M; }
+
+            // Color según severidad
+            let bgColor = [240, 249, 255]; // info
+            let borderColor = [2, 132, 199]; // info
+            let titleColor = [12, 74, 110];
+            if (alerta.severidad === "alta") {
+              bgColor = [254, 226, 226]; borderColor = DANGER; titleColor = [127, 29, 29];
+            } else if (alerta.severidad === "media") {
+              bgColor = [254, 243, 199]; borderColor = WARN; titleColor = [120, 53, 15];
+            } else if (alerta.severidad === "baja") {
+              bgColor = [219, 234, 254]; borderColor = [59, 130, 246]; titleColor = [30, 58, 138];
+            }
+
+            doc.setFillColor.apply(doc, bgColor);
+            doc.setDrawColor.apply(doc, borderColor);
+            doc.setLineWidth(0.6);
+            const cardH = 22;
+            doc.roundedRect(M, ya, W - 2 * M, cardH, 2, 2, "FD");
+
+            // Barra lateral del color
+            doc.setFillColor.apply(doc, borderColor);
+            doc.rect(M, ya, 1.5, cardH, "F");
+            doc.setLineWidth(0.2);
+
+            // Título (sin emoji, jsPDF no soporta unicode)
+            doc.setTextColor.apply(doc, titleColor);
+            doc.setFontSize(9.5);
+            doc.setFont("helvetica", "bold");
+            doc.text(alerta.titulo, M + 5, ya + 6);
+
+            // Mensaje
+            doc.setTextColor.apply(doc, TEXT);
+            doc.setFontSize(8);
+            doc.setFont("helvetica", "normal");
+            const lineasMsg = doc.splitTextToSize(alerta.mensaje, W - 2 * M - 10);
+            doc.text(lineasMsg, M + 5, ya + 11);
+
+            // Recomendación
+            doc.setTextColor.apply(doc, MUTED);
+            doc.setFontSize(7.5);
+            doc.setFont("helvetica", "italic");
+            const lineasRec = doc.splitTextToSize("Recomendación: " + alerta.recomendacion, W - 2 * M - 10);
+            doc.text(lineasRec, M + 5, ya + 17);
+
+            ya += cardH + 3;
+          });
+        }
       }
 
       // ============================================
