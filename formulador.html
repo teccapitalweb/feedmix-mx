@@ -3068,7 +3068,22 @@
         i.name.toLowerCase().includes(f) || i.cat.toLowerCase().includes(f)
       );
 
-      tbody.innerHTML = list.map(i => `
+      tbody.innerHTML = list.map(i => {
+        // Si es núcleo, mostrar los aportes REALES del catálogo (visual únicamente)
+        // Los valores internos siguen en 0 para que el optimizador no los cuente doble
+        let emShow = i.em || '—';
+        let pcShow = i.pc.toFixed(1);
+        let nucleoBadge = '';
+        if (i.isNucleo && window.FM_NUCLEOS) {
+          const nId = i.id.replace(/^nucleo_/, '');
+          const nData = window.FM_NUCLEOS.CATALOGO.find(n => n.id === nId);
+          if (nData && nData.aportes) {
+            emShow = (nData.aportes.em && nData.aportes.em > 0) ? nData.aportes.em : '—';
+            pcShow = (nData.aportes.pc || 0).toFixed(1);
+            nucleoBadge = '<span class="ing-cat-pill" style="background:#FEF3C7;color:#92400E;font-size:0.625rem;margin-left:4px;" title="Aportes del núcleo (no afectan el optimizador, se suman aparte)">' + nData.inclusion.toFixed(1) + '% incl.</span>';
+          }
+        }
+        return `
         <tr class="${i.active ? '' : 'disabled'}" data-id="${i.id}">
           <td><input type="checkbox" class="ing-checkbox" ${i.active ? 'checked' : ''} data-action="toggle"></td>
           <td>
@@ -3076,10 +3091,11 @@
               ${i.name}
               <span class="ing-cat-pill pill-${i.cat}">${i.cat}</span>
               ${i.isNucleo ? '<span class="ing-cat-pill" style="background:var(--success-light);color:var(--primary-dark);">núcleo</span>' : ''}
+              ${nucleoBadge}
             </div>
           </td>
-          <td class="num">${i.em || '—'}</td>
-          <td class="num">${i.pc.toFixed(1)}</td>
+          <td class="num">${emShow}</td>
+          <td class="num">${pcShow}</td>
           <td class="num"><input type="number" step="0.01" class="ing-input" data-action="precio" value="${i.precio}"></td>
           <td class="num"><input type="number" step="0.1" class="ing-input" data-action="min" value="${i.min}"></td>
           <td class="num"><input type="number" step="0.1" class="ing-input" data-action="max" value="${i.max}"></td>
@@ -3091,7 +3107,8 @@
             </button>
           </td>
         </tr>
-      `).join("");
+      `;
+      }).join("");
 
       tbody.querySelectorAll("tr").forEach(tr => {
         const id = tr.dataset.id;
