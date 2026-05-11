@@ -312,7 +312,7 @@
      * @param {number} edadDias - edad en días (opcional)
      * @returns {Array} - lista de alertas { severidad, titulo, mensaje, recomendacion }
      */
-    generarAlertas: function(aporte, perfilCompleto, req, tipoProduccion, etapaId, edadDias){
+    generarAlertas: function(aporte, perfilCompleto, req, tipoProduccion, etapaId, edadDias, formulaRef){
       var alertas = [];
 
       // ===== ALERTA 1: Ratio Met/Lys (clave en proteína ideal) =====
@@ -402,6 +402,58 @@
           mensaje: limit.simbolo + " cubre apenas " + limit.cobertura.toFixed(0) + "% del requerimiento (déficit: " + limit.deficit.toFixed(2) + "%).",
           recomendacion: "Aumenta " + (sugIng || "ingrediente rico en " + limit.nombre) + " para corregir. Este es el AA que LIMITA tu producción."
         });
+      }
+
+      // ===== ALERTA 5: Excesos significativos de AA (>130%) =====
+      // (v19.2) — Detectar AA con cobertura >130%, lo que indica sobrecosto inútil
+      var excesosSignificativos = [];
+      AA_LIST.forEach(function(aa){
+        var ap = aporte[aa.key] || 0;
+        var rq = req[aa.key] || 0;
+        if (rq <= 0) return;
+        var cob = (ap / rq) * 100;
+        if (cob >= 130) {
+          excesosSignificativos.push({
+            nombre: aa.nombre,
+            simbolo: aa.simbolo,
+            cobertura: cob,
+            exceso: ap - rq
+          });
+        }
+      });
+
+      if (excesosSignificativos.length > 0) {
+        var nombres = excesosSignificativos.map(function(e){
+          return e.simbolo + " (" + e.cobertura.toFixed(0) + "%)";
+        }).join(", ");
+        alertas.push({
+          severidad: "baja",
+          icono: "💰",
+          titulo: "Excesos de AA detectados",
+          mensaje: "Algunos aminoácidos están muy por encima del requerimiento: " + nombres + ".",
+          recomendacion: "Aunque no daña al ave, el AA excedente se excreta como nitrógeno y eleva costo. Si tu Lys está OK, puedes reducir proteína bruta (pasta de soya) y ahorrar."
+        });
+      }
+
+      // ===== ALERTA 6: Costo elevado de aceite/grasa (>3%) =====
+      // (v19.2) — El optimizador a veces sube aceite para alcanzar EM, pero >3% encarece la dieta
+      if (formulaRef && Array.isArray(formulaRef)) {
+        var pctAceite = 0;
+        formulaRef.forEach(function(f){
+          var ingId = (f.ing && f.ing.id) || f.id || "";
+          if (/aceite|sebo|grasa/i.test(ingId)) {
+            pctAceite += (f.pct !== undefined ? f.pct : (f.porcentaje || 0));
+          }
+        });
+        if (pctAceite > 3) {
+          alertas.push({
+            severidad: "baja",
+            icono: "🛢️",
+            titulo: "Inclusión alta de grasas/aceites",
+            mensaje: "Tu fórmula lleva " + pctAceite.toFixed(2) + "% de grasas/aceites (típico 1-3%).",
+            recomendacion: "Niveles altos suben costo y pueden causar diarreas. Considera bajar el requerimiento de EM (-50 kcal) si tu costo del aceite es alto vs el ahorro de maíz."
+          });
+        }
       }
 
       return alertas;

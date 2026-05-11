@@ -2712,13 +2712,13 @@
     </div>
   </div>
 
-  <script src="assets/firebase-config.js?v=16"></script>
-  <script src="assets/avicola-data.js?v=16"></script>
-  <script src="assets/nucleos-data.js?v=16"></script>
-  <script src="assets/consumo-data.js?v=16"></script>
-  <script src="assets/aminogramas-data.js?v=16"></script>
-  <script src="assets/solver-v2.js?v=16"></script>
-  <script src="assets/species-system.js?v=16"></script>
+  <script src="assets/firebase-config.js?v=17"></script>
+  <script src="assets/avicola-data.js?v=17"></script>
+  <script src="assets/nucleos-data.js?v=17"></script>
+  <script src="assets/consumo-data.js?v=17"></script>
+  <script src="assets/aminogramas-data.js?v=17"></script>
+  <script src="assets/solver-v2.js?v=17"></script>
+  <script src="assets/species-system.js?v=17"></script>
   <script type="module">
     import "./assets/shared.js?v=12";
     await window.fmAuthGuard({ requireAuth: true });
@@ -4330,7 +4330,7 @@
             let cls = "ok";
             if (cob < 90) cls = "deficit";
             else if (cob < 100) cls = "partial";
-            else if (cob > 115) cls = "exceso";
+            else if (cob > 120) cls = "exceso";
             const barWidth = Math.min(cob, 150); // cap visual a 150%
             const esLim = limitante && limitante.key === aa.key && cob < 95;
             return (
@@ -4348,9 +4348,9 @@
             );
           }).join("");
 
-          // 5. Alertas inteligentes
+          // 5. Alertas inteligentes (v19.2: pasa la fórmula para detectar aceite/grasa alto)
           const alertas = window.FM_AMINO.generarAlertas(
-            aporteAA, perfil, reqAA, state.tipo, state.etapaId, null
+            aporteAA, perfil, reqAA, state.tipo, state.etapaId, null, result.formula
           );
 
           const alertasContainer = document.getElementById("alertasInteligentes");
@@ -4832,8 +4832,14 @@
         const r = c.req || 0;
         const ratio = r > 0 ? a / r : 1;
         let status, color;
-        if (ratio >= 0.95 && ratio <= 1.15) { status = "OK"; color = SUCCESS; }
-        else if (ratio < 0.95) { status = "BAJO"; color = DANGER; }
+        // 4 niveles para mayor precisión:
+        // <95%   → BAJO   (rojo)
+        // 95-99% → ≈      (ámbar — cubre cerca pero NO cumple)
+        // 100-115%→ OK    (verde — cumple o ligeramente arriba)
+        // >115%  → ALTO   (ámbar — exceso)
+        if (ratio < 0.95) { status = "BAJO"; color = DANGER; }
+        else if (ratio < 1.00) { status = "CASI"; color = WARN; }
+        else if (ratio <= 1.15) { status = "OK"; color = SUCCESS; }
         else { status = "ALTO"; color = WARN; }
 
         // Label
@@ -4920,8 +4926,29 @@
 
       // ============================================
       // NOTAS TÉCNICAS DEL NUTRICIONISTA
+      // (v19.2: filtra tips redundantes con alertas inteligentes ya emitidas)
       // ============================================
-      const tips = A.getTips(state.razaId, state.etapaId).slice(0, 4);
+      let tips = A.getTips(state.razaId, state.etapaId).slice(0, 4);
+
+      // Filtrar tips que ya están cubiertos por alertas inteligentes dinámicas
+      if (window._aminogramaData && window._aminogramaData.alertas) {
+        const alertasEmitidas = window._aminogramaData.alertas;
+        const hayAlertaCa = alertasEmitidas.some(a => /partícula.*calcio|tamaño.*calcio/i.test(a.titulo));
+        const limitanteReal = window._aminogramaData.limitante;
+        const ningunLimitante = !limitanteReal || limitanteReal.cobertura >= 95;
+
+        tips = tips.filter(tip => {
+          // Quitar tip de Ca si ya hay alerta inteligente de partícula de Ca
+          if (hayAlertaCa && /calcio.*fina|calcio.*gruesa|fina.*gruesa|liberación nocturna/i.test(tip)) return false;
+          // Quitar tip de "Met es el AA limitante" si el aminograma real NO marca Met como limitante
+          if (ningunLimitante && /met.*limitante|aa.*limitante.*postura/i.test(tip)) return false;
+          // Si hay limitante real pero NO es Met, quitar el tip que dice que Met es el limitante
+          if (limitanteReal && limitanteReal.key !== "met" && limitanteReal.key !== "metcys" &&
+              /met.*limitante/i.test(tip)) return false;
+          return true;
+        });
+      }
+
       if (tips.length > 0) {
         if (y > H - 60) { doc.addPage(); y = M; }
 
@@ -5080,7 +5107,7 @@
           let color = SUCCESS;
           if (cob < 90) { estado = "DÉFICIT"; color = DANGER; }
           else if (cob < 100) { estado = "PARCIAL"; color = WARN; }
-          else if (cob > 115) { estado = "EXCESO"; color = [37, 99, 235]; }
+          else if (cob > 120) { estado = "EXCESO"; color = [37, 99, 235]; }
 
           // Sombreado alterno
           if (idx % 2 === 0) {
@@ -5266,10 +5293,21 @@
         const consumoOficial = calc.consumoDiarioPorAveG.toFixed(1) + " g/día";
         const pesoEsperado = calc.pesoEsperadoG ? (calc.pesoEsperadoG >= 1000 ? (calc.pesoEsperadoG / 1000).toFixed(2) + " kg" : calc.pesoEsperadoG.toFixed(0) + " g") : "—";
         const fcrEsp = calc.fcr ? calc.fcr.toFixed(2) : "—";
+        // Texto contextual cuando no hay FCR oficial todavía
+        let fcrDisplay;
+        if (fcrEsp !== "—") {
+          fcrDisplay = fcrEsp + " kg/kg";
+        } else if (calc.produccionPct != null && calc.produccionPct < 70) {
+          fcrDisplay = "N/A (inicio postura)";
+        } else if (calc.tipo === "ponedora" || calc.tipo === "reproductora") {
+          fcrDisplay = "Ver ciclo completo";
+        } else {
+          fcrDisplay = "—";
+        }
         const datosZoot = [
           ["Consumo oficial", consumoOficial],
           ["Peso esperado", pesoEsperado],
-          ["FCR esperado", fcrEsp !== "—" ? fcrEsp + " kg/kg" : (calc.produccionPct != null && calc.produccionPct < 50 ? "N/A (inicio postura)" : "—")],
+          ["FCR esperado", fcrDisplay],
           ["Producción", calc.produccionPct ? calc.produccionPct.toFixed(0) + "% postura" : (calc.tipo === "engorda" ? "engorda" : "—")]
         ];
         datosZoot.forEach(([label, val], idx) => {
