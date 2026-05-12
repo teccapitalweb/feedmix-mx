@@ -1,18 +1,17 @@
 // ============================================
 // FeedMix MX — Firebase Config
 // ============================================
-// EDITAR ESTOS VALORES con los de tu proyecto Firebase:
-// 1. Crea proyecto en https://console.firebase.google.com → "feedmix-mx"
-// 2. Habilita Authentication (Email/Password + Google)
-// 3. Habilita Firestore Database (modo producción)
-// 4. Project Settings → Tus apps → Web → copia los valores
+// Proyecto Firebase: feedmix-mx (Spark plan)
+// Region Firestore: us-central1 (Iowa)
+// Authentication: Email/Password + Google habilitados
+// Dominios autorizados: localhost, teccapitalweb.github.io
 // ============================================
 
 window.FEEDMIX_FIREBASE_CONFIG = {
-  apiKey: "TU_API_KEY",
+  apiKey: "AIzaSyDXFSthaAulo53iMIKoxZBMxdWcvg5rqS8",
   authDomain: "feedmix-mx.firebaseapp.com",
   projectId: "feedmix-mx",
-  storageBucket: "feedmix-mx.appspot.com",
-  messagingSenderId: "TU_SENDER_ID",
-  appId: "TU_APP_ID"
+  storageBucket: "feedmix-mx.firebasestorage.app",
+  messagingSenderId: "83356604413",
+  appId: "1:83356604413:web:10ac53064589f2a45c2b94"
 };

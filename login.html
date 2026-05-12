@@ -262,12 +262,13 @@
           </li>
         </ul>
 
-        <div id="demoHint" class="hidden" style="margin-top:var(--space-8);background:rgba(184,115,51,0.15);border:1px solid rgba(184,115,51,0.35);border-radius:var(--radius);padding:var(--space-4);">
-          <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--accent-light);margin-bottom:var(--space-2);">🟡 Modo demo</div>
+        <div id="demoHint" style="margin-top:var(--space-8);background:rgba(184,115,51,0.15);border:1px solid rgba(184,115,51,0.35);border-radius:var(--radius);padding:var(--space-4);">
+          <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--accent-light);margin-bottom:var(--space-2);">🟡 Cuenta de prueba</div>
           <div style="color:white;font-size:0.875rem;line-height:1.5;">
-            Prueba el sistema con la cuenta demo:<br>
+            Prueba el sistema sin registrarte:<br>
             📧 <code style="background:rgba(0,0,0,0.2);padding:2px 8px;border-radius:4px;">demo@feedmix.mx</code><br>
-            🔑 <code style="background:rgba(0,0,0,0.2);padding:2px 8px;border-radius:4px;">demo123</code>
+            🔑 <code style="background:rgba(0,0,0,0.2);padding:2px 8px;border-radius:4px;">demo123</code><br>
+            <small style="opacity:0.7;display:block;margin-top:6px;">Toca aquí para autocompletar</small>
           </div>
         </div>
       </div>
@@ -330,21 +331,21 @@
 
   </div>
 
-  <script src="assets/firebase-config.js?v=12"></script>
+  <script src="assets/firebase-config.js?v=18"></script>
   <script type="module">
-    import "./assets/shared.js?v=12";
+    import "./assets/shared.js?v=18";
 
     await window.fmAuthGuard({ requireAuth: false, redirectIfAuth: "panel.html" });
 
     // Mostrar hint demo si estamos en modo demo
-    if (window.FM_IS_DEMO) {
-      document.getElementById("demoHint").classList.remove("hidden");
-      // Pre-llenar campos al hacer click en el hint
-      document.getElementById("demoHint").style.cursor = "pointer";
-      document.getElementById("demoHint").addEventListener("click", () => {
+    // Hint de cuenta de prueba: siempre clickeable para autollenar credenciales
+    const demoHint = document.getElementById("demoHint");
+    if (demoHint) {
+      demoHint.style.cursor = "pointer";
+      demoHint.addEventListener("click", () => {
         document.getElementById("email").value = "demo@feedmix.mx";
         document.getElementById("password").value = "demo123";
-        window.fmToast("Credenciales demo precargadas — pulsa Iniciar sesión", "info");
+        window.fmToast("Credenciales precargadas — pulsa Iniciar sesión", "info");
       });
     }
 
@@ -378,9 +379,12 @@
       } catch (err) {
         const msg = {
           "auth/invalid-credential": "Email o contraseña incorrectos.",
+          "auth/invalid-email": "El email no tiene un formato válido.",
           "auth/user-not-found": "No existe una cuenta con ese email.",
           "auth/wrong-password": "Contraseña incorrecta.",
-          "auth/too-many-requests": "Demasiados intentos. Espera unos minutos."
+          "auth/too-many-requests": "Demasiados intentos. Espera unos minutos o restablece tu contraseña.",
+          "auth/user-disabled": "Esta cuenta está deshabilitada. Contacta a soporte.",
+          "auth/network-request-failed": "Error de red. Verifica tu conexión a internet."
         }[err.code] || "Error al iniciar sesión. Intenta de nuevo.";
         showError(msg);
         setLoading(false);
@@ -394,9 +398,14 @@
         await signInWithPopup(auth, provider);
         window.location.href = "panel.html";
       } catch (err) {
-        if (err.code !== "auth/popup-closed-by-user") {
-          showError("Error con Google. Intenta de nuevo.");
-        }
+        if (err.code === "auth/popup-closed-by-user") return; // El usuario cerró el popup, no es error
+        const msg = {
+          "auth/popup-blocked": "Tu navegador bloqueó el popup. Permite popups para este sitio e intenta de nuevo.",
+          "auth/unauthorized-domain": "Este dominio no está autorizado. Contacta a soporte.",
+          "auth/account-exists-with-different-credential": "Ya existe una cuenta con este email usando otro método. Intenta con email/contraseña.",
+          "auth/network-request-failed": "Error de red. Verifica tu conexión a internet."
+        }[err.code] || "Error con Google. Intenta con email/contraseña o contacta soporte.";
+        showError(msg);
       }
     });
 
@@ -407,8 +416,17 @@
         window.fmToast("Escribe tu email primero", "warning");
         return;
       }
-      // En v2 se conectará a sendPasswordResetEmail
-      window.fmToast("Te enviaremos un enlace de recuperación a " + email, "info");
+      try {
+        await window.fmFirebase.sendPasswordResetEmail(auth, email);
+        window.fmToast("Te enviamos un enlace de recuperación a " + email + ". Revisa tu bandeja.", "success");
+      } catch (err) {
+        const msg = {
+          "auth/user-not-found": "No existe una cuenta con ese email.",
+          "auth/invalid-email": "Email inválido.",
+          "auth/too-many-requests": "Demasiados intentos. Espera unos minutos."
+        }[err.code] || "No se pudo enviar el correo de recuperación. Intenta de nuevo.";
+        showError(msg);
+      }
     });
   </script>
 

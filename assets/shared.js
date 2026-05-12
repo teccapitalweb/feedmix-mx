@@ -290,36 +290,50 @@ if (IS_DEMO) {
 
 else {
 
-  const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
-  const fbAuth = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
-  const fbStore = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+  try {
+    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
+    const fbAuth = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
+    const fbStore = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
 
-  const app = initializeApp(cfg);
-  window.fmAuth = fbAuth.getAuth(app);
-  window.fmDb = fbStore.getFirestore(app);
+    const app = initializeApp(cfg);
+    window.fmAuth = fbAuth.getAuth(app);
+    window.fmDb = fbStore.getFirestore(app);
 
-  window.fmFirebase = {
-    onAuthStateChanged: fbAuth.onAuthStateChanged,
-    signInWithEmailAndPassword: fbAuth.signInWithEmailAndPassword,
-    createUserWithEmailAndPassword: fbAuth.createUserWithEmailAndPassword,
-    GoogleAuthProvider: fbAuth.GoogleAuthProvider,
-    signInWithPopup: fbAuth.signInWithPopup,
-    signOut: fbAuth.signOut,
-    updateProfile: fbAuth.updateProfile,
-    sendPasswordResetEmail: fbAuth.sendPasswordResetEmail,
-    doc: fbStore.doc,
-    getDoc: fbStore.getDoc,
-    setDoc: fbStore.setDoc,
-    updateDoc: fbStore.updateDoc,
-    deleteDoc: fbStore.deleteDoc,
-    collection: fbStore.collection,
-    addDoc: fbStore.addDoc,
-    getDocs: fbStore.getDocs,
-    query: fbStore.query,
-    where: fbStore.where,
-    orderBy: fbStore.orderBy,
-    serverTimestamp: fbStore.serverTimestamp
-  };
+    window.fmFirebase = {
+      onAuthStateChanged: fbAuth.onAuthStateChanged,
+      signInWithEmailAndPassword: fbAuth.signInWithEmailAndPassword,
+      createUserWithEmailAndPassword: fbAuth.createUserWithEmailAndPassword,
+      GoogleAuthProvider: fbAuth.GoogleAuthProvider,
+      signInWithPopup: fbAuth.signInWithPopup,
+      signOut: fbAuth.signOut,
+      updateProfile: fbAuth.updateProfile,
+      sendPasswordResetEmail: fbAuth.sendPasswordResetEmail,
+      doc: fbStore.doc,
+      getDoc: fbStore.getDoc,
+      setDoc: fbStore.setDoc,
+      updateDoc: fbStore.updateDoc,
+      deleteDoc: fbStore.deleteDoc,
+      collection: fbStore.collection,
+      addDoc: fbStore.addDoc,
+      getDocs: fbStore.getDocs,
+      query: fbStore.query,
+      where: fbStore.where,
+      orderBy: fbStore.orderBy,
+      serverTimestamp: fbStore.serverTimestamp
+    };
+
+    console.log("%c🟢 FeedMix MX — Firebase conectado y listo", "background:#D1FAE5;color:#065F46;padding:6px 12px;border-radius:6px;font-weight:bold;");
+
+  } catch (err) {
+    console.error("❌ Error al inicializar Firebase:", err);
+    console.warn("⚠️ Verifica: 1) Conexión a internet, 2) Dominio autorizado en Firebase Auth, 3) Credenciales en firebase-config.js");
+    // Mostrar toast amigable al usuario si la función ya cargó
+    if (typeof window.fmToast === "function") {
+      window.fmToast("Error de conexión con Firebase. Verifica tu internet o contacta soporte.", "error");
+    }
+    // Re-throw para que las páginas que dependen de Firebase puedan manejarlo
+    throw err;
+  }
 
 }
 
