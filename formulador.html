@@ -2219,11 +2219,11 @@
             <span class="formulador-tab-num">1</span>
             <span>Configurar</span>
           </button>
-          <button type="button" class="formulador-tab" data-panel="ingredientes" role="tab">
+          <button type="button" class="formulador-tab" data-panel="ingredientes" role="tab" data-premium="formulas">
             <span class="formulador-tab-num">2</span>
             <span>Ingredientes</span>
           </button>
-          <button type="button" class="formulador-tab" data-panel="resultado" role="tab">
+          <button type="button" class="formulador-tab" data-panel="resultado" role="tab" data-premium="formulas">
             <span class="formulador-tab-num">3</span>
             <span>Resultado</span>
           </button>
@@ -2347,7 +2347,7 @@
           </div>
             <div class="panel-nav">
               <span></span>
-              <button type="button" class="btn btn-primary btn-lg" id="btnGoIngredientes">
+              <button type="button" class="btn btn-primary btn-lg" id="btnGoIngredientes" data-premium="formulas">
                 Siguiente: Ingredientes →
               </button>
             </div>
@@ -2712,7 +2712,7 @@
     </div>
   </div>
 
-  <script src="assets/firebase-config.js?v=25"></script>
+  <script src="assets/firebase-config.js?v=26"></script>
   <script src="assets/avicola-data.js?v=19"></script>
   <script src="assets/nucleos-data.js?v=19"></script>
   <script src="assets/consumo-data.js?v=19"></script>
@@ -2720,7 +2720,7 @@
   <script src="assets/solver-v2.js?v=19"></script>
   <script src="assets/species-system.js?v=19"></script>
   <script type="module">
-    import "./assets/shared.js?v=25";
+    import "./assets/shared.js?v=26";
     await window.fmAuthGuard({ requireAuth: true });
 
     // Banner modo exploración (si no tiene plan activo)

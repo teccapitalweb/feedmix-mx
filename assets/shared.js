@@ -1011,6 +1011,17 @@ premiumStyle.textContent = `
     background: linear-gradient(135deg, #A06028 0%, #B87333 100%) !important;
     box-shadow: 0 4px 12px rgba(184, 115, 51, 0.35);
   }
+  /* EXCEPCIÓN: tabs del formulador NO cambian de color, solo agregan candado */
+  .formulador-tab.fm-premium-locked {
+    background: transparent !important;
+    color: inherit !important;
+    opacity: 0.6 !important;
+  }
+  .formulador-tab.fm-premium-locked:hover {
+    background: rgba(184, 115, 51, 0.08) !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+  }
   .fm-lock-icon {
     display: inline-block;
     margin-right: 4px;
