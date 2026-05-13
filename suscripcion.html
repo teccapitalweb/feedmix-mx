@@ -402,11 +402,11 @@
               </div>
             </div>
             <div class="plan-actual-cta">
-              <a href="https://wa.me/5212382514313?text=Hola%2C%20quiero%20activar%20mi%20suscripci%C3%B3n%20a%20FeedMix%20MX" target="_blank" class="btn btn-accent btn-lg">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.138.563 4.14 1.535 5.874L0 24l6.29-1.508A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.814 9.814 0 01-5.058-1.4l-.361-.214-3.735.896.944-3.653-.235-.374A9.817 9.817 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
+              <button type="button" onclick="window.fmShowUpgradeModal({reason: 'manual'})" class="btn btn-accent btn-lg" style="border:none;cursor:pointer;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
                 Activar suscripción
-              </a>
-              <div style="font-size:0.75rem;color:rgba(255,255,255,0.7);margin-top:8px;">por WhatsApp</div>
+              </button>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.7);margin-top:8px;">Pago seguro con Stripe</div>
             </div>
           </div>
         </div>
@@ -427,9 +427,9 @@
               <span class="plan-price-period">MXN</span>
             </div>
             <div class="plan-price-hint">Equivale a $466/mes · Pago único por 3 meses</div>
-            <a href="https://wa.me/5212382514313?text=Quiero%20activar%20Plan%20Trimestral%20de%20FeedMix%20MX%20%28%241%2C399%20MXN%29" target="_blank" class="btn btn-outline btn-block">
+            <button type="button" id="btnPlanTrimestral" onclick="window.fmStartCheckout('trimestral')" class="btn btn-outline btn-block">
               Activar 3 meses
-            </a>
+            </button>
             <ul class="plan-features">
               <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Fórmulas ilimitadas</li>
               <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> 179 etapas técnicas · 30 razas</li>
@@ -451,9 +451,9 @@
               <span class="plan-price-period">MXN</span>
             </div>
             <div class="plan-price-hint">Equivale a $208/mes · Ahorra 55% vs trimestral</div>
-            <a href="https://wa.me/5212382514313?text=Quiero%20activar%20Plan%20Anual%20de%20FeedMix%20MX%20%28%242%2C499%20MXN%29" target="_blank" class="btn btn-primary btn-block">
+            <button type="button" id="btnPlanAnual" onclick="window.fmStartCheckout('anual')" class="btn btn-primary btn-block">
               Activar 1 año
-            </a>
+            </button>
             <ul class="plan-features">
               <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> <strong>Todo lo del plan Trimestral</strong></li>
               <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> 12 meses completos de acceso</li>
@@ -476,9 +476,9 @@
             </div>
             <span class="plan-pago-unico">💰 Pago único</span>
             <div class="plan-price-hint">Se recupera en 14 meses vs anual</div>
-            <a href="https://wa.me/5212382514313?text=Quiero%20activar%20Plan%20DE%20POR%20VIDA%20de%20FeedMix%20MX%20%28%243%2C499%20MXN%20pago%20%C3%BAnico%29" target="_blank" class="btn btn-accent btn-block">
+            <button type="button" id="btnPlanLifetime" onclick="window.fmStartCheckout('lifetime')" class="btn btn-accent btn-block">
               Comprar de por vida
-            </a>
+            </button>
             <ul class="plan-features">
               <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> <strong>Todo lo del plan Anual</strong></li>
               <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> <strong>Acceso de por vida</strong> sin renovar</li>
@@ -498,13 +498,13 @@
           </div>
           <div class="info-card-content">
             <strong>¿Cómo se activa la suscripción?</strong>
-            <p>Por ahora la suscripción se procesa <strong>directamente por WhatsApp</strong> con un asesor. Te ayudamos con:</p>
+            <p>El pago se procesa <strong>directamente con tarjeta vía Stripe</strong> de forma segura. Tu plan se activa automáticamente al confirmar el pago. Incluye:</p>
             <ul style="margin-top:8px;list-style:none;padding:0;">
-              <li>• Activación inmediata del plan</li>
-              <li>• Pago por transferencia o tarjeta (Stripe)</li>
-              <li>• Factura para deducción de impuestos</li>
-              <li>• Capacitación inicial sin costo extra</li>
-              <li>• Garantía de devolución 14 días</li>
+              <li>• <strong>Activación inmediata</strong> al confirmar el pago</li>
+              <li>• Pago con tarjeta de crédito o débito (Visa, Mastercard, Amex)</li>
+              <li>• Factura para deducción de impuestos disponible</li>
+              <li>• <strong>Garantía de devolución 14 días</strong> sin preguntas</li>
+              <li>• ¿Necesitas factura o pagar por transferencia? <a href="https://wa.me/5212382514313?text=Hola%2C%20necesito%20ayuda%20con%20mi%20suscripci%C3%B3n%20FeedMix" target="_blank" style="color:var(--accent);font-weight:600;">Escríbenos por WhatsApp</a></li>
             </ul>
           </div>
         </div>
@@ -513,9 +513,9 @@
     </div>
   </div>
 
-  <script src="assets/firebase-config.js?v=20"></script>
+  <script src="assets/firebase-config.js?v=21"></script>
   <script type="module">
-    import "./assets/shared.js?v=20";
+    import "./assets/shared.js?v=21";
     const user = await window.fmAuthGuard({ requireAuth: true });
     const profile = window.fmProfile || {};
 
