@@ -489,43 +489,63 @@ window.fmComputeAccess = function(profile) {
 // ============================================
 // PRICING - FUENTE ÚNICA DE VERDAD
 // ============================================
+// 3 planes: Trimestral (3 meses) / Anual / Lifetime
+// Trimestral y Lifetime son ONE-TIME PAYMENTS (no recurring)
+// Anual es RECURRING (subscription anual)
+// ============================================
 window.FM_PRICING = {
-  pro: {
-    nombre: "Profesional",
-    descripcion: "Para nutricionistas y granjeros independientes",
-    mensual: 1499,
-    anual: 14990,
-    ahorroAnual: "2 meses gratis",
-    // Stripe Price IDs — REEMPLAZAR con los reales tras crear productos en Stripe
-    stripePriceMensual: "price_FEEDMIX_PRO_MENSUAL_PLACEHOLDER",
-    stripePriceAnual: "price_FEEDMIX_PRO_ANUAL_PLACEHOLDER",
+  trimestral: {
+    nombre: "Trimestral",
+    descripcion: "3 meses de acceso completo. Ideal para probar a fondo.",
+    precio: 1399,
+    moneda: "MXN",
+    duracion: "3 meses",
+    mode: "subscription", // every 3 months recurring
+    badge: null,
+    stripePriceId: "price_1TWgYRA7If2CqXs95er8a6ad",
     features: [
-      "1 usuario nutricionista o granjero",
-      "Fórmulas ilimitadas",
+      "Fórmulas ilimitadas durante 3 meses",
       "179 etapas técnicas · 30 razas",
       "Aminograma completo (8 AA)",
       "Alertas inteligentes",
-      "PDF profesional FeedMix",
-      "Plan de parvada oficial",
+      "PDF profesional sin marca de agua",
       "Soporte por email + WhatsApp"
     ]
   },
-  despacho: {
-    nombre: "Despacho",
-    descripcion: "Para consultorías y empresas",
-    mensual: 3499,
-    anual: 34990,
-    ahorroAnual: "2 meses gratis",
-    stripePriceMensual: "price_FEEDMIX_DESPACHO_MENSUAL_PLACEHOLDER",
-    stripePriceAnual: "price_FEEDMIX_DESPACHO_ANUAL_PLACEHOLDER",
+  anual: {
+    nombre: "Anual",
+    descripcion: "12 meses de acceso. El favorito de los nutricionistas.",
+    precio: 2499,
+    moneda: "MXN",
+    duracion: "1 año",
+    mode: "subscription", // yearly recurring
+    badge: "⭐ MÁS POPULAR",
+    stripePriceId: "price_1TWgZUA7If2CqXs9TmNLis9i",
     features: [
-      "Hasta 5 usuarios",
-      "Todo lo del plan Profesional",
-      "PDF con marca blanca (logo + datos del despacho)",
-      "Cartera de clientes compartida",
+      "Todo lo del plan Trimestral",
+      "12 meses completos de acceso",
+      "Ahorra 55% vs trimestral",
       "Soporte prioritario WhatsApp",
-      "Capacitación inicial 1:1",
-      "Onboarding personalizado"
+      "Actualizaciones incluidas",
+      "Capacitación 1:1 incluida"
+    ]
+  },
+  lifetime: {
+    nombre: "De por vida",
+    descripcion: "Pago único. Acceso para siempre, sin renovaciones.",
+    precio: 3499,
+    moneda: "MXN",
+    duracion: "para siempre",
+    mode: "payment", // ONE-TIME, no subscription
+    badge: "🏆 MEJOR VALOR",
+    stripePriceId: "price_1TWgaaA7If2CqXs9wqiOk33L",
+    features: [
+      "Todo lo del plan Anual",
+      "Acceso de por vida sin renovar",
+      "Todas las futuras actualizaciones",
+      "Marca blanca en PDFs",
+      "Soporte VIP de por vida",
+      "Capacitación avanzada incluida"
     ]
   }
 };
@@ -691,23 +711,27 @@ function autoPaywallBanner() {
 }
 
 // ============================================
-// MODAL DE UPGRADE (paywall completo)
+// MODAL DE UPGRADE (paywall completo) — 3 PLANES
 // ============================================
 window.fmShowUpgradeModal = function(opts = {}) {
-  // opts.reason puede ser: "expired" | "formulas" | "watermark" | "save" | "manual"
   const reason = opts.reason || "manual";
   if (document.getElementById("fmUpgradeModal")) return;
 
   const reasonMsg = {
     expired: "Tu prueba gratuita terminó. Activa tu plan para seguir formulando.",
-    formulas: "Has alcanzado el límite de fórmulas de la prueba. Activa Profesional para fórmulas ilimitadas.",
-    watermark: "Quita la marca de agua activando el plan Profesional o Despacho.",
-    save: "Guarda fórmulas en la nube activando el plan Profesional o Despacho.",
-    multipleUsers: "El plan Despacho permite hasta 5 usuarios trabajando en paralelo.",
+    formulas: "Has alcanzado el límite de fórmulas de la prueba. Activa un plan para fórmulas ilimitadas.",
+    watermark: "Quita la marca de agua activando cualquier plan de pago.",
+    save: "Guarda tus fórmulas en la nube activando un plan.",
     manual: "Activa todo el poder de FeedMix MX."
   }[reason];
 
   const pricing = window.FM_PRICING;
+  const plans = [
+    { key: "trimestral", borderColor: "#E2E8F0", btnBg: "#3F4F2E", isFeatured: false },
+    { key: "anual", borderColor: "#B87333", btnBg: "#3F4F2E", isFeatured: true },
+    { key: "lifetime", borderColor: "#DC2626", btnBg: "#B87333", isFeatured: true }
+  ];
+
   const modal = document.createElement("div");
   modal.id = "fmUpgradeModal";
   modal.style.cssText = `
@@ -719,63 +743,52 @@ window.fmShowUpgradeModal = function(opts = {}) {
     animation: fmFadeIn 0.2s ease-out;
   `;
 
-  modal.innerHTML = `
-    <div style="background:white;border-radius:16px;max-width:920px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.3);">
-      <div style="background:linear-gradient(135deg,#3F4F2E 0%,#2A3520 100%);color:white;padding:28px 32px;border-radius:16px 16px 0 0;position:relative;">
-        <button onclick="document.getElementById('fmUpgradeModal').remove()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);color:white;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;">×</button>
-        <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;color:#D4925A;margin-bottom:6px;">ACTIVA FEEDMIX MX</div>
-        <h2 style="font-size:1.75rem;font-weight:800;margin:0 0 8px 0;line-height:1.2;">Sigue formulando sin límites</h2>
-        <p style="opacity:0.85;margin:0;font-size:0.9375rem;line-height:1.5;">${reasonMsg}</p>
-      </div>
+  function planCardHTML(planKey, isFeatured, borderColor, btnBg) {
+    const p = pricing[planKey];
+    const capitalized = planKey.charAt(0).toUpperCase() + planKey.slice(1);
+    const bgGrad = isFeatured ? "linear-gradient(180deg,#FFFFFF 0%,#FFF7ED 100%)" : "white";
+    const badgeHTML = p.badge
+      ? '<div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:' + (planKey === "lifetime" ? "#DC2626" : "#B87333") + ';color:white;font-size:0.625rem;font-weight:800;letter-spacing:0.08em;padding:5px 12px;border-radius:999px;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.2);">' + p.badge + '</div>'
+      : '';
+    const pagoUnicoBadge = p.mode === "payment"
+      ? '<div style="display:inline-flex;align-items:center;gap:4px;background:rgba(220,38,38,0.1);color:#B91C1C;padding:3px 8px;border-radius:999px;font-size:0.625rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;width:fit-content;">💰 Pago único</div>'
+      : '';
+    return (
+      '<div style="border:2px solid ' + borderColor + ';border-radius:12px;padding:24px 18px;display:flex;flex-direction:column;background:' + bgGrad + ';position:relative;">' +
+        badgeHTML +
+        '<div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;color:#B87333;margin-bottom:4px;text-transform:uppercase;">' + p.nombre + '</div>' +
+        '<div style="color:#64748B;font-size:0.75rem;margin-bottom:14px;min-height:36px;">' + p.descripcion + '</div>' +
+        '<div style="display:flex;align-items:baseline;gap:4px;margin-bottom:4px;">' +
+          '<span style="font-size:0.875rem;color:#94A3B8;font-weight:600;">$</span>' +
+          '<span style="font-size:2.25rem;font-weight:800;color:#0F172A;line-height:1;">' + p.precio.toLocaleString("es-MX") + '</span>' +
+          '<span style="font-size:0.8125rem;color:#64748B;">MXN</span>' +
+        '</div>' +
+        '<div style="font-size:0.6875rem;color:#94A3B8;margin-bottom:8px;">' + p.duracion + '</div>' +
+        pagoUnicoBadge +
+        '<button id="btnUpgrade' + capitalized + '" onclick="window.fmStartCheckout(\'' + planKey + '\')" style="background:' + btnBg + ';color:white;border:none;padding:11px 14px;border-radius:8px;font-weight:700;font-size:0.875rem;cursor:pointer;margin-top:auto;margin-bottom:14px;">Activar ' + p.nombre + '</button>' +
+        '<ul style="list-style:none;padding:0;margin:0;font-size:0.75rem;color:#475569;display:flex;flex-direction:column;gap:6px;">' +
+          p.features.map(function(f){ return '<li style="display:flex;gap:6px;align-items:flex-start;"><span style="color:#10B981;font-weight:700;flex-shrink:0;">✓</span><span>' + f + '</span></li>'; }).join('') +
+        '</ul>' +
+      '</div>'
+    );
+  }
 
-      <div style="padding:20px 32px;display:flex;justify-content:center;gap:8px;align-items:center;border-bottom:1px solid #F1F5F9;">
-        <span style="font-size:0.8125rem;font-weight:600;color:#64748B;">Facturación:</span>
-        <div style="background:#F1F5F9;padding:3px;border-radius:999px;display:flex;gap:3px;">
-          <button id="billCycleMensual" onclick="window.fmToggleBilling('mensual')" style="border:none;padding:6px 14px;border-radius:999px;font-weight:700;font-size:0.8125rem;cursor:pointer;background:transparent;color:#475569;">Mensual</button>
-          <button id="billCycleAnual" onclick="window.fmToggleBilling('anual')" style="border:none;padding:6px 14px;border-radius:999px;font-weight:700;font-size:0.8125rem;cursor:pointer;background:#3F4F2E;color:white;">Anual <span style="background:#B87333;color:white;font-size:0.625rem;padding:2px 6px;border-radius:999px;margin-left:4px;">-17%</span></button>
-        </div>
-      </div>
-
-      <div style="padding:24px 32px;display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-
-        <div style="border:2px solid #E2E8F0;border-radius:12px;padding:24px;display:flex;flex-direction:column;">
-          <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;color:#B87333;margin-bottom:4px;">PROFESIONAL</div>
-          <div style="color:#64748B;font-size:0.8125rem;margin-bottom:16px;">${pricing.pro.descripcion}</div>
-          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px;">
-            <span style="font-size:0.875rem;color:#94A3B8;font-weight:600;">$</span>
-            <span id="proPriceAmount" style="font-size:2.5rem;font-weight:800;color:#0F172A;line-height:1;">${pricing.pro.anual.toLocaleString("es-MX")}</span>
-            <span id="proPricePeriod" style="font-size:0.875rem;color:#64748B;">MXN / año</span>
-          </div>
-          <div id="proPriceHint" style="font-size:0.75rem;color:#94A3B8;margin-bottom:16px;">Equivale a $1,249/mes · ${pricing.pro.ahorroAnual}</div>
-          <button id="btnUpgradePro" onclick="window.fmStartCheckout('pro')" style="background:#3F4F2E;color:white;border:none;padding:12px 16px;border-radius:8px;font-weight:700;font-size:0.9375rem;cursor:pointer;margin-bottom:16px;">Activar Profesional</button>
-          <ul style="list-style:none;padding:0;margin:0;font-size:0.8125rem;color:#475569;display:flex;flex-direction:column;gap:8px;">
-            ${pricing.pro.features.map(f => '<li style="display:flex;gap:8px;"><span style="color:#10B981;font-weight:700;flex-shrink:0;">✓</span><span>' + f + '</span></li>').join('')}
-          </ul>
-        </div>
-
-        <div style="border:2px solid #B87333;border-radius:12px;padding:24px;display:flex;flex-direction:column;background:linear-gradient(180deg,#FFFFFF 0%,#FFF7ED 100%);position:relative;">
-          <div style="position:absolute;top:-10px;right:16px;background:#B87333;color:white;font-size:0.625rem;font-weight:800;letter-spacing:0.08em;padding:4px 10px;border-radius:999px;">RECOMENDADO</div>
-          <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;color:#B87333;margin-bottom:4px;">DESPACHO</div>
-          <div style="color:#64748B;font-size:0.8125rem;margin-bottom:16px;">${pricing.despacho.descripcion}</div>
-          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px;">
-            <span style="font-size:0.875rem;color:#94A3B8;font-weight:600;">$</span>
-            <span id="despachoPriceAmount" style="font-size:2.5rem;font-weight:800;color:#0F172A;line-height:1;">${pricing.despacho.anual.toLocaleString("es-MX")}</span>
-            <span id="despachoPricePeriod" style="font-size:0.875rem;color:#64748B;">MXN / año</span>
-          </div>
-          <div id="despachoPriceHint" style="font-size:0.75rem;color:#94A3B8;margin-bottom:16px;">Equivale a $2,916/mes · ${pricing.despacho.ahorroAnual}</div>
-          <button id="btnUpgradeDespacho" onclick="window.fmStartCheckout('despacho')" style="background:#B87333;color:white;border:none;padding:12px 16px;border-radius:8px;font-weight:700;font-size:0.9375rem;cursor:pointer;margin-bottom:16px;">Activar Despacho</button>
-          <ul style="list-style:none;padding:0;margin:0;font-size:0.8125rem;color:#475569;display:flex;flex-direction:column;gap:8px;">
-            ${pricing.despacho.features.map(f => '<li style="display:flex;gap:8px;"><span style="color:#10B981;font-weight:700;flex-shrink:0;">✓</span><span>' + f + '</span></li>').join('')}
-          </ul>
-        </div>
-
-      </div>
-
-      <div style="padding:16px 32px;border-top:1px solid #F1F5F9;background:#F8FAFC;border-radius:0 0 16px 16px;text-align:center;font-size:0.75rem;color:#64748B;">
-        🔒 Pago seguro con Stripe · 💸 Garantía 30 días devolución · 🇲🇽 Precios en pesos mexicanos
-      </div>
-    </div>
-  `;
+  modal.innerHTML = (
+    '<div style="background:white;border-radius:16px;max-width:1080px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.3);">' +
+      '<div style="background:linear-gradient(135deg,#3F4F2E 0%,#2A3520 100%);color:white;padding:28px 32px;border-radius:16px 16px 0 0;position:relative;">' +
+        '<button onclick="document.getElementById(\'fmUpgradeModal\').remove()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);color:white;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;">×</button>' +
+        '<div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;color:#D4925A;margin-bottom:6px;">ACTIVA FEEDMIX MX</div>' +
+        '<h2 style="font-size:1.75rem;font-weight:800;margin:0 0 8px 0;line-height:1.2;">Elige el plan que mejor te convenga</h2>' +
+        '<p style="opacity:0.85;margin:0;font-size:0.9375rem;line-height:1.5;">' + reasonMsg + '</p>' +
+      '</div>' +
+      '<div style="padding:36px 24px 20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">' +
+        plans.map(function(p){ return planCardHTML(p.key, p.isFeatured, p.borderColor, p.btnBg); }).join('') +
+      '</div>' +
+      '<div style="padding:16px 32px;border-top:1px solid #F1F5F9;background:#F8FAFC;border-radius:0 0 16px 16px;text-align:center;font-size:0.75rem;color:#64748B;">' +
+        '🔒 Pago seguro con Stripe · 💸 Garantía 14 días devolución · 🇲🇽 Precios en pesos mexicanos' +
+      '</div>' +
+    '</div>'
+  );
 
   document.body.appendChild(modal);
 
@@ -783,44 +796,19 @@ window.fmShowUpgradeModal = function(opts = {}) {
   modal.addEventListener("click", function(e) {
     if (e.target === modal) modal.remove();
   });
-};
 
-// Estado global del modal: ciclo de facturación seleccionado
-window._fmBillingCycle = "anual";
-
-window.fmToggleBilling = function(cycle) {
-  window._fmBillingCycle = cycle;
-  const pricing = window.FM_PRICING;
-
-  const btnMensual = document.getElementById("billCycleMensual");
-  const btnAnual = document.getElementById("billCycleAnual");
-  if (btnMensual && btnAnual) {
-    btnMensual.style.background = cycle === "mensual" ? "#3F4F2E" : "transparent";
-    btnMensual.style.color = cycle === "mensual" ? "white" : "#475569";
-    btnAnual.style.background = cycle === "anual" ? "#3F4F2E" : "transparent";
-    btnAnual.style.color = cycle === "anual" ? "white" : "#475569";
-  }
-
-  // Actualizar precios
-  if (cycle === "mensual") {
-    document.getElementById("proPriceAmount").textContent = pricing.pro.mensual.toLocaleString("es-MX");
-    document.getElementById("proPricePeriod").textContent = "MXN / mes";
-    document.getElementById("proPriceHint").textContent = "Cancela cuando quieras";
-    document.getElementById("despachoPriceAmount").textContent = pricing.despacho.mensual.toLocaleString("es-MX");
-    document.getElementById("despachoPricePeriod").textContent = "MXN / mes";
-    document.getElementById("despachoPriceHint").textContent = "Cancela cuando quieras";
-  } else {
-    document.getElementById("proPriceAmount").textContent = pricing.pro.anual.toLocaleString("es-MX");
-    document.getElementById("proPricePeriod").textContent = "MXN / año";
-    document.getElementById("proPriceHint").textContent = "Equivale a $" + Math.round(pricing.pro.anual / 12).toLocaleString("es-MX") + "/mes · " + pricing.pro.ahorroAnual;
-    document.getElementById("despachoPriceAmount").textContent = pricing.despacho.anual.toLocaleString("es-MX");
-    document.getElementById("despachoPricePeriod").textContent = "MXN / año";
-    document.getElementById("despachoPriceHint").textContent = "Equivale a $" + Math.round(pricing.despacho.anual / 12).toLocaleString("es-MX") + "/mes · " + pricing.despacho.ahorroAnual;
+  // Responsive: 1 columna en mobile
+  if (window.innerWidth < 720) {
+    const grid = modal.querySelector('[style*="grid-template-columns:1fr 1fr 1fr"]');
+    if (grid) grid.style.gridTemplateColumns = "1fr";
+  } else if (window.innerWidth < 1024) {
+    const grid = modal.querySelector('[style*="grid-template-columns:1fr 1fr 1fr"]');
+    if (grid) grid.style.gridTemplateColumns = "1fr 1fr";
   }
 };
 
 // ============================================
-// CHECKOUT CON STRIPE
+// CHECKOUT CON STRIPE (3 planes: trimestral / anual / lifetime)
 // ============================================
 window.fmStartCheckout = async function(planKey) {
   const user = window.fmAuth?.currentUser;
@@ -829,14 +817,11 @@ window.fmStartCheckout = async function(planKey) {
     return;
   }
 
-  const cycle = window._fmBillingCycle || "anual";
   const plan = window.FM_PRICING[planKey];
-  if (!plan) {
+  if (!plan || !plan.stripePriceId) {
     window.fmToast("Plan no válido", "danger");
     return;
   }
-
-  const priceId = cycle === "mensual" ? plan.stripePriceMensual : plan.stripePriceAnual;
 
   // Mostrar loading
   const btn = document.getElementById("btnUpgrade" + planKey.charAt(0).toUpperCase() + planKey.slice(1));
@@ -847,16 +832,15 @@ window.fmStartCheckout = async function(planKey) {
   }
 
   try {
-    // El webhook server (Railway) crea la sesión de Stripe Embedded Checkout
     const FM_WEBHOOK_URL = window.FM_WEBHOOK_URL || "https://feedmix-webhook-production.up.railway.app";
 
     const response = await fetch(FM_WEBHOOK_URL + "/create-checkout-session", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        priceId: priceId,
+        priceId: plan.stripePriceId,
         plan: planKey,
-        cycle: cycle,
+        mode: plan.mode, // "subscription" o "payment" (lifetime es payment)
         uid: user.uid,
         email: user.email,
         displayName: user.displayName || ""
@@ -872,7 +856,7 @@ window.fmStartCheckout = async function(planKey) {
       throw new Error(data.error || "No se recibió clientSecret de Stripe");
     }
 
-    // Cargar Stripe.js y montar Embedded Checkout
+    // Cargar Stripe.js
     if (!window.Stripe) {
       await new Promise((resolve, reject) => {
         const s = document.createElement("script");
@@ -883,13 +867,12 @@ window.fmStartCheckout = async function(planKey) {
       });
     }
 
-    // Cerrar modal de upgrade y abrir embedded checkout
+    // Cerrar modal de upgrade y abrir checkout
     document.getElementById("fmUpgradeModal")?.remove();
 
-    const stripePublicKey = window.FM_STRIPE_PUBLIC_KEY || "pk_live_PLACEHOLDER_REEMPLAZAR";
+    const stripePublicKey = window.FM_STRIPE_PUBLIC_KEY || "pk_live_51TMAcSA7If2CqXs9NuKsM1cVT9n5agProkMR8HFiT6QTXzS0g9PtiokZ4cpT1Qo3rk9bbsrZHx9sOUbE9UEOjgGs00n1OM3Y9b";
     const stripe = window.Stripe(stripePublicKey);
 
-    // Container del embedded checkout
     const checkoutContainer = document.createElement("div");
     checkoutContainer.id = "fmCheckoutModal";
     checkoutContainer.style.cssText = `
@@ -904,8 +887,8 @@ window.fmStartCheckout = async function(planKey) {
         <div style="padding:20px 24px;border-bottom:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;">
           <div>
             <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;color:#3F4F2E;">CHECKOUT SEGURO</div>
-            <div style="font-size:1.125rem;font-weight:700;color:#0F172A;">${plan.nombre} - ${cycle === "mensual" ? "Mensual" : "Anual"}</div>
-            <div style="font-size:0.8125rem;color:#64748B;margin-top:2px;">${window.fmFormatMXN(cycle === "mensual" ? plan.mensual : plan.anual)}${cycle === "mensual" ? "/mes" : "/año"}</div>
+            <div style="font-size:1.125rem;font-weight:700;color:#0F172A;">Plan ${plan.nombre}</div>
+            <div style="font-size:0.8125rem;color:#64748B;margin-top:2px;">${window.fmFormatMXN(plan.precio)} · ${plan.duracion}</div>
           </div>
           <button onclick="document.getElementById('fmCheckoutModal').remove()" style="background:#F1F5F9;color:#475569;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;">×</button>
         </div>
