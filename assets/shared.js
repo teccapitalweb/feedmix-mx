@@ -431,53 +431,49 @@ window.fmComputeAccess = function(profile) {
     return new Date(v);
   }
 
-  const trialEnd = toDate(profile.trialEnd);
   const subscriptionEnd = toDate(profile.subscriptionEnd);
 
-  // ¿Está en trial activo?
-  const isTrialActive = status === "trial" && trialEnd && trialEnd > now;
-  // ¿Tiene suscripción activa pagada?
+  // SIMPLIFICADO (sin trial): solo 2 estados
+  // - PAGADO: status="active" y suscripción no expirada
+  // - MODO EXPLORACIÓN: cualquier otro caso (incluye trial, sin pagar, expirado)
   const isPaidActive = status === "active" && (!subscriptionEnd || subscriptionEnd > now);
-  // ¿Ya expiró?
-  const isExpired = !isTrialActive && !isPaidActive;
+  const isExpired = !isPaidActive; // Para mantener compatibilidad
 
-  // Días restantes
+  // Días restantes (solo aplica para suscripción pagada)
   let daysLeft = 0;
   let endDate = null;
-  if (isTrialActive) {
-    daysLeft = Math.ceil((trialEnd - now) / (1000 * 60 * 60 * 24));
-    endDate = trialEnd;
-  } else if (isPaidActive && subscriptionEnd) {
+  if (isPaidActive && subscriptionEnd) {
     daysLeft = Math.ceil((subscriptionEnd - now) / (1000 * 60 * 60 * 24));
     endDate = subscriptionEnd;
   }
 
-  // Acceso
-  const hasAccess = isTrialActive || isPaidActive;
+  // Acceso: solo si está pagado
+  const hasAccess = isPaidActive;
 
-  // Límite de fórmulas (trial limita a 3, pagado ilimitado)
-  const formulasLimit = isPaidActive ? Infinity : (isTrialActive ? 10 : 0);
+  // Límite de fórmulas: pagado ilimitado, modo exploración = 0
+  const formulasLimit = isPaidActive ? Infinity : 0;
 
   // Labels para UI
-  const planLabel = plan === "despacho" ? "Plan Despacho" : "Plan Profesional";
+  const planLabel = plan === "despacho" ? "Plan Despacho" :
+                    plan === "lifetime" ? "Plan De por vida" :
+                    plan === "anual" ? "Plan Anual" :
+                    plan === "trimestral" ? "Plan Trimestral" : "Plan Profesional";
   let statusLabel;
-  if (isPaidActive) statusLabel = "Activa";
-  else if (isTrialActive) statusLabel = "Prueba gratis (" + daysLeft + " días)";
-  else if (status === "cancelled") statusLabel = "Cancelada";
-  else statusLabel = "Prueba expirada";
+  if (isPaidActive) statusLabel = plan === "lifetime" ? "De por vida ✓" : "Activa";
+  else statusLabel = "Modo exploración";
 
   return {
     status: status,
     plan: plan,
     hasAccess: hasAccess,
-    isTrial: isTrialActive,
+    isTrial: false,           // YA NO HAY TRIAL — todos sin pagar = exploración
     isPaid: isPaidActive,
     isExpired: isExpired,
     daysLeft: daysLeft,
     endDate: endDate,
-    canCreateFormula: hasAccess && (formulasCount < formulasLimit),
-    canSavePDF: hasAccess,
-    canRemoveWatermark: isPaidActive, // Trial siempre con marca de agua
+    canCreateFormula: isPaidActive,
+    canSavePDF: isPaidActive,
+    canRemoveWatermark: isPaidActive,
     canHaveMultipleUsers: isPaidActive && plan === "despacho",
     formulasCount: formulasCount,
     formulasLimit: formulasLimit,
@@ -665,29 +661,17 @@ window.fmShowPaywallBanner = function() {
     borderBottom = "#A7F3D0";
     content =
       '<span>✅ <strong>' + acc.planLabel + ' activo</strong>' +
-      (acc.daysLeft > 0 ? ' · Renueva en ' + acc.daysLeft + ' días' : '') +
+      (acc.daysLeft > 0 && acc.plan !== "lifetime" ? ' · Renueva en ' + acc.daysLeft + ' días' : '') +
+      (acc.plan === "lifetime" ? ' · Acceso permanente' : '') +
       '</span>';
-  } else if (acc.isTrial) {
-    // Trial activo - banner ámbar con CTA
-    const urgencia = acc.daysLeft <= 3 ? '🔥 ' : '🟡 ';
-    bgGrad = acc.daysLeft <= 3
-      ? "linear-gradient(90deg, #FEF3C7 0%, #FBBF24 100%)"
-      : "linear-gradient(90deg, #FEF3C7 0%, #FDE68A 100%)";
+  } else {
+    // Modo exploración - banner ámbar con CTA
+    bgGrad = "linear-gradient(90deg, #FEF3C7 0%, #FDE68A 100%)";
     color = "#78350F";
     borderBottom = "#FCD34D";
     content =
-      '<span>' + urgencia + '<strong>Te quedan ' + acc.daysLeft + ' días de prueba</strong>' +
-      (acc.formulasLimit !== Infinity ? ' · ' + acc.formulasCount + '/' + acc.formulasLimit + ' fórmulas usadas' : '') +
-      '</span>' +
+      '<span>🟡 <strong>Modo exploración</strong> · Activa tu plan para optimizar, guardar y descargar fórmulas</span>' +
       '<button onclick="window.fmShowUpgradeModal()" style="background:#B87333;color:white;border:none;padding:6px 14px;border-radius:6px;font-weight:700;font-size:12px;cursor:pointer;">Activar plan</button>';
-  } else {
-    // Expirado - banner rojo
-    bgGrad = "linear-gradient(90deg, #FEE2E2 0%, #FECACA 100%)";
-    color = "#7F1D1D";
-    borderBottom = "#FCA5A5";
-    content =
-      '<span>🔴 <strong>Tu prueba terminó</strong> · Activa tu plan para seguir usando FeedMix</span>' +
-      '<button onclick="window.fmShowUpgradeModal()" style="background:#DC2626;color:white;border:none;padding:6px 14px;border-radius:6px;font-weight:700;font-size:12px;cursor:pointer;">Activar ahora</button>';
   }
 
   b.style.cssText =
@@ -967,11 +951,9 @@ window.fmCheckPremium = function(reason) {
   const acc = window.fmAccess;
   // Si no se ha cargado fmAccess todavía, permitir (auth guard ya redirigió si era necesario)
   if (!acc) return true;
-  // Si está pagado, permitir
+  // Solo permitir si está PAGADO. Modo exploración = bloqueado.
   if (acc.isPaid) return true;
-  // Si está en trial activo, permitir (con marca de agua en PDFs)
-  if (acc.isTrial) return true;
-  // Si no tiene acceso, mostrar modal
+  // Cualquier otro caso → mostrar modal upgrade
   window.fmShowUpgradeModal({ reason: reason || "manual" });
   return false;
 };
@@ -986,7 +968,7 @@ window.fmCheckPremium = function(reason) {
 window.fmAutoGuardPremiumButtons = function() {
   const acc = window.fmAccess;
   if (!acc) return;
-  const isBlocked = !acc.isPaid && !acc.isTrial;
+  const isBlocked = !acc.isPaid;
 
   document.querySelectorAll("[data-premium]").forEach(btn => {
     if (btn.dataset.fmGuarded === "1") return; // ya procesado
@@ -1067,7 +1049,7 @@ document.head.appendChild(premiumStyle);
 window.fmShowExplorationBanner = function(targetSelector, message) {
   const acc = window.fmAccess;
   if (!acc) return;
-  const isBlocked = !acc.isPaid && !acc.isTrial;
+  const isBlocked = !acc.isPaid;
   if (!isBlocked) return; // solo mostrar si no tiene acceso
 
   const target = document.querySelector(targetSelector);

@@ -734,8 +734,8 @@
                 </svg>
               </div>
               <div class="trial-badge-content">
-                <small>Plan en prueba</small>
-                <strong id="trialText">14 días de prueba activa</strong>
+                <small id="trialLabel">Modo exploración</small>
+                <strong id="trialText">Activa tu plan para usar todo</strong>
               </div>
             </div>
 
@@ -776,9 +776,9 @@
 
   </div>
 
-  <script src="assets/firebase-config.js?v=23"></script>
+  <script src="assets/firebase-config.js?v=24"></script>
   <script type="module">
-    import "./assets/shared.js?v=23";
+    import "./assets/shared.js?v=24";
 
     const user = await window.fmAuthGuard({ requireAuth: true });
 
@@ -814,8 +814,32 @@
       const end = profile.trialEnd.toDate ? profile.trialEnd.toDate() : new Date(profile.trialEnd);
       const days = Math.max(0, Math.ceil((end - new Date()) / (1000 * 60 * 60 * 24)));
       document.getElementById("statDays").textContent = days;
-      document.getElementById("trialText").textContent = days > 0 ? `${days} días restantes` : "Prueba terminada — actualiza tu plan";
     }
+
+    // Trial badge: mostrar estado real (pagado o modo exploración)
+    setTimeout(() => {
+      const acc = window.fmAccess;
+      const badge = document.getElementById("trialBadge");
+      const label = document.getElementById("trialLabel");
+      const text = document.getElementById("trialText");
+      if (!acc || !badge) return;
+
+      if (acc.isPaid) {
+        // Pagado - verde
+        badge.style.background = "linear-gradient(135deg,#ECFDF5,#D1FAE5)";
+        badge.style.borderColor = "#A7F3D0";
+        if (label) label.textContent = acc.planLabel + " activo";
+        if (text) text.textContent = acc.plan === "lifetime"
+          ? "Acceso permanente ✓"
+          : (acc.daysLeft > 0 ? "Renueva en " + acc.daysLeft + " días" : "Activa");
+      } else {
+        // Modo exploración - ámbar
+        if (label) label.textContent = "Modo exploración";
+        if (text) text.textContent = "Activa tu plan para usar todo";
+        badge.style.cursor = "pointer";
+        badge.onclick = () => window.fmShowUpgradeModal({reason: "manual"});
+      }
+    }, 400);
 
     // User menu — logout
     // Toggle dropdown del usuario
