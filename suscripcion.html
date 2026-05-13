@@ -103,20 +103,24 @@
 
     .planes-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: var(--space-5);
       margin-bottom: var(--space-6);
+      margin-top: var(--space-6);
     }
 
-    @media (max-width: 768px) { .planes-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 1024px) { .planes-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 720px)  { .planes-grid { grid-template-columns: 1fr; } }
 
     .plan-card {
       background: white;
       border: 2px solid var(--neutral-200);
       border-radius: var(--radius-xl);
-      padding: var(--space-7);
+      padding: var(--space-6) var(--space-5);
       position: relative;
       transition: all var(--transition);
+      display: flex;
+      flex-direction: column;
     }
 
     .plan-card:hover {
@@ -125,40 +129,88 @@
       box-shadow: var(--shadow-md);
     }
 
+    /* Card "MEJOR VALOR" (lifetime) */
     .plan-card.featured {
-      border-color: var(--primary);
-      background: linear-gradient(180deg, white 0%, var(--primary-50) 100%);
+      border-color: var(--accent);
+      background: linear-gradient(180deg, white 0%, #FFF7ED 100%);
+      box-shadow: 0 8px 32px rgba(184, 115, 51, 0.12);
     }
 
-    .plan-card.featured::before {
-      content: "Más popular";
+    .plan-card.featured:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 36px rgba(184, 115, 51, 0.2);
+    }
+
+    /* Card del plan actual */
+    .plan-card.current {
+      border-color: var(--success);
+    }
+
+    /* Badges arriba (más popular / mejor valor) */
+    .plan-badge {
       position: absolute;
-      top: -12px;
+      top: -14px;
       left: 50%;
       transform: translateX(-50%);
+      padding: 6px 16px;
+      border-radius: var(--radius-full);
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      z-index: 2;
+    }
+
+    .plan-badge-popular {
       background: var(--accent);
-      color: var(--neutral-900);
-      padding: 4px 14px;
+      color: white;
+      box-shadow: 0 4px 12px rgba(184, 115, 51, 0.35);
+    }
+
+    .plan-badge-best {
+      background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+    }
+
+    /* Banda "Tu plan actual" arriba del card (en lugar de etiqueta flotante) */
+    .plan-current-banner {
+      background: var(--success);
+      color: white;
+      text-align: center;
+      padding: 6px 12px;
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 12px 12px 0 0;
+      margin: calc(-1 * var(--space-6)) calc(-1 * var(--space-5)) var(--space-5);
+    }
+
+    .plan-current-banner svg {
+      width: 14px; height: 14px;
+      vertical-align: middle;
+      margin-right: 4px;
+    }
+
+    /* Badge "PAGO ÚNICO" abajo del precio en el lifetime */
+    .plan-pago-unico {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(220, 38, 38, 0.1);
+      color: #B91C1C;
+      padding: 4px 10px;
       border-radius: var(--radius-full);
       font-size: 0.6875rem;
       font-weight: 800;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      box-shadow: 0 4px 12px rgba(184,115,51,0.3);
-    }
-
-    .plan-card.current::after {
-      content: "✓ Tu plan actual";
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      background: var(--success);
-      color: white;
-      padding: 4px 10px;
-      border-radius: var(--radius);
-      font-size: 0.6875rem;
-      font-weight: 800;
-      letter-spacing: 0.04em;
+      margin-top: 4px;
+      margin-bottom: var(--space-3);
+      width: fit-content;
     }
 
     .plan-name {
@@ -172,56 +224,74 @@
     }
 
     .plan-tagline {
-      font-size: 1rem;
+      font-size: 0.875rem;
       color: var(--neutral-600);
       margin-bottom: var(--space-4);
+      min-height: 42px;
     }
 
     .plan-price {
-      display: flex; align-items: baseline; gap: 8px;
-      margin-bottom: var(--space-5);
+      display: flex; align-items: baseline; gap: 6px;
+      margin-bottom: var(--space-1);
     }
 
     .plan-price strong {
       font-family: var(--font-display);
-      font-size: 3rem;
+      font-size: 2.25rem;
       font-weight: 800;
       color: var(--neutral-900);
-      letter-spacing: -0.03em;
+      letter-spacing: -0.02em;
       line-height: 1;
     }
 
     .plan-price-currency {
-      font-size: 1.25rem;
+      font-size: 0.875rem;
       font-weight: 700;
       color: var(--neutral-500);
+      align-self: flex-start;
+      padding-top: 4px;
     }
 
     .plan-price-period {
-      font-size: 0.9375rem;
+      font-size: 0.8125rem;
       color: var(--neutral-500);
+      font-weight: 600;
+    }
+
+    .plan-price-hint {
+      font-size: 0.75rem;
+      color: var(--neutral-500);
+      margin-bottom: var(--space-4);
+      min-height: 18px;
+    }
+
+    /* Botón centrado */
+    .plan-card .btn-block {
+      margin-top: var(--space-2);
     }
 
     .plan-features {
       list-style: none;
       padding: 0;
-      margin: var(--space-5) 0;
+      margin: var(--space-5) 0 0 0;
       padding-top: var(--space-5);
       border-top: 1px solid var(--neutral-100);
+      flex-grow: 1;
     }
 
     .plan-features li {
       display: flex;
       align-items: flex-start;
-      gap: var(--space-3);
-      padding: 8px 0;
-      font-size: 0.9375rem;
+      gap: var(--space-2);
+      padding: 6px 0;
+      font-size: 0.875rem;
       color: var(--neutral-700);
+      line-height: 1.5;
     }
 
     .plan-features li svg {
       flex-shrink: 0;
-      width: 20px; height: 20px;
+      width: 18px; height: 18px;
       color: var(--success);
       margin-top: 2px;
     }
@@ -343,50 +413,82 @@
 
         <!-- Comparativa de planes -->
         <h3 style="font-size:1.25rem;font-weight:800;margin-bottom:var(--space-2);">Planes disponibles</h3>
-        <p style="color:var(--neutral-600);margin-bottom:var(--space-5);">Elige el plan que mejor se adapte a tu práctica profesional.</p>
+        <p style="color:var(--neutral-600);margin-bottom:var(--space-5);">Elige el plan que mejor se adapte a tu práctica profesional. Todos incluyen las mismas funciones.</p>
 
         <div class="planes-grid">
-          <div class="plan-card current" id="planPro">
-            <div class="plan-name">Pro</div>
-            <div class="plan-tagline">Para nutricionistas independientes</div>
+
+          <!-- PLAN 3 MESES -->
+          <div class="plan-card" id="planTrimestral">
+            <div class="plan-name">Trimestral</div>
+            <div class="plan-tagline">Pruébalo a fondo y decide después</div>
             <div class="plan-price">
-              <span class="plan-price-currency">USD</span>
-              <strong>$500</strong>
-              <span class="plan-price-period">/ año</span>
+              <span class="plan-price-currency">$</span>
+              <strong>1,399</strong>
+              <span class="plan-price-period">MXN</span>
             </div>
-            <a href="https://wa.me/5212382514313?text=Quiero%20activar%20Plan%20Pro%20de%20FeedMix%20MX%20%28%24500%20USD%2Fa%C3%B1o%29" target="_blank" class="btn btn-outline btn-block">
-              Mantener plan Pro
+            <div class="plan-price-hint">Equivale a $466/mes · Pago único por 3 meses</div>
+            <a href="https://wa.me/5212382514313?text=Quiero%20activar%20Plan%20Trimestral%20de%20FeedMix%20MX%20%28%241%2C399%20MXN%29" target="_blank" class="btn btn-outline btn-block">
+              Activar 3 meses
             </a>
             <ul class="plan-features">
-              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> 1 usuario nutricionista</li>
               <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Fórmulas ilimitadas</li>
-              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Catálogo completo (25 ingredientes)</li>
-              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Todas las razas y etapas</li>
-              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> PDFs profesionales</li>
-              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Soporte por email</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> 179 etapas técnicas · 30 razas</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Aminograma completo (8 AA)</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Alertas inteligentes</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> PDF profesional sin marca de agua</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Soporte por email + WhatsApp</li>
             </ul>
           </div>
 
-          <div class="plan-card featured" id="planDespacho">
-            <div class="plan-name">Despacho</div>
-            <div class="plan-tagline">Para consultorías y empresas</div>
+          <!-- PLAN ANUAL -->
+          <div class="plan-card" id="planAnual">
+            <div class="plan-badge plan-badge-popular">⭐ Más popular</div>
+            <div class="plan-name">Anual</div>
+            <div class="plan-tagline">El favorito de los nutricionistas</div>
             <div class="plan-price">
-              <span class="plan-price-currency">USD</span>
-              <strong>$1,500</strong>
-              <span class="plan-price-period">/ año</span>
+              <span class="plan-price-currency">$</span>
+              <strong>2,499</strong>
+              <span class="plan-price-period">MXN</span>
             </div>
-            <a href="https://wa.me/5212382514313?text=Quiero%20cambiar%20a%20Plan%20Despacho%20de%20FeedMix%20MX%20%28%241%2C500%20USD%2Fa%C3%B1o%29" target="_blank" class="btn btn-primary btn-block">
-              Cambiar a Despacho
+            <div class="plan-price-hint">Equivale a $208/mes · Ahorra 55% vs trimestral</div>
+            <a href="https://wa.me/5212382514313?text=Quiero%20activar%20Plan%20Anual%20de%20FeedMix%20MX%20%28%242%2C499%20MXN%29" target="_blank" class="btn btn-primary btn-block">
+              Activar 1 año
             </a>
             <ul class="plan-features">
-              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Hasta 5 usuarios</li>
-              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Todo lo del plan Pro</li>
-              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> <strong>Marca blanca en PDFs</strong></li>
-              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Cartera de clientes compartida</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> <strong>Todo lo del plan Trimestral</strong></li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> 12 meses completos de acceso</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Ahorra $3,097 MXN vs trimestral</li>
               <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Soporte prioritario WhatsApp</li>
-              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Capacitación inicial 1:1</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Actualizaciones incluidas</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Capacitación 1:1 incluida</li>
             </ul>
           </div>
+
+          <!-- PLAN DE POR VIDA -->
+          <div class="plan-card featured" id="planLifetime">
+            <div class="plan-badge plan-badge-best">🏆 Mejor valor</div>
+            <div class="plan-name">De por vida</div>
+            <div class="plan-tagline">Una sola vez. Para siempre.</div>
+            <div class="plan-price">
+              <span class="plan-price-currency">$</span>
+              <strong>3,499</strong>
+              <span class="plan-price-period">MXN</span>
+            </div>
+            <span class="plan-pago-unico">💰 Pago único</span>
+            <div class="plan-price-hint">Se recupera en 14 meses vs anual</div>
+            <a href="https://wa.me/5212382514313?text=Quiero%20activar%20Plan%20DE%20POR%20VIDA%20de%20FeedMix%20MX%20%28%243%2C499%20MXN%20pago%20%C3%BAnico%29" target="_blank" class="btn btn-accent btn-block">
+              Comprar de por vida
+            </a>
+            <ul class="plan-features">
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> <strong>Todo lo del plan Anual</strong></li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> <strong>Acceso de por vida</strong> sin renovar</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Todas las futuras actualizaciones</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Marca blanca en PDFs</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Soporte VIP de por vida</li>
+              <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Capacitación avanzada incluida</li>
+            </ul>
+          </div>
+
         </div>
 
         <!-- Info de pago -->
@@ -401,7 +503,8 @@
               <li>• Activación inmediata del plan</li>
               <li>• Pago por transferencia o tarjeta (Stripe)</li>
               <li>• Factura para deducción de impuestos</li>
-              <li>• Capacitación inicial sin costo extra (Plan Despacho)</li>
+              <li>• Capacitación inicial sin costo extra</li>
+              <li>• Garantía de devolución 14 días</li>
             </ul>
           </div>
         </div>
@@ -416,17 +519,31 @@
     const user = await window.fmAuthGuard({ requireAuth: true });
     const profile = window.fmProfile || {};
 
-    // Plan actual
-    const planActual = profile.plan || "pro";
-    const isDespacho = planActual === "despacho";
+    // Plan actual (puede ser: trimestral, anual, lifetime, pro, despacho legacy)
+    const planActual = profile.plan || "trial";
     const isTrial = profile.status === "trial";
 
+    // Mapeo legacy y nuevo
+    const planNames = {
+      trimestral: "Trimestral (3 meses)",
+      anual: "Anual",
+      lifetime: "De por vida",
+      pro: "Pro (legacy)",
+      despacho: "Despacho (legacy)",
+      trial: "Prueba gratis"
+    };
+
     document.getElementById("planActualNombre").textContent =
-      `Plan ${isDespacho ? "Despacho" : "Pro"}${isTrial ? " · Trial" : ""}`;
+      `Plan ${planNames[planActual] || planActual}${isTrial ? " · Trial" : ""}`;
 
     if (!isTrial) {
+      const descs = {
+        trimestral: "Suscripción activa — 3 meses de acceso completo.",
+        anual: "Suscripción activa — 12 meses de acceso completo.",
+        lifetime: "Acceso de por vida — Nunca tendrás que renovar."
+      };
       document.getElementById("planActualDesc").textContent =
-        isDespacho ? "Suscripción activa — Plan Despacho con hasta 5 usuarios." : "Suscripción activa — Plan Pro individual.";
+        descs[planActual] || "Suscripción activa.";
     }
 
     // Días trial
@@ -439,14 +556,26 @@
     // Fórmulas creadas
     document.getElementById("formulasUsadas").textContent = profile.formulasCount || 0;
 
-    // Marcar plan actual como "current"
-    document.getElementById("planPro").classList.toggle("current", !isDespacho);
-    document.getElementById("planDespacho").classList.toggle("current", isDespacho);
-
-    // Si está en Despacho, ajustar texto
-    if (isDespacho) {
-      document.querySelector("#planPro .btn").textContent = "Cambiar a Pro";
-      document.querySelector("#planDespacho .btn").textContent = "Mantener plan Despacho";
+    // Marcar plan actual y ajustar botones
+    const planIdMap = {
+      trimestral: "planTrimestral",
+      anual: "planAnual",
+      lifetime: "planLifetime"
+    };
+    const planActualId = planIdMap[planActual];
+    if (planActualId) {
+      const card = document.getElementById(planActualId);
+      if (card) {
+        card.classList.add("current");
+        // Agregar banner "Tu plan actual" arriba del card
+        const banner = document.createElement("div");
+        banner.className = "plan-current-banner";
+        banner.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Tu plan actual';
+        card.insertBefore(banner, card.firstChild);
+        // Cambiar texto del botón
+        const btn = card.querySelector(".btn");
+        if (btn) btn.textContent = "Plan activo";
+      }
     }
   </script>
 
