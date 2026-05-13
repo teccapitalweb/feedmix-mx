@@ -2712,15 +2712,15 @@
     </div>
   </div>
 
-  <script src="assets/firebase-config.js?v=18"></script>
-  <script src="assets/avicola-data.js?v=18"></script>
-  <script src="assets/nucleos-data.js?v=18"></script>
-  <script src="assets/consumo-data.js?v=18"></script>
-  <script src="assets/aminogramas-data.js?v=18"></script>
-  <script src="assets/solver-v2.js?v=18"></script>
-  <script src="assets/species-system.js?v=18"></script>
+  <script src="assets/firebase-config.js?v=19"></script>
+  <script src="assets/avicola-data.js?v=19"></script>
+  <script src="assets/nucleos-data.js?v=19"></script>
+  <script src="assets/consumo-data.js?v=19"></script>
+  <script src="assets/aminogramas-data.js?v=19"></script>
+  <script src="assets/solver-v2.js?v=19"></script>
+  <script src="assets/species-system.js?v=19"></script>
   <script type="module">
-    import "./assets/shared.js?v=18";
+    import "./assets/shared.js?v=19";
     await window.fmAuthGuard({ requireAuth: true });
 
     const A = window.FM_AVICOLA;
@@ -3955,6 +3955,19 @@
     }
 
     document.getElementById("btnOptimize").addEventListener("click", async () => {
+      // ============ PAYWALL: bloquear si no tiene acceso ============
+      const acc = window.fmAccess;
+      if (acc && !acc.canCreateFormula) {
+        if (acc.isExpired) {
+          window.fmShowUpgradeModal({ reason: "expired" });
+        } else if (acc.formulasCount >= acc.formulasLimit) {
+          window.fmShowUpgradeModal({ reason: "formulas" });
+        } else {
+          window.fmShowUpgradeModal({ reason: "manual" });
+        }
+        return;
+      }
+
       window.fmToast("Optimizando fórmula...", "info");
       await new Promise(r => setTimeout(r, 400));
 
@@ -4385,6 +4398,13 @@
     });
 
     document.getElementById("btnPdf").addEventListener("click", async () => {
+      // ============ PAYWALL: bloquear PDF si no tiene acceso ============
+      const acc = window.fmAccess;
+      if (acc && !acc.canSavePDF) {
+        window.fmShowUpgradeModal({ reason: "expired" });
+        return;
+      }
+
       const btn = document.getElementById("btnPdf");
       const originalHtml = btn.innerHTML;
       btn.disabled = true;
@@ -5584,6 +5604,39 @@
       }
 
       // ============================================
+      // MARCA DE AGUA si está en TRIAL (no pagado)
+      // ============================================
+      const acc = window.fmAccess;
+      if (acc && !acc.canRemoveWatermark) {
+        const totalPages = doc.internal.getNumberOfPages();
+        for (let p = 1; p <= totalPages; p++) {
+          doc.setPage(p);
+          doc.saveGraphicsState && doc.saveGraphicsState();
+          // GState con opacidad si está disponible
+          if (doc.GState) {
+            doc.setGState(new doc.GState({ opacity: 0.12 }));
+          }
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(78);
+          doc.setTextColor(184, 115, 51); // Cobre
+          // Diagonal centrada
+          doc.text("FEEDMIX MX · DEMO", W / 2, H / 2, {
+            align: "center",
+            angle: 45
+          });
+          doc.restoreGraphicsState && doc.restoreGraphicsState();
+          // Restablecer opacidad
+          if (doc.GState) doc.setGState(new doc.GState({ opacity: 1 }));
+
+          // Texto de pie de página adicional
+          doc.setFontSize(7);
+          doc.setFont("helvetica", "italic");
+          doc.setTextColor(184, 115, 51);
+          doc.text("Versión DEMO - Activa tu plan en feedmix.mx para quitar la marca de agua", W / 2, H - 8, { align: "center" });
+        }
+      }
+
+      // ============================================
       // Descargar
       // ============================================
       const filename = "FeedMix_" + cliente.replace(/[^a-z0-9]/gi, "_").slice(0, 20) + "_" + etapa.id + "_" + folio + ".pdf";
@@ -5592,6 +5645,13 @@
     }
 
     document.getElementById("btnSave").addEventListener("click", async () => {
+      // ============ PAYWALL: bloquear guardar si no tiene acceso ============
+      const acc = window.fmAccess;
+      if (acc && !acc.canSavePDF) {
+        window.fmShowUpgradeModal({ reason: "save" });
+        return;
+      }
+
       if (!state.formula) {
         window.fmToast("Primero optimiza una fórmula antes de guardar", "warning");
         return;

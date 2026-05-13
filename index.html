@@ -1520,12 +1520,12 @@
               </label>
               <div class="roi-plan-toggle">
                 <button type="button" class="roi-plan-btn active" data-plan="pro">
-                  <strong>Pro</strong>
-                  <small>$500 USD/año</small>
+                  <strong>Profesional</strong>
+                  <small>$1,499 MXN/mes</small>
                 </button>
                 <button type="button" class="roi-plan-btn" data-plan="despacho">
                   <strong>Despacho</strong>
-                  <small>$1,500 USD/año</small>
+                  <small>$3,499 MXN/mes</small>
                 </button>
               </div>
             </div>
@@ -1560,14 +1560,15 @@
 
       <div class="pricing-grid">
         <div class="price-card">
-          <div class="price-name">Pro</div>
-          <div class="price-tagline">Para nutricionistas independientes</div>
+          <div class="price-name">Profesional</div>
+          <div class="price-tagline">Para nutricionistas y granjeros independientes</div>
           <div class="price-amount">
-            <span class="price-amount-currency">USD</span>
-            <strong>$500</strong>
-            <span class="price-amount-period">/ año</span>
+            <span class="price-amount-currency">MXN</span>
+            <strong>$1,499</strong>
+            <span class="price-amount-period">/ mes</span>
           </div>
-          <a href="registro.html?plan=pro" class="btn btn-outline btn-block">Empezar prueba</a>
+          <div style="font-size:0.75rem;color:var(--neutral-500);margin-bottom:var(--space-3);text-align:center;">o $14,990 al año · ahorra 2 meses</div>
+          <a href="registro.html?plan=pro" class="btn btn-outline btn-block">Empezar prueba 14 días</a>
           <ul class="price-features">
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 1 usuario nutricionista</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Fórmulas ilimitadas</li>
@@ -1582,11 +1583,12 @@
           <div class="price-name">Despacho</div>
           <div class="price-tagline">Para consultorías y empresas</div>
           <div class="price-amount">
-            <span class="price-amount-currency">USD</span>
-            <strong>$1,500</strong>
-            <span class="price-amount-period">/ año</span>
+            <span class="price-amount-currency">MXN</span>
+            <strong>$3,499</strong>
+            <span class="price-amount-period">/ mes</span>
           </div>
-          <a href="registro.html?plan=despacho" class="btn btn-primary btn-block">Empezar prueba</a>
+          <div style="font-size:0.75rem;color:var(--neutral-500);margin-bottom:var(--space-3);text-align:center;">o $34,990 al año · ahorra 2 meses</div>
+          <a href="registro.html?plan=despacho" class="btn btn-primary btn-block">Empezar prueba 14 días</a>
           <ul class="price-features">
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Hasta 5 usuarios</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Todo lo del plan Pro</li>
@@ -1944,10 +1946,8 @@
         const ahorroMes = costoComprado * ahorroPctIngredientes;
         const ahorroAnualMXN = ahorroMes * 12;
 
-        // Costo del plan en MXN (1 USD ≈ 17 MXN)
-        const tipoCambio = 17;
-        const costoPlanUSD = planActivo === "pro" ? 500 : 1500;
-        const costoPlanMXN = costoPlanUSD * tipoCambio;
+        // Costo del plan en MXN (precios anuales para ROI)
+        const costoPlanMXN = planActivo === "pro" ? 14990 : 34990;
 
         // Días para recuperar inversión
         const ahorroDiario = ahorroMes / 30;
