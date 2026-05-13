@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ============================================
+    // /nutricionistas/{uid}
+    // El perfil del usuario (creado al registrarse)
+    // ============================================
+    match /nutricionistas/{userId} {
+      // Cada usuario solo puede leer/escribir SU propio perfil
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // ============================================
+    // /usuarios/{uid}
+    // Datos adicionales del usuario (preferencias, configuración)
+    // ============================================
+    match /usuarios/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // ============================================
+    // /formulas/{formulaId}
+    // Las fórmulas guardadas (cada doc tiene campo userId)
+    // ============================================
+    match /formulas/{formulaId} {
+      // Crear: solo si el userId del doc nuevo coincide con el usuario actual
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid;
+      // Leer / actualizar / borrar: solo si el doc ya existe y le pertenece al usuario
+      allow read, update, delete: if request.auth != null
+                                  && resource.data.userId == request.auth.uid;
+    }
+
+  }
+}
