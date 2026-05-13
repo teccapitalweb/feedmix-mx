@@ -245,11 +245,11 @@
             <div class="perfil-stats">
               <div class="perfil-stat">
                 <div class="perfil-stat-num" id="statFormulas">0</div>
-                <div class="perfil-stat-label">Fórmulas</div>
+                <div class="perfil-stat-label">Fórmulas guardadas</div>
               </div>
               <div class="perfil-stat">
-                <div class="perfil-stat-num" id="statDays">14</div>
-                <div class="perfil-stat-label">Días trial</div>
+                <div class="perfil-stat-num" id="statDays" style="font-size:1rem;line-height:1.3;">—</div>
+                <div class="perfil-stat-label" id="statDaysLabel">Estado</div>
               </div>
             </div>
           </div>
@@ -319,9 +319,9 @@
     </div>
   </div>
 
-  <script src="assets/firebase-config.js?v=24"></script>
+  <script src="assets/firebase-config.js?v=25"></script>
   <script type="module">
-    import "./assets/shared.js?v=24";
+    import "./assets/shared.js?v=25";
     const user = await window.fmAuthGuard({ requireAuth: true });
 
     const profile = window.fmProfile || {};
@@ -344,20 +344,48 @@
       `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || user.email;
     document.getElementById("perfilRole").textContent = profile.profession || "Nutricionista";
 
-    // Plan
-    const planLabel = profile.plan === "despacho" ? "Plan Despacho" : "Plan Pro";
-    const planStatus = profile.status === "trial" ? "· Trial" : "";
-    document.getElementById("perfilPlan").innerHTML = `⭐ ${planLabel} ${planStatus}`;
+    // Plan badge + Estado stat (basado en fmAccess real)
+    setTimeout(() => {
+      const acc = window.fmAccess;
+      const badge = document.getElementById("perfilPlan");
+      const statDays = document.getElementById("statDays");
+      const statDaysLabel = document.getElementById("statDaysLabel");
+      if (!badge) return;
+
+      if (acc && acc.isPaid) {
+        // Pagado
+        const planName = acc.planLabel || "Plan activo";
+        badge.innerHTML = `✅ ${planName}`;
+        badge.style.background = "linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)";
+        badge.style.borderColor = "#10B981";
+        badge.style.color = "#065F46";
+        if (statDays) {
+          statDays.textContent = acc.plan === "lifetime" ? "∞" :
+                                 (acc.daysLeft > 0 ? acc.daysLeft : "—");
+        }
+        if (statDaysLabel) {
+          statDaysLabel.textContent = acc.plan === "lifetime" ? "De por vida" : "Días restantes";
+        }
+        if (statDays) statDays.style.fontSize = "2rem";
+      } else {
+        // Modo exploración
+        badge.innerHTML = `🟡 Modo exploración`;
+        badge.style.background = "linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)";
+        badge.style.borderColor = "#F59E0B";
+        badge.style.color = "#78350F";
+        badge.style.cursor = "pointer";
+        badge.onclick = () => window.fmShowUpgradeModal({reason: "manual"});
+        badge.title = "Activa tu plan haciendo clic";
+        if (statDays) {
+          statDays.textContent = "Sin plan";
+          statDays.style.fontSize = "1rem";
+        }
+        if (statDaysLabel) statDaysLabel.textContent = "Estado";
+      }
+    }, 400);
 
     // Stats
     document.getElementById("statFormulas").textContent = profile.formulasCount || 0;
-
-    // Días trial
-    if (profile.trialEnd) {
-      const end = profile.trialEnd.toDate ? profile.trialEnd.toDate() : new Date(profile.trialEnd);
-      const days = Math.max(0, Math.ceil((end - new Date()) / (1000 * 60 * 60 * 24)));
-      document.getElementById("statDays").textContent = days;
-    }
 
     // Guardar cambios
     document.getElementById("perfilForm").addEventListener("submit", async (e) => {

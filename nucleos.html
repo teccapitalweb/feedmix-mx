@@ -1114,11 +1114,11 @@
     </div>
   </div>
 
-  <script src="assets/firebase-config.js?v=24"></script>
+  <script src="assets/firebase-config.js?v=25"></script>
   <script src="assets/avicola-data.js?v=12"></script>
   <script src="assets/nucleos-data.js?v=12"></script>
   <script type="module">
-    import "./assets/shared.js?v=24";
+    import "./assets/shared.js?v=25";
     await window.fmAuthGuard({ requireAuth: true });
 
     // Banner modo exploración (si no tiene plan activo)
@@ -1421,7 +1421,7 @@
             </div>
 
             <div class="nucleo-card-actions">
-              <button class="btn btn-primary btn-usar" data-id="${n.id}">
+              <button class="btn btn-primary btn-usar" data-id="${n.id}" data-premium="nucleos">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 Usar este núcleo
               </button>
@@ -1438,6 +1438,8 @@
       // Eventos de eliminar
       grid.querySelectorAll('[data-action="delete"]').forEach(btn => {
         btn.addEventListener("click", () => {
+          // PAYWALL: bloquear si no tiene acceso
+          if (window.fmCheckPremium && !window.fmCheckPremium("nucleos")) return;
           const id = btn.dataset.id;
           const propios = N.getNucleosPropios();
           const nucleo = propios.find(p => p.id === id);
@@ -1455,6 +1457,8 @@
       grid.querySelectorAll('.btn-usar').forEach(btn => {
         btn.addEventListener("click", e => {
           e.preventDefault();
+          // PAYWALL: bloquear si no tiene acceso
+          if (window.fmCheckPremium && !window.fmCheckPremium("nucleos")) return;
           const id = btn.dataset.id;
           const nucleo = N.getTodos().find(x => x.id === id);
           if (!nucleo) return;
@@ -1477,6 +1481,11 @@
           }, 600);
         });
       });
+
+      // Re-aplicar guard premium en botones renderizados dinámicamente
+      if (window.fmAutoGuardPremiumButtons) {
+        setTimeout(() => window.fmAutoGuardPremiumButtons(), 50);
+      }
     }
 
     // ============================================
