@@ -832,6 +832,17 @@ window.fmStartCheckout = async function(planKey) {
   }
 
   try {
+    // ============ FIX BUG 1: limpiar checkout anterior ============
+    // Si ya hay un checkout montado, destruirlo antes de crear otro
+    // (Stripe NO permite múltiples Embedded Checkout objects simultáneamente)
+    if (window._fmStripeCheckout) {
+      try {
+        window._fmStripeCheckout.destroy();
+      } catch (e) { /* ignore */ }
+      window._fmStripeCheckout = null;
+    }
+    document.getElementById("fmCheckoutModal")?.remove();
+
     const FM_WEBHOOK_URL = window.FM_WEBHOOK_URL || "https://feedmix-webhook-production.up.railway.app";
 
     const response = await fetch(FM_WEBHOOK_URL + "/create-checkout-session", {
@@ -848,7 +859,13 @@ window.fmStartCheckout = async function(planKey) {
     });
 
     if (!response.ok) {
-      throw new Error("Error " + response.status + " al crear sesión de pago");
+      // Intentar leer el error real del body
+      let errBody = "";
+      try {
+        const errJson = await response.json();
+        errBody = errJson.error || "";
+      } catch(e) {}
+      throw new Error("Error " + response.status + (errBody ? " - " + errBody : " al crear sesión de pago"));
     }
 
     const data = await response.json();
@@ -890,7 +907,7 @@ window.fmStartCheckout = async function(planKey) {
             <div style="font-size:1.125rem;font-weight:700;color:#0F172A;">Plan ${plan.nombre}</div>
             <div style="font-size:0.8125rem;color:#64748B;margin-top:2px;">${window.fmFormatMXN(plan.precio)} · ${plan.duracion}</div>
           </div>
-          <button onclick="document.getElementById('fmCheckoutModal').remove()" style="background:#F1F5F9;color:#475569;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;">×</button>
+          <button onclick="window.fmCloseCheckout()" style="background:#F1F5F9;color:#475569;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;">×</button>
         </div>
         <div id="fmCheckoutEmbed" style="padding:8px;"></div>
       </div>
@@ -902,6 +919,15 @@ window.fmStartCheckout = async function(planKey) {
     });
     checkout.mount("#fmCheckoutEmbed");
 
+    // Guardar instancia globalmente para poder destruirla después
+    window._fmStripeCheckout = checkout;
+
+    // Restaurar botón si lo había
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
+
   } catch (err) {
     console.error("Error en checkout:", err);
     window.fmToast("Error al iniciar el pago: " + err.message, "danger");
@@ -909,7 +935,22 @@ window.fmStartCheckout = async function(planKey) {
       btn.disabled = false;
       btn.textContent = originalText;
     }
+    // Limpiar por si quedó algo a medias
+    if (window._fmStripeCheckout) {
+      try { window._fmStripeCheckout.destroy(); } catch(e) {}
+      window._fmStripeCheckout = null;
+    }
+    document.getElementById("fmCheckoutModal")?.remove();
   }
+};
+
+// Helper para cerrar el checkout y limpiar la instancia
+window.fmCloseCheckout = function() {
+  if (window._fmStripeCheckout) {
+    try { window._fmStripeCheckout.destroy(); } catch(e) {}
+    window._fmStripeCheckout = null;
+  }
+  document.getElementById("fmCheckoutModal")?.remove();
 };
 
 // Animación spinner
