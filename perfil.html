@@ -307,7 +307,7 @@
                 </button>
               </div>
 
-              <button type="submit" class="btn btn-primary btn-lg" id="btnSave">
+              <button type="submit" class="btn btn-primary btn-lg" id="btnSave" data-premium="perfil">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                 <span id="btnSaveText">Guardar cambios</span>
               </button>
@@ -319,9 +319,9 @@
     </div>
   </div>
 
-  <script src="assets/firebase-config.js?v=22"></script>
+  <script src="assets/firebase-config.js?v=23"></script>
   <script type="module">
-    import "./assets/shared.js?v=22";
+    import "./assets/shared.js?v=23";
     const user = await window.fmAuthGuard({ requireAuth: true });
 
     const profile = window.fmProfile || {};

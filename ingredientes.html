@@ -1024,7 +1024,7 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             ¿Cómo funciona?
           </button>
-          <button class="btn btn-primary btn-sm" id="btnAdd">
+          <button class="btn btn-primary btn-sm" id="btnAdd" data-premium="ingredientes">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Nuevo ingrediente
           </button>
@@ -1139,7 +1139,7 @@
           </div>
           <div style="display:flex;gap:var(--space-3);align-items:center;">
             <span class="badge badge-neutral" id="totalCount">0 ingredientes</span>
-            <button class="btn btn-ghost btn-sm" id="btnReset">
+            <button class="btn btn-ghost btn-sm" id="btnReset" data-premium="ingredientes">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
               Restaurar valores
             </button>
@@ -1329,10 +1329,17 @@
     </div>
   </div>
 
-  <script src="assets/firebase-config.js?v=22"></script>
+  <script src="assets/firebase-config.js?v=23"></script>
   <script type="module">
-    import "./assets/shared.js?v=22";
+    import "./assets/shared.js?v=23";
     await window.fmAuthGuard({ requireAuth: true });
+
+    // Banner modo exploración (si no tiene plan activo)
+    setTimeout(() => {
+      if (window.fmShowExplorationBanner) {
+        window.fmShowExplorationBanner(".app-content", "Explora el catálogo completo. Activa tu plan para agregar tus propios ingredientes y precios.");
+      }
+    }, 300);
 
     // ============================================
     // BIBLIOTECA PRECARGADA (catálogo NRC + México)
@@ -1508,6 +1515,11 @@
           const input = tr.querySelector(`[data-action="${field}"]`);
           if (!input) return;
           input.addEventListener("change", (e) => {
+            // PAYWALL: bloquear edición si no tiene acceso
+            if (window.fmCheckPremium && !window.fmCheckPremium("ingredientes")) {
+              e.target.value = ing[field]; // revertir
+              return;
+            }
             const newVal = parseFloat(e.target.value) || 0;
             ing[field] = newVal;
             // Si cambió un valor nutricional, marcar como con análisis lab
@@ -1524,6 +1536,8 @@
         });
 
         tr.querySelector('[data-action="delete"]')?.addEventListener("click", () => {
+          // PAYWALL: bloquear eliminar si no tiene acceso
+          if (window.fmCheckPremium && !window.fmCheckPremium("ingredientes")) return;
           const msg = ing.source === 'propio'
             ? `¿Eliminar "${ing.name}" de tu catálogo?`
             : `¿Quitar "${ing.name}" del catálogo? Puedes restaurarlo con "Restaurar valores".`;

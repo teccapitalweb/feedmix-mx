@@ -490,10 +490,10 @@
     </div>
   </div>
 
-  <script src="assets/firebase-config.js?v=22"></script>
+  <script src="assets/firebase-config.js?v=23"></script>
   <script src="assets/avicola-data.js?v=12"></script>
   <script type="module">
-    import "./assets/shared.js?v=22";
+    import "./assets/shared.js?v=23";
     await window.fmAuthGuard({ requireAuth: true });
 
     const A = window.FM_AVICOLA;
@@ -502,11 +502,65 @@
     let busqueda = "";
 
     // ============================================
-    // CARGAR FÓRMULAS
+    // CARGAR FÓRMULAS (con fallback demo para modo exploración)
     // ============================================
     async function cargarFormulas() {
       const user = window.fmAuth.currentUser;
       if (!user) return;
+
+      // ====== MODO EXPLORACIÓN: usuarios sin acceso ven historial demo ======
+      const acc = window.fmAccess;
+      if (acc && !acc.isPaid && !acc.isTrial) {
+        formulas = [
+          {
+            id: "demo-1",
+            nombre: "Pollo Engorda Inicio · Cliente Demo",
+            tipo: "engorda",
+            etapa: "Iniciador (1-21 días)",
+            raza: "Ross 308",
+            tons: 5,
+            costoLote: 46500,
+            costoTon: 9300,
+            ingredientes: 8,
+            createdAt: new Date(Date.now() - 1000*60*60*24*2),
+            esDemo: true
+          },
+          {
+            id: "demo-2",
+            nombre: "Ponedora Fase 1 · Granja San José",
+            tipo: "ponedora",
+            etapa: "Postura pico (21-45 sem)",
+            raza: "Hy-Line W-36",
+            tons: 10,
+            costoLote: 95400,
+            costoTon: 9540,
+            ingredientes: 9,
+            createdAt: new Date(Date.now() - 1000*60*60*24*5),
+            esDemo: true
+          },
+          {
+            id: "demo-3",
+            nombre: "Reproductora Pesada · Granja Tehuacán",
+            tipo: "reproductora",
+            etapa: "Producción",
+            raza: "Cobb 500",
+            tons: 8,
+            costoLote: 81600,
+            costoTon: 10200,
+            ingredientes: 10,
+            createdAt: new Date(Date.now() - 1000*60*60*24*9),
+            esDemo: true
+          }
+        ];
+        render();
+        // Banner de modo exploración
+        if (window.fmShowExplorationBanner) {
+          setTimeout(() => {
+            window.fmShowExplorationBanner(".app-content", "Estás viendo fórmulas de ejemplo. Activa tu plan para guardar y gestionar tus propias fórmulas.");
+          }, 100);
+        }
+        return;
+      }
 
       try {
         const colRef = window.fmFirebase.collection(window.fmDb, "formulas");
@@ -700,9 +754,22 @@
       // Eventos
       container.querySelectorAll(".formula-card").forEach(card => {
         const id = card.dataset.id;
-        card.querySelector('[data-action="ver"]').addEventListener("click", () => verDetalle(id));
-        card.querySelector('[data-action="duplicar"]').addEventListener("click", () => duplicar(id));
-        card.querySelector('[data-action="eliminar"]').addEventListener("click", () => eliminar(id));
+        // PAYWALL: bloquear acciones en fórmulas demo
+        const f = formulas.find(x => x.id === id);
+        const esDemo = f?.esDemo === true;
+
+        card.querySelector('[data-action="ver"]').addEventListener("click", () => {
+          if (esDemo) { window.fmShowUpgradeModal({reason: "save"}); return; }
+          verDetalle(id);
+        });
+        card.querySelector('[data-action="duplicar"]')?.addEventListener("click", () => {
+          if (esDemo) { window.fmShowUpgradeModal({reason: "save"}); return; }
+          duplicar(id);
+        });
+        card.querySelector('[data-action="eliminar"]')?.addEventListener("click", () => {
+          if (esDemo) { window.fmShowUpgradeModal({reason: "save"}); return; }
+          eliminar(id);
+        });
       });
     }
 

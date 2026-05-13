@@ -776,9 +776,9 @@
 
   </div>
 
-  <script src="assets/firebase-config.js?v=22"></script>
+  <script src="assets/firebase-config.js?v=23"></script>
   <script type="module">
-    import "./assets/shared.js?v=22";
+    import "./assets/shared.js?v=23";
 
     const user = await window.fmAuthGuard({ requireAuth: true });
 
@@ -825,6 +825,13 @@
       if (e.target.closest(".user-dropdown")) return;
       userMenuEl.classList.toggle("open");
     });
+
+    // Mostrar banner de modo exploración si no tiene acceso
+    setTimeout(() => {
+      if (window.fmShowExplorationBanner) {
+        window.fmShowExplorationBanner(".app-content", "Explora todas las funciones de FeedMix MX. Activa tu plan para optimizar, guardar y generar PDFs profesionales.");
+      }
+    }, 300);
 
     // Cerrar dropdown al clickear fuera
     document.addEventListener("click", (e) => {

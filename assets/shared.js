@@ -953,6 +953,160 @@ window.fmCloseCheckout = function() {
   document.getElementById("fmCheckoutModal")?.remove();
 };
 
+// ============================================
+// PREMIUM GUARD - SISTEMA "MODO EXPLORACIÓN"
+// ============================================
+// Bloquea acciones premium para usuarios sin acceso pagado.
+// Uso simple:
+//   if (window.fmCheckPremium('formulas')) { ... ejecutar acción ... }
+//
+// Si el usuario NO tiene acceso → muestra modal upgrade y devuelve false
+// Si SÍ tiene acceso → devuelve true y deja pasar
+// ============================================
+window.fmCheckPremium = function(reason) {
+  const acc = window.fmAccess;
+  // Si no se ha cargado fmAccess todavía, permitir (auth guard ya redirigió si era necesario)
+  if (!acc) return true;
+  // Si está pagado, permitir
+  if (acc.isPaid) return true;
+  // Si está en trial activo, permitir (con marca de agua en PDFs)
+  if (acc.isTrial) return true;
+  // Si no tiene acceso, mostrar modal
+  window.fmShowUpgradeModal({ reason: reason || "manual" });
+  return false;
+};
+
+// Auto-marcar botones premium con candado visual y bloquearlos si no hay acceso
+// Uso: agrega data-premium="reason" a cualquier botón premium
+//   <button data-premium="formulas">Optimizar</button>
+// El sistema automáticamente:
+//   1. Agrega 🔒 al texto si no tiene acceso
+//   2. Cambia el color a cobre (premium)
+//   3. Intercepta el click y muestra modal upgrade
+window.fmAutoGuardPremiumButtons = function() {
+  const acc = window.fmAccess;
+  if (!acc) return;
+  const isBlocked = !acc.isPaid && !acc.isTrial;
+
+  document.querySelectorAll("[data-premium]").forEach(btn => {
+    if (btn.dataset.fmGuarded === "1") return; // ya procesado
+    const reason = btn.dataset.premium || "manual";
+
+    if (isBlocked) {
+      // Marcar visualmente
+      btn.classList.add("fm-premium-locked");
+      // Agregar candado si no lo tiene
+      if (!btn.querySelector(".fm-lock-icon") && !btn.textContent.includes("🔒")) {
+        const lock = document.createElement("span");
+        lock.className = "fm-lock-icon";
+        lock.textContent = "🔒 ";
+        lock.style.marginRight = "4px";
+        btn.insertBefore(lock, btn.firstChild);
+      }
+      // Interceptar TODOS los clicks
+      btn.addEventListener("click", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        window.fmShowUpgradeModal({ reason });
+      }, true); // capture phase para ganar a otros listeners
+    }
+    btn.dataset.fmGuarded = "1";
+  });
+};
+
+// Estilos visuales para botones premium bloqueados
+const premiumStyle = document.createElement("style");
+premiumStyle.textContent = `
+  .fm-premium-locked {
+    background: linear-gradient(135deg, #B87333 0%, #D4925A 100%) !important;
+    color: white !important;
+    cursor: pointer !important;
+    opacity: 1 !important;
+    position: relative;
+  }
+  .fm-premium-locked:hover {
+    background: linear-gradient(135deg, #A06028 0%, #B87333 100%) !important;
+    box-shadow: 0 4px 12px rgba(184, 115, 51, 0.35);
+  }
+  .fm-lock-icon {
+    display: inline-block;
+    margin-right: 4px;
+  }
+  /* Demo banner para secciones */
+  .fm-demo-banner {
+    background: linear-gradient(90deg, #FEF3C7 0%, #FDE68A 100%);
+    border: 1px solid #FCD34D;
+    color: #78350F;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .fm-demo-banner strong { font-weight: 700; }
+  .fm-demo-banner button {
+    margin-left: auto;
+    background: #B87333;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.8125rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .fm-demo-banner button:hover { background: #A06028; }
+`;
+document.head.appendChild(premiumStyle);
+
+// Helper para insertar banner "Estás en modo exploración" arriba de cualquier sección
+window.fmShowExplorationBanner = function(targetSelector, message) {
+  const acc = window.fmAccess;
+  if (!acc) return;
+  const isBlocked = !acc.isPaid && !acc.isTrial;
+  if (!isBlocked) return; // solo mostrar si no tiene acceso
+
+  const target = document.querySelector(targetSelector);
+  if (!target) return;
+  if (target.querySelector(".fm-demo-banner")) return; // ya está
+
+  const banner = document.createElement("div");
+  banner.className = "fm-demo-banner";
+  banner.innerHTML =
+    '<span style="font-size:1.25rem;">🟡</span>' +
+    '<div><strong>Modo exploración activo.</strong> ' + (message || 'Explora libremente. Activa tu plan para guardar y usar todas las funciones.') + '</div>' +
+    '<button onclick="window.fmShowUpgradeModal()">Activar plan</button>';
+  target.insertBefore(banner, target.firstChild);
+};
+
+// Auto-ejecutar el guard de botones cuando fmAccess esté listo
+function autoPremiumGuard() {
+  // Esperar a que fmAccess se calcule
+  if (window.fmAccess) {
+    window.fmAutoGuardPremiumButtons();
+  } else {
+    // Reintentar cada 200ms hasta 3 segundos
+    let tries = 0;
+    const interval = setInterval(() => {
+      tries++;
+      if (window.fmAccess || tries > 15) {
+        clearInterval(interval);
+        if (window.fmAccess) window.fmAutoGuardPremiumButtons();
+      }
+    }, 200);
+  }
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => setTimeout(autoPremiumGuard, 300));
+} else {
+  setTimeout(autoPremiumGuard, 300);
+}
+
+
 // Animación spinner
 const spinnerStyle = document.createElement("style");
 spinnerStyle.textContent = `@keyframes fmSpin { to { transform: rotate(360deg); } } @keyframes fmFadeIn { from { opacity: 0; } to { opacity: 1; } }`;

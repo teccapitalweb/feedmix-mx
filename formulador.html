@@ -2174,11 +2174,11 @@
             <button type="button" class="solver-btn" id="solverV1" data-solver="1">⚡ Rápido</button>
             <button type="button" class="solver-btn active" id="solverV2" data-solver="2">🎯 Preciso</button>
           </div>
-          <button class="btn btn-ghost btn-sm" id="btnSave">
+          <button class="btn btn-ghost btn-sm" id="btnSave" data-premium="save">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
             Guardar
           </button>
-          <button class="btn btn-primary btn-sm" id="btnOptimize">
+          <button class="btn btn-primary btn-sm" id="btnOptimize" data-premium="formulas">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             Optimizar
           </button>
@@ -2684,7 +2684,7 @@
                         </div>
                       </div>
 
-                      <button class="btn btn-action-pdf btn-block btn-lg" id="btnPdf">
+                      <button class="btn btn-action-pdf btn-block btn-lg" id="btnPdf" data-premium="watermark">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                         <span>Descargar PDF profesional</span>
                       </button>
@@ -2712,7 +2712,7 @@
     </div>
   </div>
 
-  <script src="assets/firebase-config.js?v=22"></script>
+  <script src="assets/firebase-config.js?v=23"></script>
   <script src="assets/avicola-data.js?v=19"></script>
   <script src="assets/nucleos-data.js?v=19"></script>
   <script src="assets/consumo-data.js?v=19"></script>
@@ -2720,8 +2720,15 @@
   <script src="assets/solver-v2.js?v=19"></script>
   <script src="assets/species-system.js?v=19"></script>
   <script type="module">
-    import "./assets/shared.js?v=22";
+    import "./assets/shared.js?v=23";
     await window.fmAuthGuard({ requireAuth: true });
+
+    // Banner modo exploración (si no tiene plan activo)
+    setTimeout(() => {
+      if (window.fmShowExplorationBanner) {
+        window.fmShowExplorationBanner(".app-content", "Estás explorando el formulador. Activa tu plan para optimizar, guardar y descargar PDFs profesionales.");
+      }
+    }, 300);
 
     const A = window.FM_AVICOLA;
 

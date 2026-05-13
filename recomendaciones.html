@@ -1700,10 +1700,17 @@
     </div>
   </div>
 
-  <script src="assets/firebase-config.js?v=22"></script>
+  <script src="assets/firebase-config.js?v=23"></script>
   <script type="module">
-    import "./assets/shared.js?v=22";
+    import "./assets/shared.js?v=23";
     await window.fmAuthGuard({ requireAuth: true });
+
+    // Banner modo exploración (si no tiene plan activo)
+    setTimeout(() => {
+      if (window.fmShowExplorationBanner) {
+        window.fmShowExplorationBanner(".app-content", "Estas son recomendaciones generales. Activa tu plan para recibir sugerencias personalizadas según tus fórmulas.");
+      }
+    }, 300);
   </script>
 
   <script src="assets/guide-system.js?v=12"></script>
