@@ -366,22 +366,53 @@ window.fmAuthGuard = function(opts = {}) {
         window.location.href = "login.html";
         return;
       }
-      if (redirectIfAuth && user) {
-        window.location.href = redirectIfAuth;
-        return;
-      }
+
+      // ============================================
+      // Si HAY usuario, SIEMPRE asegurar perfil ANTES de redirigir o resolver
+      // ============================================
+      // Esto cubre el caso de Google Sign-In: si el usuario autentica con Google
+      // pero no tenía cuenta previa (no pasó por registro.html), su doc en
+      // Firestore no existe. Lo creamos automáticamente aquí.
       if (user) {
         try {
           const ref = window.fmFirebase.doc(window.fmDb, "nutricionistas", user.uid);
           const snap = await window.fmFirebase.getDoc(ref);
-          window.fmProfile = snap.exists() ? snap.data() : null;
+          if (!snap.exists()) {
+            // Crear perfil automáticamente para usuarios nuevos (especialmente Google)
+            const displayName = user.displayName || "";
+            const nameParts = displayName.split(" ");
+            await window.fmFirebase.setDoc(ref, {
+              uid: user.uid,
+              email: user.email || "",
+              firstName: nameParts[0] || "",
+              lastName: nameParts.slice(1).join(" ") || "",
+              profession: "",
+              company: "",
+              status: "exploration",
+              createdAt: window.fmFirebase.serverTimestamp(),
+              formulasCount: 0
+            });
+            console.log("✅ Perfil creado automáticamente para usuario nuevo:", user.email);
+            // Re-leer para obtener los datos
+            const newSnap = await window.fmFirebase.getDoc(ref);
+            window.fmProfile = newSnap.exists() ? newSnap.data() : null;
+          } else {
+            window.fmProfile = snap.data();
+          }
         } catch (e) {
-          console.warn("No se pudo cargar perfil:", e);
+          console.warn("No se pudo cargar/crear perfil:", e);
           window.fmProfile = null;
         }
         // Calcular acceso centralizado
         window.fmAccess = window.fmComputeAccess(window.fmProfile);
       }
+
+      // Después de crear/cargar perfil, redirigir si corresponde
+      if (redirectIfAuth && user) {
+        window.location.href = redirectIfAuth;
+        return;
+      }
+
       resolved = true;
       resolve(user);
     });
