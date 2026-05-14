@@ -227,24 +227,41 @@
       </a>
 
       <div class="auth-visual-content">
-        <h1>14 días de prueba. Sin tarjeta. Sin compromiso.</h1>
-        <p>Crea tu cuenta y empieza a formular en menos de 2 minutos. Si no te enamora, simplemente no renueves.</p>
+        <h1>Empieza a formular en menos de 2 minutos.</h1>
+        <p>Crea tu cuenta gratis y explora todo el sistema. Activa tu plan cuando estés listo para producir.</p>
 
-        <div id="planSelected" class="plan-card">
-          <div class="plan-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-            </svg>
-          </div>
-          <div class="plan-card-content">
-            <small id="planLabel">Plan Pro</small>
-            <strong id="planPrice">$500 USD / año</strong>
-            <span id="planDesc">14 días gratis · Cancela cuando quieras</span>
-          </div>
+        <div style="margin-top:var(--space-8);background:linear-gradient(135deg, rgba(184,115,51,0.18) 0%, rgba(184,115,51,0.08) 100%);border:1px solid rgba(184,115,51,0.35);border-radius:var(--radius);padding:var(--space-5);">
+          <div style="font-size:0.75rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent-light);margin-bottom:var(--space-3);">⚡ Lo que vas a tener</div>
+          <ul style="list-style:none;padding:0;margin:0;color:white;font-size:0.875rem;line-height:1.6;display:flex;flex-direction:column;gap:10px;">
+            <li style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="color:#FCD34D;font-weight:800;flex-shrink:0;">→</span>
+              <span><strong>Optimización de mínimo costo</strong> con motor GLPK profesional</span>
+            </li>
+            <li style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="color:#FCD34D;font-weight:800;flex-shrink:0;">→</span>
+              <span><strong>179 etapas técnicas · 30 razas</strong> (Ross, Cobb, Hy-Line, Lohmann, ISA, Bovans...)</span>
+            </li>
+            <li style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="color:#FCD34D;font-weight:800;flex-shrink:0;">→</span>
+              <span><strong>Aminograma completo</strong> con 8 AA esenciales (NRC + Rostagno)</span>
+            </li>
+            <li style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="color:#FCD34D;font-weight:800;flex-shrink:0;">→</span>
+              <span><strong>Alertas inteligentes</strong> (Met limitante, Ca particulado, EM/PC ratio)</span>
+            </li>
+            <li style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="color:#FCD34D;font-weight:800;flex-shrink:0;">→</span>
+              <span><strong>PDFs profesionales</strong> con tu marca para entregar al cliente</span>
+            </li>
+            <li style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="color:#FCD34D;font-weight:800;flex-shrink:0;">→</span>
+              <span><strong>Soporte por WhatsApp</strong> en español mexicano</span>
+            </li>
+          </ul>
         </div>
 
-        <div style="font-size:0.875rem;color:rgba(255,255,255,0.7);">
-          ¿Necesitas otro plan? Lo eliges desde la <a href="index.html#planes" style="color:white;text-decoration:underline;">página de planes</a>.
+        <div style="margin-top:var(--space-5);font-size:0.875rem;color:rgba(255,255,255,0.75);">
+          Después de crear tu cuenta podrás <strong style="color:white;">explorar el sistema completo</strong> y activar tu plan desde dentro.
         </div>
       </div>
 
@@ -305,7 +322,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary btn-block btn-lg" id="signupBtn">
-              <span id="signupBtnText">Crear cuenta y empezar prueba</span>
+              <span id="signupBtnText">Crear cuenta gratis</span>
             </button>
 
             <div id="errorBox" class="alert alert-danger hidden mt-4"></div>
@@ -320,25 +337,15 @@
 
   </div>
 
-  <script src="assets/firebase-config.js?v=26"></script>
+  <script src="assets/firebase-config.js?v=27"></script>
   <script type="module">
-    import "./assets/shared.js?v=26";
+    import "./assets/shared.js?v=27";
 
     await window.fmAuthGuard({ requireAuth: false, redirectIfAuth: "panel.html" });
 
     const { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile, doc, setDoc, serverTimestamp } = window.fmFirebase;
     const auth = window.fmAuth;
     const db = window.fmDb;
-
-    // Plan desde URL (?plan=pro o ?plan=despacho)
-    const params = new URLSearchParams(window.location.search);
-    const plan = params.get("plan") === "despacho" ? "despacho" : "pro";
-
-    if (plan === "despacho") {
-      document.getElementById("planLabel").textContent = "Plan Despacho";
-      document.getElementById("planPrice").textContent = "$1,500 USD / año";
-      document.getElementById("planDesc").textContent = "Hasta 5 usuarios · Marca blanca";
-    }
 
     const form = document.getElementById("signupForm");
     const btn = document.getElementById("signupBtn");
@@ -352,13 +359,12 @@
     function hideError() { errorBox.classList.add("hidden"); }
     function setLoading(on) {
       btn.disabled = on;
-      btnText.innerHTML = on ? '<span class="spinner" style="border-color:rgba(255,255,255,.3);border-top-color:white;"></span>' : "Crear cuenta y empezar prueba";
+      btnText.innerHTML = on ? '<span class="spinner" style="border-color:rgba(255,255,255,.3);border-top-color:white;"></span>' : "Crear cuenta gratis";
     }
 
     async function createProfile(user, extra = {}) {
-      const trialEnd = new Date();
-      trialEnd.setDate(trialEnd.getDate() + 14);
-
+      // Sin trial: el usuario entra directamente en MODO EXPLORACIÓN
+      // status quedará undefined hasta que pague (entonces el webhook lo pone en "active")
       await setDoc(doc(db, "nutricionistas", user.uid), {
         uid: user.uid,
         email: user.email,
@@ -366,9 +372,7 @@
         lastName: extra.lastName || user.displayName?.split(" ").slice(1).join(" ") || "",
         profession: extra.profession || "",
         company: extra.company || "",
-        plan: plan,
-        status: "trial",
-        trialEnd: trialEnd,
+        status: "exploration",
         createdAt: serverTimestamp(),
         formulasCount: 0
       });

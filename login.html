@@ -262,14 +262,26 @@
           </li>
         </ul>
 
-        <div id="demoHint" style="margin-top:var(--space-8);background:rgba(184,115,51,0.15);border:1px solid rgba(184,115,51,0.35);border-radius:var(--radius);padding:var(--space-4);">
-          <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--accent-light);margin-bottom:var(--space-2);">🟡 Cuenta de prueba</div>
-          <div style="color:white;font-size:0.875rem;line-height:1.5;">
-            Prueba el sistema sin registrarte:<br>
-            📧 <code style="background:rgba(0,0,0,0.2);padding:2px 8px;border-radius:4px;">demo@feedmix.mx</code><br>
-            🔑 <code style="background:rgba(0,0,0,0.2);padding:2px 8px;border-radius:4px;">demo123</code><br>
-            <small style="opacity:0.7;display:block;margin-top:6px;">Toca aquí para autocompletar</small>
-          </div>
+        <div style="margin-top:var(--space-8);background:linear-gradient(135deg, rgba(184,115,51,0.18) 0%, rgba(184,115,51,0.08) 100%);border:1px solid rgba(184,115,51,0.35);border-radius:var(--radius);padding:var(--space-5);">
+          <div style="font-size:0.75rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent-light);margin-bottom:var(--space-3);">💰 Lo que te ahorras con FeedMix MX</div>
+          <ul style="list-style:none;padding:0;margin:0;color:white;font-size:0.875rem;line-height:1.6;display:flex;flex-direction:column;gap:10px;">
+            <li style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="color:#FCD34D;font-weight:800;flex-shrink:0;">→</span>
+              <span><strong>Hasta 12% menos en costo/tonelada</strong> vs Excel o fórmulas heredadas</span>
+            </li>
+            <li style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="color:#FCD34D;font-weight:800;flex-shrink:0;">→</span>
+              <span><strong>2-3 horas → 2 segundos</strong> en cada fórmula nueva</span>
+            </li>
+            <li style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="color:#FCD34D;font-weight:800;flex-shrink:0;">→</span>
+              <span><strong>Aminograma completo</strong> (8 AA) — detecta el limitante real, no solo Lys/Met</span>
+            </li>
+            <li style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="color:#FCD34D;font-weight:800;flex-shrink:0;">→</span>
+              <span><strong>PDFs profesionales</strong> para entregar al cliente o granjero</span>
+            </li>
+          </ul>
         </div>
       </div>
 
@@ -331,23 +343,11 @@
 
   </div>
 
-  <script src="assets/firebase-config.js?v=26"></script>
+  <script src="assets/firebase-config.js?v=27"></script>
   <script type="module">
-    import "./assets/shared.js?v=26";
+    import "./assets/shared.js?v=27";
 
     await window.fmAuthGuard({ requireAuth: false, redirectIfAuth: "panel.html" });
-
-    // Mostrar hint demo si estamos en modo demo
-    // Hint de cuenta de prueba: siempre clickeable para autollenar credenciales
-    const demoHint = document.getElementById("demoHint");
-    if (demoHint) {
-      demoHint.style.cursor = "pointer";
-      demoHint.addEventListener("click", () => {
-        document.getElementById("email").value = "demo@feedmix.mx";
-        document.getElementById("password").value = "demo123";
-        window.fmToast("Credenciales precargadas — pulsa Iniciar sesión", "info");
-      });
-    }
 
     const { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } = window.fmFirebase;
     const auth = window.fmAuth;
