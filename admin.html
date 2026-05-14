@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Panel Admin — FeedMix MX</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/shared.css">
+  <style>
+    body { background: #0F172A; min-height: 100vh; }
+    .admin-shell { max-width: 1400px; margin: 0 auto; padding: var(--space-5); }
+
+    /* Header */
+    .admin-header {
+      background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: var(--space-5) var(--space-6);
+      margin-bottom: var(--space-5);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+    }
+    .admin-title {
+      display: flex; align-items: center; gap: var(--space-3);
+    }
+    .admin-title-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+      border-radius: 12px;
+      display: grid; place-items: center;
+      box-shadow: 0 4px 16px rgba(220, 38, 38, 0.4);
+    }
+    .admin-title h1 {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+    .admin-title small {
+      color: #94A3B8;
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .admin-actions {
+      display: flex; gap: var(--space-2);
+    }
+    .btn-admin-action {
+      background: rgba(255,255,255,0.05);
+      color: white;
+      border: 1px solid #334155;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-admin-action:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: #475569;
+    }
+
+    /* Stats */
+    .admin-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-4);
+      margin-bottom: var(--space-5);
+    }
+    @media (max-width: 900px) { .admin-stats { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 500px) { .admin-stats { grid-template-columns: 1fr; } }
+
+    .stat-card {
+      background: linear-gradient(135deg, #1E293B 0%, #1E293B 100%);
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: var(--space-4);
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--gradient);
+    }
+    .stat-card.stat-total::before { background: linear-gradient(90deg, #3F4F2E, #5A6E45); }
+    .stat-card.stat-paid::before { background: linear-gradient(90deg, #10B981, #059669); }
+    .stat-card.stat-exploration::before { background: linear-gradient(90deg, #F59E0B, #D97706); }
+    .stat-card.stat-revenue::before { background: linear-gradient(90deg, #B87333, #92400E); }
+
+    .stat-label {
+      color: #94A3B8;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .stat-value {
+      color: white;
+      font-size: 1.875rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+    .stat-sub {
+      color: #64748B;
+      font-size: 0.75rem;
+      margin-top: 4px;
+    }
+
+    /* Toolbar */
+    .admin-toolbar {
+      display: flex;
+      gap: var(--space-3);
+      margin-bottom: var(--space-4);
+      flex-wrap: wrap;
+    }
+    .admin-search {
+      flex: 1;
+      min-width: 240px;
+      position: relative;
+    }
+    .admin-search input {
+      width: 100%;
+      background: #1E293B;
+      border: 1px solid #334155;
+      color: white;
+      padding: 10px 14px 10px 38px;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      font-family: inherit;
+    }
+    .admin-search input::placeholder { color: #64748B; }
+    .admin-search input:focus { border-color: var(--primary); outline: none; }
+    .admin-search svg {
+      position: absolute;
+      left: 12px; top: 50%; transform: translateY(-50%);
+      width: 16px; height: 16px;
+      color: #64748B;
+    }
+    .filter-select {
+      background: #1E293B;
+      border: 1px solid #334155;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    /* Table */
+    .users-table-wrap {
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .users-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .users-table thead {
+      background: #0F172A;
+    }
+    .users-table th {
+      color: #94A3B8;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid #334155;
+    }
+    .users-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #1E293B;
+      color: #E2E8F0;
+      font-size: 0.875rem;
+      vertical-align: middle;
+    }
+    .users-table tr:hover td { background: rgba(63, 79, 46, 0.08); }
+
+    .user-email {
+      color: white;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .user-name { color: #94A3B8; font-size: 0.8125rem; }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .status-badge.paid { background: rgba(16, 185, 129, 0.15); color: #6EE7B7; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-badge.exploration { background: rgba(245, 158, 11, 0.15); color: #FCD34D; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .status-badge.expired { background: rgba(220, 38, 38, 0.15); color: #FCA5A5; border: 1px solid rgba(220, 38, 38, 0.3); }
+    .status-badge.lifetime { background: rgba(184, 115, 51, 0.2); color: #FBBF24; border: 1px solid rgba(184, 115, 51, 0.4); }
+
+    .action-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .btn-action {
+      background: rgba(63, 79, 46, 0.3);
+      color: #BBE2A2;
+      border: 1px solid rgba(63, 79, 46, 0.6);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+      position: relative;
+    }
+    .btn-action:hover {
+      background: rgba(63, 79, 46, 0.5);
+      border-color: var(--primary);
+    }
+    .btn-action.danger {
+      background: rgba(220, 38, 38, 0.15);
+      color: #FCA5A5;
+      border-color: rgba(220, 38, 38, 0.3);
+    }
+    .btn-action.danger:hover { background: rgba(220, 38, 38, 0.25); }
+
+    .access-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .access-menu {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      background: #0F172A;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 6px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      z-index: 100;
+      min-width: 200px;
+      display: none;
+    }
+    .access-menu.open { display: block; }
+    .access-menu button {
+      display: block;
+      width: 100%;
+      background: transparent;
+      color: #E2E8F0;
+      border: none;
+      padding: 8px 12px;
+      text-align: left;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+    .access-menu button:hover {
+      background: rgba(63, 79, 46, 0.3);
+      color: white;
+    }
+    .access-menu .menu-divider {
+      height: 1px;
+      background: #334155;
+      margin: 4px 0;
+    }
+    .access-menu .menu-label {
+      font-size: 0.625rem;
+      color: #64748B;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 6px 12px 2px;
+      font-weight: 700;
+    }
+
+    .empty-row { text-align: center; padding: var(--space-7); color: #64748B; }
+
+    /* Mobile: card view */
+    @media (max-width: 768px) {
+      .users-table thead { display: none; }
+      .users-table, .users-table tbody, .users-table tr, .users-table td { display: block; }
+      .users-table tr {
+        background: #0F172A;
+        margin-bottom: var(--space-3);
+        border-radius: 12px;
+        padding: var(--space-3);
+      }
+      .users-table td { border: none; padding: 6px 0; }
+      .users-table td::before {
+        content: attr(data-label);
+        display: block;
+        font-size: 0.6875rem;
+        color: #64748B;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        font-weight: 700;
+        margin-bottom: 2px;
+      }
+    }
+
+    /* Loading */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9998;
+      color: white;
+      font-weight: 700;
+    }
+    .loading-overlay.show { display: flex; }
+    .loading-overlay-inner {
+      background: #1E293B;
+      border-radius: 12px;
+      padding: var(--space-5) var(--space-6);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+  </style>
+</head>
+<body>
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-overlay-inner">
+      <span class="spinner" style="border-color:rgba(255,255,255,0.2);border-top-color:white;width:20px;height:20px;border-width:2.5px;"></span>
+      <span id="loadingMsg">Procesando...</span>
+    </div>
+  </div>
+
+  <div class="admin-shell">
+    <!-- HEADER -->
+    <div class="admin-header">
+      <div class="admin-title">
+        <div class="admin-title-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Panel Admin</h1>
+          <small id="adminEmail">Cargando...</small>
+        </div>
+      </div>
+      <div class="admin-actions">
+        <a href="panel.html" class="btn-admin-action">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          Panel usuario
+        </a>
+        <button class="btn-admin-action" id="btnRefresh">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Refrescar
+        </button>
+        <button class="btn-admin-action" id="btnLogout">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Salir
+        </button>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="admin-stats">
+      <div class="stat-card stat-total">
+        <div class="stat-label">Usuarios totales</div>
+        <div class="stat-value" id="statTotal">—</div>
+        <div class="stat-sub" id="statTotalSub">Registrados en FeedMix</div>
+      </div>
+      <div class="stat-card stat-paid">
+        <div class="stat-label">Plan activo</div>
+        <div class="stat-value" id="statPaid">—</div>
+        <div class="stat-sub" id="statPaidSub">Pagaron suscripción</div>
+      </div>
+      <div class="stat-card stat-exploration">
+        <div class="stat-label">Modo exploración</div>
+        <div class="stat-value" id="statExploration">—</div>
+        <div class="stat-sub">Aún no pagan</div>
+      </div>
+      <div class="stat-card stat-revenue">
+        <div class="stat-label">Ingresos potenciales</div>
+        <div class="stat-value" id="statRevenue">—</div>
+        <div class="stat-sub">Valor de los pagados (MXN)</div>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="admin-toolbar">
+      <div class="admin-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Buscar por email o nombre...">
+      </div>
+      <select class="filter-select" id="filterStatus">
+        <option value="all">Todos los estados</option>
+        <option value="paid">✅ Pagados</option>
+        <option value="exploration">🟡 Modo exploración</option>
+        <option value="expired">🔴 Expirados</option>
+      </select>
+      <select class="filter-select" id="sortBy">
+        <option value="recent">Más recientes</option>
+        <option value="oldest">Más antiguos</option>
+        <option value="email">Email A-Z</option>
+        <option value="formulas">Más fórmulas</option>
+      </select>
+    </div>
+
+    <!-- TABLE -->
+    <div class="users-table-wrap">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th style="width:30%;">Usuario</th>
+            <th>Estado</th>
+            <th>Plan</th>
+            <th>Fórmulas</th>
+            <th>Registro</th>
+            <th>Vence</th>
+            <th style="width:25%;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="usersBody">
+          <tr><td colspan="7" class="empty-row">Cargando usuarios...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="assets/firebase-config.js?v=31"></script>
+  <script type="module">
+    import "./assets/shared.js?v=31";
+
+    // ====== GUARD: solo admins ======
+    const user = await window.fmAuthGuard({ requireAuth: true });
+    if (!window.fmIsAdmin()) {
+      alert("No tienes permisos de administrador");
+      location.href = "panel.html";
+    }
+
+    document.getElementById("adminEmail").textContent = "Sesión: " + user.email;
+
+    const { collection, getDocs, doc, updateDoc, deleteField, serverTimestamp } = window.fmFirebase;
+    const db = window.fmDb;
+
+    let allUsers = [];
+    const $ = id => document.getElementById(id);
+    const loadingOverlay = $("loadingOverlay");
+    const loadingMsg = $("loadingMsg");
+
+    function showLoading(msg) { loadingMsg.textContent = msg; loadingOverlay.classList.add("show"); }
+    function hideLoading() { loadingOverlay.classList.remove("show"); }
+
+    function formatDate(ts) {
+      if (!ts) return "—";
+      const d = ts.toDate ? ts.toDate() : (ts.seconds ? new Date(ts.seconds * 1000) : new Date(ts));
+      const now = new Date();
+      const diff = Math.floor((now - d) / 86400000);
+      if (diff === 0) return "Hoy";
+      if (diff === 1) return "Ayer";
+      if (diff < 7) return `Hace ${diff} días`;
+      if (diff < 30) return `Hace ${Math.floor(diff / 7)} sem.`;
+      return d.toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric" });
+    }
+
+    function formatVence(ts, plan) {
+      if (plan === "lifetime") return "♾️ Permanente";
+      if (!ts) return "—";
+      const d = ts.toDate ? ts.toDate() : (ts.seconds ? new Date(ts.seconds * 1000) : new Date(ts));
+      const days = Math.ceil((d - new Date()) / 86400000);
+      if (days < 0) return `❌ Hace ${-days}d`;
+      if (days < 30) return `${days} días`;
+      return d.toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric" });
+    }
+
+    function getStatusInfo(u) {
+      const isPaid = u.status === "active";
+      const subEnd = u.subscriptionEnd?.toDate ? u.subscriptionEnd.toDate() : (u.subscriptionEnd?.seconds ? new Date(u.subscriptionEnd.seconds * 1000) : null);
+      const expired = subEnd && subEnd < new Date();
+      if (u.plan === "lifetime") return { type: "lifetime", label: "♾️ De por vida" };
+      if (isPaid && !expired) return { type: "paid", label: "✅ Activo" };
+      if (isPaid && expired) return { type: "expired", label: "🔴 Expirado" };
+      return { type: "exploration", label: "🟡 Exploración" };
+    }
+
+    function getPlanLabel(plan) {
+      const labels = {
+        trimestral: "Trimestral",
+        anual: "Anual",
+        lifetime: "De por vida",
+        pro: "Pro (legacy)",
+        despacho: "Despacho (legacy)"
+      };
+      return labels[plan] || "—";
+    }
+
+    async function cargarUsuarios() {
+      showLoading("Cargando usuarios...");
+      try {
+        const snap = await getDocs(collection(db, "nutricionistas"));
+        allUsers = [];
+        snap.forEach(d => allUsers.push({ id: d.id, ...d.data() }));
+        renderStats();
+        renderTable();
+      } catch (e) {
+        console.error("Error cargando usuarios:", e);
+        $("usersBody").innerHTML = `<tr><td colspan="7" class="empty-row">⚠️ Error al cargar usuarios: ${e.message}</td></tr>`;
+      }
+      hideLoading();
+    }
+
+    function renderStats() {
+      const total = allUsers.length;
+      let paid = 0, exploration = 0, revenue = 0;
+      allUsers.forEach(u => {
+        const info = getStatusInfo(u);
+        if (info.type === "paid" || info.type === "lifetime") {
+          paid++;
+          const precios = { trimestral: 1399, anual: 2499, lifetime: 3499, pro: 14990, despacho: 34990 };
+          revenue += precios[u.plan] || 0;
+        } else {
+          exploration++;
+        }
+      });
+      $("statTotal").textContent = total;
+      $("statPaid").textContent = paid;
+      $("statExploration").textContent = exploration;
+      $("statRevenue").textContent = "$" + revenue.toLocaleString("es-MX");
+      const conv = total > 0 ? Math.round((paid / total) * 100) : 0;
+      $("statPaidSub").textContent = `${conv}% de conversión`;
+    }
+
+    function renderTable() {
+      const search = $("searchInput").value.toLowerCase().trim();
+      const filterStatus = $("filterStatus").value;
+      const sortBy = $("sortBy").value;
+
+      let filtered = allUsers.filter(u => {
+        if (search) {
+          const haystack = `${u.email || ""} ${u.firstName || ""} ${u.lastName || ""}`.toLowerCase();
+          if (!haystack.includes(search)) return false;
+        }
+        if (filterStatus !== "all") {
+          const info = getStatusInfo(u);
+          if (filterStatus === "paid" && !["paid", "lifetime"].includes(info.type)) return false;
+          if (filterStatus === "exploration" && info.type !== "exploration") return false;
+          if (filterStatus === "expired" && info.type !== "expired") return false;
+        }
+        return true;
+      });
+
+      filtered.sort((a, b) => {
+        if (sortBy === "email") return (a.email || "").localeCompare(b.email || "");
+        if (sortBy === "formulas") return (b.formulasCount || 0) - (a.formulasCount || 0);
+        const da = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt?.seconds * 1000 || 0);
+        const db_ = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt?.seconds * 1000 || 0);
+        return sortBy === "oldest" ? da - db_ : db_ - da;
+      });
+
+      const tbody = $("usersBody");
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="empty-row">No se encontraron usuarios</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(u => {
+        const info = getStatusInfo(u);
+        const fullName = `${u.firstName || ""} ${u.lastName || ""}`.trim() || "Sin nombre";
+        return `
+          <tr data-id="${u.id}">
+            <td data-label="Usuario">
+              <span class="user-email">${u.email || "—"}</span>
+              <span class="user-name">${fullName}</span>
+            </td>
+            <td data-label="Estado">
+              <span class="status-badge ${info.type}">${info.label}</span>
+            </td>
+            <td data-label="Plan">${getPlanLabel(u.plan)}</td>
+            <td data-label="Fórmulas">${u.formulasCount || 0}</td>
+            <td data-label="Registro">${formatDate(u.createdAt)}</td>
+            <td data-label="Vence">${formatVence(u.subscriptionEnd, u.plan)}</td>
+            <td data-label="Acciones">
+              <div class="action-row">
+                <div class="access-dropdown">
+                  <button class="btn-action" data-toggle-menu="${u.id}">⚡ Dar acceso ▾</button>
+                  <div class="access-menu" id="menu-${u.id}">
+                    <div class="menu-label">⏱ Prueba gratis</div>
+                    <button data-grant="${u.id}|7|trial">7 días</button>
+                    <button data-grant="${u.id}|15|trial">15 días</button>
+                    <button data-grant="${u.id}|30|trial">30 días</button>
+                    <div class="menu-divider"></div>
+                    <div class="menu-label">📦 Planes pagados</div>
+                    <button data-grant="${u.id}|90|trimestral">3 meses (Trimestral)</button>
+                    <button data-grant="${u.id}|180|trimestral">6 meses</button>
+                    <button data-grant="${u.id}|365|anual">1 año (Anual)</button>
+                    <button data-grant="${u.id}|36500|lifetime">♾️ De por vida</button>
+                  </div>
+                </div>
+                <button class="btn-action danger" data-revoke="${u.id}">🚫 Revocar</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      // Toggle dropdowns
+      tbody.querySelectorAll("[data-toggle-menu]").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const id = btn.dataset.toggleMenu;
+          const menu = $("menu-" + id);
+          // Cerrar otros
+          document.querySelectorAll(".access-menu.open").forEach(m => { if (m !== menu) m.classList.remove("open"); });
+          menu.classList.toggle("open");
+        });
+      });
+      // Grant access
+      tbody.querySelectorAll("[data-grant]").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+          const [uid, days, plan] = btn.dataset.grant.split("|");
+          await otorgarAcceso(uid, parseInt(days, 10), plan);
+        });
+      });
+      // Revoke
+      tbody.querySelectorAll("[data-revoke]").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+          const uid = btn.dataset.revoke;
+          await revocarAcceso(uid);
+        });
+      });
+    }
+
+    // Cerrar dropdowns al click fuera
+    document.addEventListener("click", () => {
+      document.querySelectorAll(".access-menu.open").forEach(m => m.classList.remove("open"));
+    });
+
+    async function otorgarAcceso(userId, dias, plan) {
+      const u = allUsers.find(x => x.id === userId);
+      if (!u) return;
+      if (!confirm(`¿Otorgar acceso "${plan === "lifetime" ? "DE POR VIDA" : dias + " días"}" a ${u.email}?`)) return;
+
+      showLoading("Otorgando acceso...");
+      try {
+        const endDate = new Date();
+        endDate.setDate(endDate.getDate() + dias);
+
+        await updateDoc(doc(db, "nutricionistas", userId), {
+          status: "active",
+          plan: plan,
+          isLifetime: plan === "lifetime",
+          subscriptionEnd: endDate,
+          activatedByAdmin: true,
+          activatedByAdminEmail: user.email,
+          activatedAt: serverTimestamp()
+        });
+
+        window.fmToast(`✅ Acceso otorgado a ${u.email}`, "success");
+        await cargarUsuarios();
+      } catch (e) {
+        console.error("Error otorgando acceso:", e);
+        window.fmToast("Error: " + e.message, "danger");
+      }
+      hideLoading();
+    }
+
+    async function revocarAcceso(userId) {
+      const u = allUsers.find(x => x.id === userId);
+      if (!u) return;
+      if (!confirm(`⚠️ ¿REVOCAR acceso a ${u.email}? Quedará en modo exploración.`)) return;
+
+      showLoading("Revocando acceso...");
+      try {
+        await updateDoc(doc(db, "nutricionistas", userId), {
+          status: "exploration",
+          plan: null,
+          isLifetime: false,
+          subscriptionEnd: null,
+          revokedByAdmin: true,
+          revokedByAdminEmail: user.email,
+          revokedAt: serverTimestamp()
+        });
+
+        window.fmToast(`🚫 Acceso revocado a ${u.email}`, "info");
+        await cargarUsuarios();
+      } catch (e) {
+        console.error("Error revocando acceso:", e);
+        window.fmToast("Error: " + e.message, "danger");
+      }
+      hideLoading();
+    }
+
+    // Eventos
+    $("searchInput").addEventListener("input", renderTable);
+    $("filterStatus").addEventListener("change", renderTable);
+    $("sortBy").addEventListener("change", renderTable);
+    $("btnRefresh").addEventListener("click", cargarUsuarios);
+    $("btnLogout").addEventListener("click", () => {
+      if (confirm("¿Cerrar sesión?")) window.fmLogout();
+    });
+
+    // Cargar al inicio
+    cargarUsuarios();
+  </script>
+</body>
+</html>

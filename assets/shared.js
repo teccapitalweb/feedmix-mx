@@ -520,6 +520,26 @@ window.fmComputeAccess = function(profile) {
 // Trimestral y Lifetime son ONE-TIME PAYMENTS (no recurring)
 // Anual es RECURRING (subscription anual)
 // ============================================
+// ============================================
+// LISTA DE ADMINS — Acceso al panel admin
+// ============================================
+// Agrega aquí los emails que tienen acceso a admin.html
+// Cualquier otro email será redirigido a panel.html
+window.FM_ADMIN_EMAILS = [
+  "sinergiaagricola789@gmail.com",
+  "ipcilinstituto@gmail.com",
+  "ipcilinstituto@ipcil.org",
+  "pecuariavision62@gmail.com",
+  "demo@feedmix.mx",
+  "americaagrotec7@gmail.com"
+];
+
+window.fmIsAdmin = function() {
+  const user = window.fmAuth?.currentUser;
+  if (!user || !user.email) return false;
+  return window.FM_ADMIN_EMAILS.map(e => e.toLowerCase()).includes(user.email.toLowerCase());
+};
+
 window.FM_PRICING = {
   trimestral: {
     nombre: "Trimestral",
@@ -1143,4 +1163,318 @@ if (document.readyState === "loading") {
   });
 } else {
   setTimeout(autoPaywallBanner, 100);
+}
+
+// ============================================
+// POPUP DE BIENVENIDA POST-PAGO + CONFETI 🎉
+// ============================================
+window.fmShowWelcomePopup = function(opts = {}) {
+  if (document.getElementById("fmWelcomeModal")) return;
+
+  const acc = window.fmAccess;
+  const profile = window.fmProfile || {};
+  const firstName = profile.firstName || opts.firstName || "Nutricionista";
+  const planLabel = (acc && acc.planLabel) || opts.planLabel || "Plan activo";
+  const plan = (acc && acc.plan) || opts.plan || "anual";
+
+  const planEmoji = plan === "lifetime" ? "♾️" : plan === "anual" ? "📅" : "📦";
+  const planVigencia = plan === "lifetime" ? "Acceso permanente — para siempre" :
+                       plan === "anual" ? "12 meses de acceso completo" :
+                       plan === "trimestral" ? "3 meses de acceso completo" :
+                       "Acceso activo";
+
+  const precios = { trimestral: 1399, anual: 2499, lifetime: 3499 };
+  const monto = precios[plan] ? "$" + precios[plan].toLocaleString("es-MX") + " MXN" : "";
+
+  const modal = document.createElement("div");
+  modal.id = "fmWelcomeModal";
+  modal.innerHTML = `
+    <style>
+      #fmWelcomeModal {
+        position: fixed; inset: 0; z-index: 10000;
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(8px);
+        display: flex; align-items: center; justify-content: center;
+        padding: 20px; overflow-y: auto;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        animation: fmFadeIn 0.4s ease-out;
+      }
+      .fm-welcome-card {
+        background: white;
+        border-radius: 24px;
+        max-width: 520px;
+        width: 100%;
+        max-height: 92vh;
+        overflow-y: auto;
+        position: relative;
+        box-shadow: 0 32px 96px rgba(0,0,0,.5);
+        animation: fmPopIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      @keyframes fmPopIn {
+        0% { transform: scale(0.5); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+      .fm-welcome-header {
+        background: linear-gradient(135deg, #3F4F2E 0%, #2A3520 100%);
+        color: white;
+        padding: 36px 28px 28px;
+        border-radius: 24px 24px 0 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .fm-welcome-header::before {
+        content: "";
+        position: absolute;
+        top: -50%; left: -50%; right: -50%; bottom: -50%;
+        background: radial-gradient(circle, rgba(184, 115, 51, 0.3) 0%, transparent 60%);
+        animation: fmGlow 3s ease-in-out infinite;
+      }
+      @keyframes fmGlow {
+        0%, 100% { transform: scale(1); opacity: 0.5; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+      }
+      .fm-welcome-emoji {
+        font-size: 64px;
+        line-height: 1;
+        margin-bottom: 12px;
+        animation: fmBounce 1s ease-in-out infinite;
+        position: relative;
+        z-index: 1;
+      }
+      @keyframes fmBounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+      }
+      .fm-welcome-title {
+        font-size: 1.875rem;
+        font-weight: 800;
+        margin: 0 0 8px 0;
+        letter-spacing: -0.02em;
+        position: relative;
+        z-index: 1;
+        line-height: 1.15;
+      }
+      .fm-welcome-subtitle {
+        opacity: 0.9;
+        font-size: 1.0625rem;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+      }
+      .fm-welcome-body { padding: 24px 28px 12px; }
+      .fm-welcome-plan-card {
+        background: linear-gradient(135deg, #FFF7ED 0%, #FED7AA 100%);
+        border: 2px solid #B87333;
+        border-radius: 16px;
+        padding: 18px 20px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      .fm-welcome-plan-emoji {
+        font-size: 28px;
+        margin-bottom: 4px;
+      }
+      .fm-welcome-plan-name {
+        font-size: 1.125rem;
+        font-weight: 800;
+        color: #78350F;
+        margin: 0 0 4px 0;
+      }
+      .fm-welcome-plan-detail {
+        font-size: 0.875rem;
+        color: #92400E;
+        margin: 0;
+      }
+      .fm-welcome-plan-monto {
+        font-size: 0.75rem;
+        color: #92400E;
+        opacity: 0.7;
+        margin-top: 6px;
+        font-weight: 600;
+      }
+      .fm-welcome-list-title {
+        font-size: 0.6875rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        color: #3F4F2E;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+        text-align: center;
+      }
+      .fm-welcome-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 24px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .fm-welcome-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 0.9375rem;
+        color: #334155;
+        line-height: 1.5;
+      }
+      .fm-welcome-list li::before {
+        content: "✓";
+        background: #10B981;
+        color: white;
+        width: 22px; height: 22px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        font-size: 0.75rem;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .fm-welcome-cta {
+        display: block;
+        width: 100%;
+        background: linear-gradient(135deg, #3F4F2E 0%, #5A6E45 100%);
+        color: white;
+        border: none;
+        padding: 16px 24px;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 800;
+        cursor: pointer;
+        font-family: inherit;
+        letter-spacing: 0.02em;
+        transition: all 0.2s;
+        box-shadow: 0 4px 16px rgba(63, 79, 46, 0.3);
+      }
+      .fm-welcome-cta:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(63, 79, 46, 0.45);
+      }
+      .fm-welcome-footer {
+        padding: 16px 28px 28px;
+        text-align: center;
+        font-size: 0.75rem;
+        color: #94A3B8;
+      }
+      .fm-confetti-container {
+        position: fixed; inset: 0; pointer-events: none; z-index: 10001;
+        overflow: hidden;
+      }
+      .fm-confetti {
+        position: absolute;
+        width: 10px; height: 10px;
+        top: -20px;
+        animation: fmFall linear forwards;
+      }
+      @keyframes fmFall {
+        to { transform: translateY(105vh) rotate(720deg); }
+      }
+    </style>
+
+    <div class="fm-welcome-card">
+      <div class="fm-welcome-header">
+        <div class="fm-welcome-emoji">🎉</div>
+        <h2 class="fm-welcome-title">¡Felicidades, ${firstName}!</h2>
+        <p class="fm-welcome-subtitle">Ya eres miembro VIP de FeedMix MX</p>
+      </div>
+
+      <div class="fm-welcome-body">
+        <div class="fm-welcome-plan-card">
+          <div class="fm-welcome-plan-emoji">${planEmoji}</div>
+          <div class="fm-welcome-plan-name">${planLabel}</div>
+          <p class="fm-welcome-plan-detail">${planVigencia}</p>
+          ${monto ? `<div class="fm-welcome-plan-monto">Inversión: ${monto}</div>` : ""}
+        </div>
+
+        <div class="fm-welcome-list-title">✨ Acabas de desbloquear</div>
+        <ul class="fm-welcome-list">
+          <li>Fórmulas ilimitadas con optimización de mínimo costo</li>
+          <li>PDFs profesionales sin marca de agua</li>
+          <li>Aminograma completo de 8 AA esenciales</li>
+          <li>Alertas inteligentes (Met limitante, Ca, EM/PC)</li>
+          <li>Soporte prioritario por WhatsApp</li>
+        </ul>
+
+        <button class="fm-welcome-cta" id="fmWelcomeCta">🚀 Empezar a formular</button>
+      </div>
+
+      <div class="fm-welcome-footer">
+        Cualquier duda escríbenos al WhatsApp: +52 1 238 251 4313
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  // Confeti animado
+  const confetti = document.createElement("div");
+  confetti.className = "fm-confetti-container";
+  const colors = ["#B87333", "#3F4F2E", "#FCD34D", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"];
+  for (let i = 0; i < 80; i++) {
+    const piece = document.createElement("div");
+    piece.className = "fm-confetti";
+    piece.style.left = Math.random() * 100 + "%";
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDuration = (2 + Math.random() * 2.5) + "s";
+    piece.style.animationDelay = Math.random() * 0.8 + "s";
+    piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+    if (Math.random() > 0.5) piece.style.borderRadius = "50%";
+    confetti.appendChild(piece);
+  }
+  document.body.appendChild(confetti);
+  // Quitar confeti después de 6 segundos
+  setTimeout(() => confetti.remove(), 6000);
+
+  // CTA
+  document.getElementById("fmWelcomeCta").addEventListener("click", () => {
+    modal.remove();
+    if (location.pathname.endsWith("panel.html") || location.pathname === "/") {
+      location.href = "formulador.html";
+    } else {
+      // Ya está en otra página, solo cerrar el modal
+    }
+  });
+
+  // Click fuera del card cierra
+  modal.addEventListener("click", function(e) {
+    if (e.target === modal) modal.remove();
+  });
+};
+
+// Auto-detectar redirect de Stripe Checkout exitoso
+// Si la URL trae ?stripe_session=cs_xxx, mostrar popup celebratorio
+if (typeof window !== "undefined" && window.location.search.includes("stripe_session=")) {
+  const showWelcome = () => {
+    // Esperar a que fmAccess esté listo (perfil cargado de Firestore)
+    let tries = 0;
+    const checkAndShow = setInterval(() => {
+      tries++;
+      if (window.fmAccess && window.fmAccess.isPaid) {
+        clearInterval(checkAndShow);
+        window.fmShowWelcomePopup();
+        // Limpiar URL sin recargar
+        const url = new URL(window.location.href);
+        url.searchParams.delete("stripe_session");
+        history.replaceState({}, "", url.toString());
+      } else if (tries > 25) {
+        // 5 segundos sin perfil pagado — el webhook puede tardar
+        clearInterval(checkAndShow);
+        // Mostrar popup genérico de todas formas
+        window.fmShowWelcomePopup({
+          firstName: window.fmProfile?.firstName,
+          planLabel: "Plan activado",
+          plan: "anual"
+        });
+        const url = new URL(window.location.href);
+        url.searchParams.delete("stripe_session");
+        history.replaceState({}, "", url.toString());
+      }
+    }, 200);
+  };
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => setTimeout(showWelcome, 500));
+  } else {
+    setTimeout(showWelcome, 500);
+  }
 }
