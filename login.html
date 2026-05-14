@@ -343,9 +343,9 @@
 
   </div>
 
-  <script src="assets/firebase-config.js?v=29"></script>
+  <script src="assets/firebase-config.js?v=30"></script>
   <script type="module">
-    import "./assets/shared.js?v=29";
+    import "./assets/shared.js?v=30";
 
     await window.fmAuthGuard({ requireAuth: false, redirectIfAuth: "panel.html" });
 
@@ -439,7 +439,7 @@
       }
     });
 
-    document.getElementById("forgotLink").addEventListener("click", (e) => {
+    document.getElementById("forgotLink").addEventListener("click", async (e) => {
       e.preventDefault();
       const email = document.getElementById("email").value.trim();
       if (!email) {
