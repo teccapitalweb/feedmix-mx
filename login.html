@@ -343,14 +343,40 @@
 
   </div>
 
-  <script src="assets/firebase-config.js?v=27"></script>
+  <script src="assets/firebase-config.js?v=28"></script>
   <script type="module">
-    import "./assets/shared.js?v=27";
+    import "./assets/shared.js?v=28";
 
     await window.fmAuthGuard({ requireAuth: false, redirectIfAuth: "panel.html" });
 
-    const { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } = window.fmFirebase;
+    const { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, doc, getDoc, setDoc, serverTimestamp } = window.fmFirebase;
     const auth = window.fmAuth;
+    const db = window.fmDb;
+
+    // Helper para crear el perfil si el usuario es nuevo (especialmente Google sign-in)
+    async function ensureProfile(user) {
+      try {
+        const ref = doc(db, "nutricionistas", user.uid);
+        const snap = await getDoc(ref);
+        if (!snap.exists()) {
+          // Usuario nuevo (probablemente Google sign-in) - crear perfil en modo exploración
+          await setDoc(ref, {
+            uid: user.uid,
+            email: user.email,
+            firstName: user.displayName?.split(" ")[0] || "",
+            lastName: user.displayName?.split(" ").slice(1).join(" ") || "",
+            profession: "",
+            company: "",
+            status: "exploration",
+            createdAt: serverTimestamp(),
+            formulasCount: 0
+          });
+        }
+      } catch (err) {
+        console.error("Error creando perfil:", err);
+        // No bloquear el login si falla la creación del perfil
+      }
+    }
 
     const form = document.getElementById("loginForm");
     const btn = document.getElementById("loginBtn");
@@ -374,7 +400,8 @@
       try {
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value;
-        await signInWithEmailAndPassword(auth, email, password);
+        const cred = await signInWithEmailAndPassword(auth, email, password);
+        await ensureProfile(cred.user);
         window.location.href = "panel.html";
       } catch (err) {
         const msg = {
@@ -395,7 +422,8 @@
       hideError();
       try {
         const provider = new GoogleAuthProvider();
-        await signInWithPopup(auth, provider);
+        const result = await signInWithPopup(auth, provider);
+        await ensureProfile(result.user);
         window.location.href = "panel.html";
       } catch (err) {
         if (err.code === "auth/popup-closed-by-user") return; // El usuario cerró el popup, no es error
@@ -403,8 +431,10 @@
           "auth/popup-blocked": "Tu navegador bloqueó el popup. Permite popups para este sitio e intenta de nuevo.",
           "auth/unauthorized-domain": "Este dominio no está autorizado. Contacta a soporte.",
           "auth/account-exists-with-different-credential": "Ya existe una cuenta con este email usando otro método. Intenta con email/contraseña.",
-          "auth/network-request-failed": "Error de red. Verifica tu conexión a internet."
-        }[err.code] || "Error con Google. Intenta con email/contraseña o contacta soporte.";
+          "auth/network-request-failed": "Error de red. Verifica tu conexión a internet.",
+          "auth/operation-not-allowed": "El login con Google no está habilitado. Contacta a soporte.",
+          "auth/cancelled-popup-request": "Se canceló el popup anterior. Intenta de nuevo."
+        }[err.code] || ("Error con Google: " + (err.message || err.code || "desconocido"));
         showError(msg);
       }
     });
