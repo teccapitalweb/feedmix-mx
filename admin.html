@@ -348,6 +348,152 @@
       align-items: center;
       gap: var(--space-3);
     }
+
+    /* ====== Generar códigos de canje ====== */
+    .codes-card {
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: var(--space-5) var(--space-6);
+      margin-top: var(--space-5);
+    }
+    .codes-card-head {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-5);
+    }
+    .codes-card-head .ico {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, #B87333 0%, #92400E 100%);
+      border-radius: 10px;
+      display: grid; place-items: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(184, 115, 51, 0.35);
+    }
+    .codes-card-head h2 {
+      color: white; font-size: 1.125rem; font-weight: 800; margin: 0; letter-spacing: -0.01em;
+    }
+    .codes-card-head p { color: #94A3B8; font-size: 0.8125rem; margin: 2px 0 0; }
+
+    .codes-form {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: var(--space-4);
+      align-items: start;
+    }
+    @media (max-width: 1100px) { .codes-form { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .codes-form { grid-template-columns: 1fr; } }
+
+    .codes-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .codes-field label {
+      color: #E2E8F0; font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .codes-field input {
+      width: 100%;
+      background: #0F172A;
+      border: 1px solid #334155;
+      color: white;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+    .codes-field input:focus { border-color: var(--primary); outline: none; }
+    .codes-field input::-webkit-calendar-picker-indicator { filter: invert(0.8); cursor: pointer; }
+    .codes-field .hint { color: #64748B; font-size: 0.6875rem; line-height: 1.3; }
+
+    .codes-actions {
+      margin-top: var(--space-4);
+      display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap;
+    }
+    .btn-generate {
+      background: linear-gradient(135deg, #B87333 0%, #92400E 100%);
+      color: white;
+      border: none;
+      padding: 11px 22px;
+      border-radius: 10px;
+      font-size: 0.9375rem;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity 0.2s;
+    }
+    .btn-generate:hover { opacity: 0.92; }
+    .btn-generate:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .codes-error {
+      display: none;
+      background: rgba(220, 38, 38, 0.12);
+      border: 1px solid rgba(220, 38, 38, 0.35);
+      color: #FCA5A5;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+    }
+    .codes-error.show { display: block; }
+
+    .codes-result { display: none; margin-top: var(--space-5); }
+    .codes-result.show { display: block; }
+    .codes-result-head {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-3);
+    }
+    .codes-summary { color: #CBD5E1; font-size: 0.8125rem; line-height: 1.5; }
+    .codes-summary strong { color: white; }
+    .codes-summary .batch { color: #64748B; font-size: 0.75rem; display: block; margin-top: 2px; }
+
+    .btn-copy-all {
+      background: rgba(255,255,255,0.06);
+      color: white;
+      border: 1px solid #334155;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .btn-copy-all:hover { background: rgba(255,255,255,0.12); border-color: #475569; }
+
+    .codes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: var(--space-3);
+    }
+    .code-chip {
+      background: #0F172A;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 16px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 1.0625rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #FCD34D;
+    }
+    .code-chip:hover { border-color: #B87333; background: #131f38; }
+    .code-chip.copied { border-color: #10B981; color: #6EE7B7; }
+    .code-chip .copied-tag {
+      position: absolute;
+      top: 5px; right: 7px;
+      font-family: inherit;
+      font-size: 0.5625rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      color: #6EE7B7;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .code-chip.copied .copied-tag { opacity: 1; }
   </style>
 </head>
 <body>
@@ -450,6 +596,60 @@
           <tr><td colspan="7" class="empty-row">Cargando usuarios...</td></tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- GENERAR CÓDIGOS DE CANJE -->
+    <div class="codes-card">
+      <div class="codes-card-head">
+        <div class="ico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        </div>
+        <div>
+          <h2>Generar códigos de canje</h2>
+          <p>Crea lotes de códigos para repartir (cursos, promociones). No afecta a la lista de usuarios.</p>
+        </div>
+      </div>
+
+      <form class="codes-form" id="codesForm">
+        <div class="codes-field">
+          <label for="cgCount">Cantidad</label>
+          <input type="number" id="cgCount" min="1" max="1000" value="20" required>
+          <span class="hint">cuántos códigos generar</span>
+        </div>
+        <div class="codes-field">
+          <label for="cgDuration">Días de acceso</label>
+          <input type="number" id="cgDuration" min="1" value="90" required>
+          <span class="hint">días que dura el acceso desde que se canjea</span>
+        </div>
+        <div class="codes-field">
+          <label for="cgMaxUsos">Usos por código</label>
+          <input type="number" id="cgMaxUsos" min="1" value="1" required>
+          <span class="hint">1 = un solo usuario por código</span>
+        </div>
+        <div class="codes-field">
+          <label for="cgLabel">Curso / Lote</label>
+          <input type="text" id="cgLabel" placeholder="Curso Porcino jun-2026" required>
+          <span class="hint">nombre del lote (requerido)</span>
+        </div>
+        <div class="codes-field">
+          <label for="cgExpires">Caducidad del código</label>
+          <input type="date" id="cgExpires" required>
+          <span class="hint">hasta cuándo se puede canjear el código</span>
+        </div>
+      </form>
+
+      <div class="codes-actions">
+        <button type="button" class="btn-generate" id="btnGenerate">Generar lote</button>
+        <div class="codes-error" id="codesError"></div>
+      </div>
+
+      <div class="codes-result" id="codesResult">
+        <div class="codes-result-head">
+          <div class="codes-summary" id="codesSummary"></div>
+          <button type="button" class="btn-copy-all" id="btnCopyAll">📋 Copiar todos</button>
+        </div>
+        <div class="codes-grid" id="codesGrid"></div>
+      </div>
     </div>
   </div>
 
@@ -724,6 +924,157 @@
     $("btnLogout").addEventListener("click", () => {
       if (confirm("¿Cerrar sesión?")) window.fmLogout();
     });
+
+    // ====== GENERAR CÓDIGOS DE CANJE (aditivo — no toca la lógica de usuarios) ======
+    const FM_WEBHOOK_URL = window.FM_WEBHOOK_URL || "https://feedmix-webhook-production.up.railway.app";
+
+    // Fecha local YYYY-MM-DD (sin desfase de zona horaria de toISOString)
+    function toYMD(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    }
+
+    // Prellenar caducidad a HOY+60 y fijar mínimo a mañana
+    (function initCodesDate() {
+      const plus60 = new Date(); plus60.setDate(plus60.getDate() + 60);
+      const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+      $("cgExpires").value = toYMD(plus60);
+      $("cgExpires").min = toYMD(tomorrow);
+    })();
+
+    function showCodesError(msg) {
+      const el = $("codesError");
+      el.textContent = "⚠️ " + msg;
+      el.classList.add("show");
+    }
+    function clearCodesError() { $("codesError").classList.remove("show"); }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (e) {
+        // Fallback para contextos sin Clipboard API
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed"; ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.focus(); ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+          return true;
+        } catch (e2) { return false; }
+      }
+    }
+
+    let lastCodes = [];
+
+    function renderCodes(batchId, label, codes, durationDays, expiresStr) {
+      lastCodes = codes.slice();
+      const fechaTxt = new Date(expiresStr + "T00:00:00").toLocaleDateString("es-MX", { day: "2-digit", month: "long", year: "numeric" });
+      $("codesSummary").innerHTML =
+        `<strong>${codes.length} código${codes.length === 1 ? "" : "s"}</strong> · ${durationDays} días de acceso · vencen para canjear el ${fechaTxt}` +
+        `<span class="batch">Lote: ${label} — batchId: ${batchId}</span>`;
+
+      const grid = $("codesGrid");
+      grid.innerHTML = codes.map(c =>
+        `<div class="code-chip" data-code="${c}" title="Clic para copiar"><span class="copied-tag">¡Copiado!</span>${c}</div>`
+      ).join("");
+
+      grid.querySelectorAll(".code-chip").forEach(chip => {
+        chip.addEventListener("click", async () => {
+          const ok = await copyText(chip.dataset.code);
+          if (ok) {
+            chip.classList.add("copied");
+            setTimeout(() => chip.classList.remove("copied"), 1400);
+          }
+        });
+      });
+
+      $("codesResult").classList.add("show");
+    }
+
+    $("btnCopyAll").addEventListener("click", async () => {
+      if (!lastCodes.length) return;
+      const ok = await copyText(lastCodes.join("\n"));
+      const btn = $("btnCopyAll");
+      const orig = btn.textContent;
+      btn.textContent = ok ? "✅ ¡Copiados!" : "⚠️ No se pudo copiar";
+      setTimeout(() => { btn.textContent = orig; }, 1500);
+    });
+
+    async function generarLote() {
+      clearCodesError();
+      const count = parseInt($("cgCount").value, 10);
+      const durationDays = parseInt($("cgDuration").value, 10);
+      const maxUsos = parseInt($("cgMaxUsos").value, 10);
+      const label = $("cgLabel").value.trim();
+      const codeExpiresAt = $("cgExpires").value;
+
+      // Validación en cliente
+      if (!count || count < 1) return showCodesError("La cantidad debe ser al menos 1");
+      if (!durationDays || durationDays < 1) return showCodesError("Los días de acceso deben ser al menos 1");
+      if (!maxUsos || maxUsos < 1) return showCodesError("Los usos por código deben ser al menos 1");
+      if (!label) return showCodesError("Escribe el nombre del curso/lote");
+      if (!codeExpiresAt) return showCodesError("Selecciona la fecha de caducidad del código");
+      const selected = new Date(codeExpiresAt + "T00:00:00");
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      if (isNaN(selected.getTime()) || selected <= today) {
+        return showCodesError("La caducidad debe ser una fecha futura");
+      }
+
+      const admin = window.fmAuth && window.fmAuth.currentUser;
+      if (!admin || typeof admin.getIdToken !== "function") {
+        return showCodesError("No tienes permiso para generar códigos (sesión no válida o modo demo).");
+      }
+
+      const btn = $("btnGenerate");
+      const origText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "Generando…";
+
+      try {
+        const token = await admin.getIdToken();
+        const response = await fetch(FM_WEBHOOK_URL + "/admin/codes", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({ count, durationDays, maxUsos, label, codeExpiresAt })
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          showCodesError("No tienes permiso para generar códigos (revisa que estés en ADMIN_EMAILS de Railway).");
+          return;
+        }
+
+        let data;
+        try { data = await response.json(); }
+        catch (e) { showCodesError("Error de conexión, intenta de nuevo"); return; }
+
+        if (!response.ok || !data || !data.ok) {
+          showCodesError((data && (data.message || data.error)) || ("No se pudo generar el lote (código " + response.status + ")"));
+          return;
+        }
+
+        const codes = Array.isArray(data.codes) ? data.codes : [];
+        renderCodes(data.batchId, label, codes, durationDays, codeExpiresAt);
+        if (window.fmToast) window.fmToast(`✅ ${codes.length} códigos generados`, "success");
+      } catch (e) {
+        console.error("Error generando códigos:", e);
+        showCodesError("Error de conexión, intenta de nuevo");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = origText;
+      }
+    }
+
+    $("btnGenerate").addEventListener("click", generarLote);
+    $("codesForm").addEventListener("submit", (e) => { e.preventDefault(); generarLote(); });
 
     // Cargar al inicio
     cargarUsuarios();
