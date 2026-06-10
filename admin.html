@@ -494,6 +494,78 @@
       transition: opacity 0.15s;
     }
     .code-chip.copied .copied-tag { opacity: 1; }
+
+    /* ====== Auditoría: códigos generados y canjes ====== */
+    .audit-toolbar {
+      display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap;
+    }
+    .audit-toolbar input {
+      flex: 1; min-width: 220px;
+      background: #0F172A;
+      border: 1px solid #334155;
+      color: white;
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      font-family: inherit;
+    }
+    .audit-toolbar input::placeholder { color: #64748B; }
+    .audit-toolbar input:focus { border-color: var(--primary); outline: none; }
+
+    .audit-list { display: flex; flex-direction: column; gap: var(--space-2); }
+    .audit-row {
+      background: #0F172A;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .audit-row.open { border-color: #B87333; }
+    .audit-row-head {
+      display: flex; align-items: center; gap: var(--space-3);
+      padding: 12px 14px;
+      cursor: pointer;
+      flex-wrap: wrap;
+    }
+    .audit-row-head:hover { background: rgba(255,255,255,0.03); }
+    .audit-caret {
+      color: #64748B; font-size: 0.7rem; transition: transform 0.15s; flex-shrink: 0;
+    }
+    .audit-row.open .audit-caret { transform: rotate(90deg); }
+    .audit-code {
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.9375rem; font-weight: 700; letter-spacing: 0.03em; color: #FCD34D;
+    }
+    .audit-label-txt { color: #CBD5E1; font-size: 0.8125rem; flex: 1; min-width: 120px; }
+    .audit-meta { color: #94A3B8; font-size: 0.75rem; }
+    .audit-usos {
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      font-size: 0.8125rem; font-weight: 700; color: #E2E8F0;
+    }
+    .audit-state {
+      display: inline-flex; align-items: center; padding: 3px 9px;
+      border-radius: 999px; font-size: 0.625rem; font-weight: 800;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .audit-state.on { background: rgba(16,185,129,0.15); color: #6EE7B7; border: 1px solid rgba(16,185,129,0.3); }
+    .audit-state.off { background: rgba(100,116,139,0.15); color: #94A3B8; border: 1px solid rgba(100,116,139,0.3); }
+
+    .audit-detail {
+      display: none;
+      padding: 2px 14px 14px;
+      border-top: 1px solid #1E293B;
+    }
+    .audit-row.open .audit-detail { display: block; }
+    .redemption-item {
+      display: flex; justify-content: space-between; gap: var(--space-3);
+      padding: 9px 12px; flex-wrap: wrap;
+      background: #131f38;
+      border: 1px solid #1E293B;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+    .redemption-item .who { color: white; font-weight: 600; font-size: 0.8125rem; word-break: break-all; }
+    .redemption-item .when { color: #94A3B8; font-size: 0.75rem; }
+    .audit-empty-detail { color: #64748B; font-size: 0.8125rem; padding: 10px 2px 2px; font-style: italic; }
   </style>
 </head>
 <body>
@@ -649,6 +721,32 @@
           <button type="button" class="btn-copy-all" id="btnCopyAll">📋 Copiar todos</button>
         </div>
         <div class="codes-grid" id="codesGrid"></div>
+      </div>
+    </div>
+
+    <!-- CÓDIGOS GENERADOS Y CANJES (auditoría) -->
+    <div class="codes-card">
+      <div class="codes-card-head">
+        <div class="ico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </div>
+        <div>
+          <h2>Códigos generados y canjes</h2>
+          <p>Consulta qué códigos existen y quién los ha canjeado. Carga bajo demanda con el botón.</p>
+        </div>
+      </div>
+
+      <div class="audit-toolbar">
+        <input type="text" id="auditLabelFilter" placeholder="Filtrar por lote/curso (opcional)…">
+        <button type="button" class="btn-generate" id="btnLoadAudit">Cargar / Actualizar</button>
+      </div>
+      <div class="codes-error" id="auditError" style="margin-top: var(--space-3);"></div>
+
+      <div class="codes-result" id="auditResult">
+        <div class="codes-result-head">
+          <div class="codes-summary" id="auditSummary"></div>
+        </div>
+        <div class="audit-list" id="auditList"></div>
       </div>
     </div>
   </div>
@@ -1075,6 +1173,136 @@
 
     $("btnGenerate").addEventListener("click", generarLote);
     $("codesForm").addEventListener("submit", (e) => { e.preventDefault(); generarLote(); });
+
+    // ====== AUDITORÍA: CÓDIGOS GENERADOS Y CANJES (aditivo — carga bajo demanda) ======
+    // Reusa FM_WEBHOOK_URL y el patrón de token de la sección Generar (Fase 3).
+    function fmFechaCorta(iso) {
+      if (!iso) return "—";
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return "—";
+      return d.toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" });
+    }
+    function fmFechaHora(iso) {
+      if (!iso) return "—";
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return "—";
+      return d.toLocaleString("es-MX", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+    }
+
+    function showAuditError(msg) {
+      const el = $("auditError");
+      el.textContent = "⚠️ " + msg;
+      el.classList.add("show");
+    }
+    function clearAuditError() { $("auditError").classList.remove("show"); }
+
+    // Escapa texto antes de inyectarlo como HTML (email/label/code vienen del backend)
+    function escapeHtml(s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
+        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+
+    function renderAudit(codes) {
+      const list = $("auditList");
+      let totalCanjes = 0;
+      codes.forEach((c) => { totalCanjes += Array.isArray(c.redemptions) ? c.redemptions.length : 0; });
+
+      $("auditSummary").innerHTML =
+        `<strong>${codes.length} código${codes.length === 1 ? "" : "s"}</strong> · ${totalCanjes} canje${totalCanjes === 1 ? "" : "s"} totales`;
+
+      if (codes.length === 0) {
+        list.innerHTML = `<div class="audit-empty-detail">Aún no hay códigos generados.</div>`;
+        return;
+      }
+
+      list.innerHTML = codes.map((c) => {
+        const maxTxt = (c.maxUsos == null) ? "∞" : c.maxUsos;
+        const usos = c.usos || 0;
+        const estado = c.isActive === false
+          ? `<span class="audit-state off">Inactivo</span>`
+          : `<span class="audit-state on">Activo</span>`;
+        const reds = Array.isArray(c.redemptions) ? c.redemptions : [];
+        const detalle = reds.length === 0
+          ? `<div class="audit-empty-detail">Sin canjes aún.</div>`
+          : reds.map((r) => `
+              <div class="redemption-item">
+                <span class="who">${escapeHtml(r.email || r.uid || "—")}</span>
+                <span class="when">Canjeado: ${fmFechaHora(r.redeemedAt)} · Acceso hasta: ${fmFechaCorta(r.accessUntil)}</span>
+              </div>`).join("");
+
+        return `
+          <div class="audit-row" data-code="${escapeHtml(c.code)}">
+            <div class="audit-row-head" role="button" tabindex="0">
+              <span class="audit-caret">▶</span>
+              <span class="audit-code">${escapeHtml(c.code)}</span>
+              <span class="audit-label-txt">${escapeHtml(c.label || "—")}</span>
+              ${estado}
+              <span class="audit-usos">${usos} / ${maxTxt}</span>
+              <span class="audit-meta">vence ${fmFechaCorta(c.codeExpiresAt)}</span>
+            </div>
+            <div class="audit-detail">${detalle}</div>
+          </div>`;
+      }).join("");
+
+      list.querySelectorAll(".audit-row-head").forEach((head) => {
+        const toggle = () => head.parentElement.classList.toggle("open");
+        head.addEventListener("click", toggle);
+        head.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
+        });
+      });
+    }
+
+    async function cargarAuditoria() {
+      clearAuditError();
+      const adminUser = window.fmAuth && window.fmAuth.currentUser;
+      if (!adminUser || typeof adminUser.getIdToken !== "function") {
+        return showAuditError("No tienes permiso (sesión no válida o modo demo).");
+      }
+
+      const btn = $("btnLoadAudit");
+      const origText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "Cargando…";
+
+      try {
+        const token = await adminUser.getIdToken();
+        const labelFilter = $("auditLabelFilter").value.trim();
+        let url = FM_WEBHOOK_URL + "/admin/redemptions";
+        if (labelFilter) url += "?label=" + encodeURIComponent(labelFilter);
+
+        const response = await fetch(url, {
+          headers: { "Authorization": "Bearer " + token }
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          showAuditError("No tienes permiso para ver los canjes (revisa que estés en ADMIN_EMAILS de Railway).");
+          return;
+        }
+
+        let data;
+        try { data = await response.json(); }
+        catch (e) { showAuditError("Error de conexión, intenta de nuevo"); return; }
+
+        if (!response.ok || !data || !data.ok) {
+          showAuditError((data && (data.message || data.error)) || ("No se pudo cargar (código " + response.status + ")"));
+          return;
+        }
+
+        const codes = Array.isArray(data.codes) ? data.codes : [];
+        $("auditResult").classList.add("show");
+        renderAudit(codes);
+      } catch (e) {
+        console.error("Error cargando auditoría:", e);
+        showAuditError("Error de conexión, intenta de nuevo");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = origText;
+      }
+    }
+
+    $("btnLoadAudit").addEventListener("click", cargarAuditoria);
+    $("auditLabelFilter").addEventListener("keydown", (e) => { if (e.key === "Enter") cargarAuditoria(); });
 
     // Cargar al inicio
     cargarUsuarios();
