@@ -464,13 +464,26 @@ window.fmComputeAccess = function(profile) {
 
   const subscriptionEnd = toDate(profile.subscriptionEnd);
 
+  // ¿El usuario actual es admin? Misma verificación que fmIsAdmin(): email ∈ FM_ADMIN_EMAILS
+  // (reusa la lista, no la duplica). Los admins tienen acceso premium automático,
+  // sin pagar ni canjear. El email se toma del perfil o, si no, del usuario autenticado.
+  const adminEmail = (profile.email ||
+                      (window.fmAuth && window.fmAuth.currentUser && window.fmAuth.currentUser.email) ||
+                      "").toLowerCase();
+  const isAdmin = !!adminEmail && Array.isArray(window.FM_ADMIN_EMAILS) &&
+                  window.FM_ADMIN_EMAILS.map(e => e.toLowerCase()).includes(adminEmail);
+
   // SIMPLIFICADO (sin trial): solo 2 estados
   // - PAGADO: status="active" y suscripción no expirada
   // - MODO EXPLORACIÓN: cualquier otro caso (incluye trial, sin pagar, expirado)
   const isPaidActive = status === "active" && (!subscriptionEnd || subscriptionEnd > now);
-  const isExpired = !isPaidActive; // Para mantener compatibilidad
 
-  // Días restantes (solo aplica para suscripción pagada)
+  // Acceso efectivo = pagado O admin. Para usuarios NO admin es idéntico a isPaidActive:
+  // su lógica de pago/canje no cambia en absoluto.
+  const access = isPaidActive || isAdmin;
+  const isExpired = !access; // Para mantener compatibilidad
+
+  // Días restantes (solo aplica para suscripción pagada real)
   let daysLeft = 0;
   let endDate = null;
   if (isPaidActive && subscriptionEnd) {
@@ -478,34 +491,37 @@ window.fmComputeAccess = function(profile) {
     endDate = subscriptionEnd;
   }
 
-  // Acceso: solo si está pagado
-  const hasAccess = isPaidActive;
+  // Acceso: pagado o admin
+  const hasAccess = access;
 
-  // Límite de fórmulas: pagado ilimitado, modo exploración = 0
-  const formulasLimit = isPaidActive ? Infinity : 0;
+  // Límite de fórmulas: con acceso ilimitado, sin acceso = 0
+  const formulasLimit = access ? Infinity : 0;
 
   // Labels para UI
-  const planLabel = plan === "despacho" ? "Plan Despacho" :
+  const planLabel = isAdmin ? "Admin" :
+                    plan === "despacho" ? "Plan Despacho" :
                     plan === "lifetime" ? "Plan De por vida" :
                     plan === "anual" ? "Plan Anual" :
                     plan === "trimestral" ? "Plan Trimestral" : "Plan Profesional";
   let statusLabel;
-  if (isPaidActive) statusLabel = plan === "lifetime" ? "De por vida ✓" : "Activa";
+  if (isAdmin) statusLabel = "Admin";
+  else if (isPaidActive) statusLabel = plan === "lifetime" ? "De por vida ✓" : "Activa";
   else statusLabel = "Modo exploración";
 
   return {
     status: status,
     plan: plan,
+    isAdmin: isAdmin,
     hasAccess: hasAccess,
     isTrial: false,           // YA NO HAY TRIAL — todos sin pagar = exploración
-    isPaid: isPaidActive,
+    isPaid: access,
     isExpired: isExpired,
     daysLeft: daysLeft,
     endDate: endDate,
-    canCreateFormula: isPaidActive,
-    canSavePDF: isPaidActive,
-    canRemoveWatermark: isPaidActive,
-    canHaveMultipleUsers: isPaidActive && plan === "despacho",
+    canCreateFormula: access,
+    canSavePDF: access,
+    canRemoveWatermark: access,
+    canHaveMultipleUsers: (isPaidActive && plan === "despacho") || isAdmin,
     formulasCount: formulasCount,
     formulasLimit: formulasLimit,
     planLabel: planLabel,
@@ -531,7 +547,8 @@ window.FM_ADMIN_EMAILS = [
   "ipcilinstituto@ipcil.org",
   "pecuariavision62@gmail.com",
   "demo@feedmix.mx",
-  "americaagrotec7@gmail.com"
+  "americaagrotec7@gmail.com",
+  "teccapitalweb@gmail.com"
 ];
 
 window.fmIsAdmin = function() {

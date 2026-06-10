@@ -726,6 +726,15 @@
                 <h4>Soporte o cursos</h4>
                 <p>WhatsApp directo para ayuda técnica o información de cursos.</p>
               </a>
+
+              <!-- Acceso Admin — visible solo para administradores (revelado por JS si fmIsAdmin) -->
+              <a href="admin.html" class="quick-action" id="adminQuickAction" style="display:none;">
+                <div class="quick-action-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </div>
+                <h4>⚙️ Admin</h4>
+                <p>Panel de administración: gestiona usuarios y accesos.</p>
+              </a>
             </div>
           </div>
 
@@ -782,7 +791,7 @@
 
   <script src="assets/firebase-config.js?v=31"></script>
   <script type="module">
-    import "./assets/shared.js?v=32";
+    import "./assets/shared.js?v=33";
 
     const user = await window.fmAuthGuard({ requireAuth: true });
 
@@ -859,10 +868,12 @@
       if (window.fmShowExplorationBanner) {
         window.fmShowExplorationBanner(".app-content", "Explora todas las funciones de FeedMix MX. Activa tu plan para optimizar, guardar y generar PDFs profesionales.");
       }
-      // Mostrar link Admin si es admin
+      // Mostrar accesos Admin si es admin (link del dropdown + tarjeta de acción rápida)
       if (window.fmIsAdmin && window.fmIsAdmin()) {
         const adminLink = document.getElementById("adminLink");
         if (adminLink) adminLink.style.display = "flex";
+        const adminQuick = document.getElementById("adminQuickAction");
+        if (adminQuick) adminQuick.style.display = "flex";
       }
     }, 300);
 
