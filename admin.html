@@ -566,6 +566,37 @@
     .redemption-item .who { color: white; font-weight: 600; font-size: 0.8125rem; word-break: break-all; }
     .redemption-item .when { color: #94A3B8; font-size: 0.75rem; }
     .audit-empty-detail { color: #64748B; font-size: 0.8125rem; padding: 10px 2px 2px; font-style: italic; }
+
+    /* ====== Pestañas (tabs) — solo organización visual ====== */
+    .admin-tabs {
+      display: flex;
+      gap: var(--space-2);
+      margin-bottom: var(--space-5);
+      border-bottom: 1px solid #334155;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .admin-tab {
+      background: transparent;
+      color: #94A3B8;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 12px 18px;
+      font-size: 0.9375rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s;
+      margin-bottom: -1px;
+    }
+    .admin-tab:hover { color: #E2E8F0; }
+    .admin-tab.active {
+      color: white;
+      border-bottom-color: #B87333;
+    }
+    .admin-tabpanel { display: none; }
+    .admin-tabpanel.active { display: block; }
   </style>
 </head>
 <body>
@@ -605,6 +636,16 @@
         </button>
       </div>
     </div>
+
+    <!-- TABS -->
+    <div class="admin-tabs" role="tablist">
+      <button type="button" class="admin-tab active" data-tab="panelUsuarios">Usuarios</button>
+      <button type="button" class="admin-tab" data-tab="panelGenerar">Generar códigos</button>
+      <button type="button" class="admin-tab" data-tab="panelAuditoria">Auditoría</button>
+    </div>
+
+    <!-- TAB 1: USUARIOS -->
+    <div class="admin-tabpanel active" id="panelUsuarios">
 
     <!-- STATS -->
     <div class="admin-stats">
@@ -670,6 +711,11 @@
       </table>
     </div>
 
+    </div><!-- /panelUsuarios -->
+
+    <!-- TAB 2: GENERAR CÓDIGOS -->
+    <div class="admin-tabpanel" id="panelGenerar">
+
     <!-- GENERAR CÓDIGOS DE CANJE -->
     <div class="codes-card">
       <div class="codes-card-head">
@@ -724,6 +770,11 @@
       </div>
     </div>
 
+    </div><!-- /panelGenerar -->
+
+    <!-- TAB 3: AUDITORÍA -->
+    <div class="admin-tabpanel" id="panelAuditoria">
+
     <!-- CÓDIGOS GENERADOS Y CANJES (auditoría) -->
     <div class="codes-card">
       <div class="codes-card-head">
@@ -749,6 +800,8 @@
         <div class="audit-list" id="auditList"></div>
       </div>
     </div>
+
+    </div><!-- /panelAuditoria -->
   </div>
 
   <script src="assets/firebase-config.js?v=31"></script>
@@ -1303,6 +1356,21 @@
 
     $("btnLoadAudit").addEventListener("click", cargarAuditoria);
     $("auditLabelFilter").addEventListener("keydown", (e) => { if (e.key === "Enter") cargarAuditoria(); });
+
+    // ====== PESTAÑAS (solo organización visual; NO toca la lógica) ======
+    // Los 3 paneles existen siempre en el DOM (solo se ocultan con display:none),
+    // así que todos los listeners de arriba quedan enganchados aunque el panel arranque oculto.
+    (function initAdminTabs() {
+      const tabs = document.querySelectorAll(".admin-tab");
+      const panels = document.querySelectorAll(".admin-tabpanel");
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const target = tab.dataset.tab;
+          tabs.forEach((t) => t.classList.toggle("active", t === tab));
+          panels.forEach((p) => p.classList.toggle("active", p.id === target));
+        });
+      });
+    })();
 
     // Cargar al inicio
     cargarUsuarios();
