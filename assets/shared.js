@@ -819,6 +819,17 @@ window.fmShowUpgradeModal = function(opts = {}) {
       '<div style="padding:36px 24px 20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">' +
         plans.map(function(p){ return planCardHTML(p.key, p.isFeatured, p.borderColor, p.btnBg); }).join('') +
       '</div>' +
+      // --- Canje de código de cortesía ---
+      '<div style="padding:0 24px 20px;">' +
+        '<div style="border-top:1px dashed #E2E8F0;padding-top:18px;">' +
+          '<div style="font-size:0.8125rem;font-weight:700;color:#3F4F2E;margin-bottom:8px;">🎟️ ¿Tienes un código de curso?</div>' +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+            '<input id="fmRedeemInput" type="text" placeholder="XXXXX-XXXXX" autocomplete="off" spellcheck="false" maxlength="16" style="flex:1;min-width:170px;padding:10px 12px;border:1px solid #CBD5E1;border-radius:8px;font-family:ui-monospace,Menlo,Consolas,monospace;text-transform:uppercase;font-size:0.95rem;letter-spacing:0.08em;" />' +
+            '<button id="fmRedeemBtn" type="button" style="background:#3F4F2E;color:white;border:none;padding:10px 20px;border-radius:8px;font-weight:700;font-size:0.875rem;cursor:pointer;">Canjear</button>' +
+          '</div>' +
+          '<div id="fmRedeemMsg" style="display:none;margin-top:8px;font-size:0.8125rem;padding:8px 12px;border-radius:8px;"></div>' +
+        '</div>' +
+      '</div>' +
       '<div style="padding:16px 32px;border-top:1px solid #F1F5F9;background:#F8FAFC;border-radius:0 0 16px 16px;text-align:center;font-size:0.75rem;color:#64748B;">' +
         '🔒 Pago seguro con Stripe · 💸 Garantía 14 días devolución · 🇲🇽 Precios en pesos mexicanos' +
       '</div>' +
@@ -840,6 +851,13 @@ window.fmShowUpgradeModal = function(opts = {}) {
     const grid = modal.querySelector('[style*="grid-template-columns:1fr 1fr 1fr"]');
     if (grid) grid.style.gridTemplateColumns = "1fr 1fr";
   }
+
+  // Conectar el campo de canje del modal al backend
+  window.fmAttachRedeem(
+    modal.querySelector("#fmRedeemInput"),
+    modal.querySelector("#fmRedeemBtn"),
+    modal.querySelector("#fmRedeemMsg")
+  );
 };
 
 // ============================================
@@ -986,6 +1004,132 @@ window.fmCloseCheckout = function() {
     window._fmStripeCheckout = null;
   }
   document.getElementById("fmCheckoutModal")?.remove();
+};
+
+// ============================================
+// CANJE DE CÓDIGOS DE CORTESÍA
+// ============================================
+// Llama al backend POST /redeem-code con el ID token del usuario autenticado.
+// Reusa el MISMO mecanismo de acceso (status:"active" + subscriptionEnd) — NO
+// modifica fmComputeAccess. Devuelve siempre un objeto { ok, message, ... }.
+window.fmRedeemCode = async function(code) {
+  const user = window.fmAuth && window.fmAuth.currentUser;
+  if (!user) {
+    return { ok: false, message: "Inicia sesión primero" };
+  }
+
+  const normalized = (code || "").trim().toUpperCase();
+  if (!normalized) {
+    return { ok: false, message: "Ingresa un código" };
+  }
+
+  // Mapeo de errores del backend → mensajes claros en español
+  const ERROR_MESSAGES = {
+    CODIGO_INVALIDO: "Código no válido",
+    CODIGO_INACTIVO: "Este código fue desactivado",
+    CODIGO_EXPIRADO: "Este código ya venció",
+    CODIGO_AGOTADO: "Este código ya alcanzó su límite de usos",
+    YA_CANJEADO: "Ya canjeaste este código",
+    NO_AUTENTICADO: "Inicia sesión primero"
+  };
+
+  try {
+    // El usuario real de Firebase expone getIdToken(); en modo demo no existe.
+    if (typeof user.getIdToken !== "function") {
+      return { ok: false, message: "El canje no está disponible en modo demo" };
+    }
+    const token = await user.getIdToken();
+
+    const FM_WEBHOOK_URL = window.FM_WEBHOOK_URL || "https://feedmix-webhook-production.up.railway.app";
+
+    const response = await fetch(FM_WEBHOOK_URL + "/redeem-code", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({ code: normalized })
+    });
+
+    // 429 = rate-limit (puede venir sin cuerpo JSON)
+    if (response.status === 429) {
+      return { ok: false, message: "Demasiados intentos, espera un minuto" };
+    }
+
+    let data;
+    try {
+      data = await response.json();
+    } catch (e) {
+      return { ok: false, message: "Error de conexión, intenta de nuevo" };
+    }
+
+    if (data && data.ok) {
+      return data; // { ok:true, accessUntil, message }
+    }
+
+    const friendly =
+      (data && ERROR_MESSAGES[data.error]) ||
+      (data && data.message) ||
+      "No se pudo canjear el código";
+    return { ok: false, error: data && data.error, message: friendly };
+
+  } catch (err) {
+    console.error("Error en fmRedeemCode:", err);
+    return { ok: false, message: "Error de conexión, intenta de nuevo" };
+  }
+};
+
+// Helper de UI reutilizable: conecta un input + botón + zona de mensaje a fmRedeemCode.
+// Maneja estado "Canjeando…", anti doble-submit, mensajes inline y refresco de acceso.
+// Tras un canje OK recarga la página para que fmAccess se recalcule y los candados
+// premium desaparezcan solos (fallback explícito permitido y más fiable que mutar el DOM).
+window.fmAttachRedeem = function(inputEl, btnEl, msgEl, onSuccess) {
+  if (!inputEl || !btnEl) return;
+
+  const showMsg = (text, type) => {
+    if (!msgEl) return;
+    msgEl.textContent = text;
+    msgEl.style.display = "block";
+    msgEl.style.color = type === "success" ? "#065F46" : "#B91C1C";
+    msgEl.style.background = type === "success" ? "#ECFDF5" : "#FEF2F2";
+    msgEl.style.border = "1px solid " + (type === "success" ? "#A7F3D0" : "#FECACA");
+  };
+
+  let busy = false;
+  const handler = async () => {
+    if (busy) return;
+    const code = inputEl.value;
+    if (!code || !code.trim()) { showMsg("Ingresa un código", "error"); return; }
+
+    busy = true;
+    const original = btnEl.textContent;
+    btnEl.disabled = true;
+    inputEl.disabled = true;
+    btnEl.textContent = "Canjeando…";
+    if (msgEl) msgEl.style.display = "none";
+
+    const res = await window.fmRedeemCode(code);
+
+    if (res && res.ok) {
+      let fecha = "";
+      try { if (res.accessUntil) fecha = window.fmDate(res.accessUntil); } catch (e) {}
+      showMsg("¡Acceso activado" + (fecha ? " hasta " + fecha : "") + "! Actualizando…", "success");
+      if (typeof onSuccess === "function") { try { onSuccess(res); } catch (e) {} }
+      // Refrescar estado de acceso (recalcula fmAccess, quita candados)
+      setTimeout(() => location.reload(), 1800);
+    } else {
+      showMsg((res && res.message) || "No se pudo canjear el código", "error");
+      busy = false;
+      btnEl.disabled = false;
+      inputEl.disabled = false;
+      btnEl.textContent = original;
+    }
+  };
+
+  btnEl.addEventListener("click", handler);
+  inputEl.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); handler(); }
+  });
 };
 
 // ============================================
