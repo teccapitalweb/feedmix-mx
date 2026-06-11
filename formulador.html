@@ -2124,6 +2124,29 @@
     #resultOk:not(.hidden) {
       animation: resultSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
+
+    /* ============================================
+       RESPONSIVE — Tanda 4 / Bloque 1 (Configurar)
+       Solo móvil (≤480px): los grids de 2 columnas del tab Configurar
+       colapsan a 1 columna. Desktop (>480px) queda idéntico.
+       ============================================ */
+    /* Grid de inputs de la calculadora de parvada (antes inline en el markup).
+       Estilos idénticos a los que tenía inline para no cambiar el desktop. */
+    .parvada-input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 480px) {
+      .tipo-grid,
+      .etapa-grid,
+      .req-grid,
+      .parvada-input-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 
 </head>
@@ -2274,7 +2297,7 @@
 
                 <div id="parvadaPanel" style="display:none; background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%); padding:16px; border-radius:10px; border:2px solid #f59e0b; margin-top:8px;">
 
-                  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+                  <div class="parvada-input-grid">
                     <div>
                       <label style="font-size:0.78rem; font-weight:700; color:#78350f; text-transform:uppercase; letter-spacing:0.05em;">Cantidad de aves</label>
                       <input type="number" class="form-input" id="parvadaCantidad" placeholder="500" min="1" style="margin-top:4px;">
