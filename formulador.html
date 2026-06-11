@@ -2151,6 +2151,13 @@
       .comparar-result {
         grid-template-columns: 1fr;
       }
+
+      /* Bloque 3 — Composición: el aminograma se mantiene en columnas (lista
+         repetida por aminoácido), solo se estrechan las columnas fijas (sym/%)
+         y se da más peso a la de nombre+valores. Sin cambiar font-size. */
+      .aminograma-row {
+        grid-template-columns: 40px 1.5fr 1fr 44px;
+      }
     }
   </style>
 
