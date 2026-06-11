@@ -790,6 +790,16 @@
     }
 
     @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+
+    /* Móvil: modales caben mejor en pantallas chicas (≤480px).
+       .modal ya es responsive (width:100% + max-height + scroll); aquí se reduce
+       padding y, en el edu-modal, se apilan los botones del footer para que quepan. */
+    @media (max-width: 480px) {
+      .modal { padding: var(--space-5); }
+      .edu-modal-header { padding: 24px 20px 20px; }
+      .edu-modal-body { padding: 24px 20px; }
+      .edu-modal-footer { flex-direction: column; }
+    }
   </style>
 </head>
 <body>

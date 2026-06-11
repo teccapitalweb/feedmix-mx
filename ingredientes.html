@@ -508,6 +508,14 @@
       color: #451A03;
       font-weight: 800;
     }
+
+    /* Móvil: los modales caben mejor en pantallas chicas (≤480px).
+       Solo reduce padding; el layout base ya es width:100% + max-height + scroll. */
+    @media (max-width: 480px) {
+      .modal-backdrop, .tour-overlay { padding: var(--space-3); }
+      .modal, .tour-modal { padding: var(--space-5); }
+    }
+
     /* ============================================
        BLOQUE 1: Educación de columnas
        ============================================ */
