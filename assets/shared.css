@@ -270,8 +270,51 @@ section {
   gap: var(--space-3);
 }
 
+/* Hamburguesa marketing (index.html) — checkbox hack, sin JS. Oculta en desktop. */
+.nav-hamburger { display: none; }
+.nav-toggle-checkbox { display: none; }
+
 @media (max-width: 900px) {
-  .nav-links { display: none; }
+  /* Botón hamburguesa visible solo en móvil */
+  .nav-hamburger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    margin-left: auto;
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius);
+    background: white;
+    color: var(--neutral-700);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .nav-hamburger svg { width: 22px; height: 22px; }
+
+  /* En vez de ocultarse, .nav-links se despliega como dropdown bajo el navbar */
+  .navbar-inner { position: relative; gap: var(--space-3); }
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    background: white;
+    border-bottom: 1px solid var(--neutral-200);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+    padding: var(--space-2) var(--space-6) var(--space-4);
+  }
+  .nav-toggle-checkbox:checked ~ .nav-links { display: flex; }
+  .nav-links li { width: 100%; }
+  .nav-links a {
+    display: block;
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--neutral-100);
+  }
 }
 
 /* ============================================
@@ -723,11 +766,63 @@ section {
   margin: var(--space-4) 0 var(--space-2) 0.75rem;
 }
 
+/* Hamburguesa app (inyectada por shared.js en .app-topbar). Oculta en desktop. */
+.app-hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--radius);
+  background: white;
+  color: var(--neutral-700);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.app-hamburger:hover { background: var(--neutral-50); }
+.app-hamburger svg { width: 22px; height: 22px; }
+
+/* Backdrop del sidebar off-canvas (inyectado por shared.js).
+   Invisible e inerte salvo cuando tiene .open, así que no afecta al desktop. */
+.app-sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  z-index: 998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.app-sidebar-backdrop.open { opacity: 1; pointer-events: auto; }
+
 @media (max-width: 900px) {
   .app-shell { grid-template-columns: 1fr; }
-  .app-sidebar { display: none; }
   .app-content { padding: var(--space-5); }
-  .app-topbar { padding: var(--space-3) var(--space-5); }
+  .app-topbar {
+    padding: var(--space-3) var(--space-5);
+    justify-content: flex-start;
+    gap: var(--space-3);
+  }
+  /* Empuja el bloque derecho (menú de usuario) a la derecha cuando aparece la ☰ */
+  .app-topbar > *:last-child { margin-left: auto; }
+  .app-hamburger { display: inline-flex; }
+
+  /* El sidebar deja de ocultarse y pasa a ser un panel off-canvas deslizable */
+  .app-sidebar {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 264px;
+    max-width: 82vw;
+    height: 100vh;
+    z-index: 999;
+    transform: translateX(-100%);
+    transition: transform 0.28s ease;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  }
+  .app-sidebar.open { transform: translateX(0); }
 }
 
 /* ============================================

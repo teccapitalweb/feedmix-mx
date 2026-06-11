@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="assets/shared.css">
+  <link rel="stylesheet" href="assets/shared.css?v=13">
 
   <style>
     /* ====== HERO ====== */
@@ -1196,6 +1196,11 @@
         </span>
       </a>
 
+      <input type="checkbox" id="navToggle" class="nav-toggle-checkbox">
+      <label for="navToggle" class="nav-hamburger" aria-label="Abrir menú de navegación">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </label>
+
       <ul class="nav-links">
         <li><a href="#caracteristicas">Características</a></li>
         <li><a href="#como-funciona">Cómo funciona</a></li>
@@ -1986,6 +1991,20 @@
       });
 
       calcularROI();
+    })();
+  </script>
+
+  <!-- Menú móvil: cerrar el dropdown con Escape y al tocar un enlace -->
+  <script>
+    (function () {
+      const cb = document.getElementById("navToggle");
+      if (!cb) return;
+      document.querySelectorAll(".nav-links a").forEach((a) =>
+        a.addEventListener("click", () => { cb.checked = false; })
+      );
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") cb.checked = false;
+      });
     })();
   </script>
 

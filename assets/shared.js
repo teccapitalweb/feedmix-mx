@@ -1639,3 +1639,60 @@ if (typeof window !== "undefined" && window.location.search.includes("stripe_ses
     setTimeout(showWelcome, 500);
   }
 }
+
+// ============================================
+// NAV MÓVIL (hamburguesa) — páginas "app" (.app-shell + .app-sidebar)
+// ============================================
+// Inyecta un botón ☰ al inicio de .app-topbar y un backdrop en el body. El sidebar
+// se vuelve un panel off-canvas vía CSS (@media ≤900px); en desktop la ☰ está oculta
+// por CSS, así que NADA cambia en pantallas grandes. Centralizado: aplica a toda
+// página que cargue shared.js y tenga ese layout (panel, perfil, formulador,
+// ingredientes, nucleos, recomendaciones, historial, suscripcion).
+function fmInitAppMobileNav() {
+  const topbar = document.querySelector(".app-topbar");
+  const sidebar = document.querySelector(".app-sidebar");
+  if (!topbar || !sidebar) return;                     // no es página "app": no hacer nada
+  if (topbar.querySelector(".app-hamburger")) return;  // evitar doble inicialización
+
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "app-hamburger";
+  btn.setAttribute("aria-label", "Abrir menú de navegación");
+  btn.setAttribute("aria-expanded", "false");
+  btn.innerHTML =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
+  topbar.insertBefore(btn, topbar.firstChild);
+
+  const backdrop = document.createElement("div");
+  backdrop.className = "app-sidebar-backdrop";
+  document.body.appendChild(backdrop);
+
+  function openNav() {
+    sidebar.classList.add("open");
+    backdrop.classList.add("open");
+    btn.setAttribute("aria-expanded", "true");
+  }
+  function closeNav() {
+    sidebar.classList.remove("open");
+    backdrop.classList.remove("open");
+    btn.setAttribute("aria-expanded", "false");
+  }
+
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (sidebar.classList.contains("open")) closeNav();
+    else openNav();
+  });
+  backdrop.addEventListener("click", closeNav);
+  // Cerrar al elegir un enlace del menú (navegación)
+  sidebar.querySelectorAll("a").forEach((a) => a.addEventListener("click", closeNav));
+  // Cerrar con Escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && sidebar.classList.contains("open")) closeNav();
+  });
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", fmInitAppMobileNav);
+} else {
+  fmInitAppMobileNav();
+}
