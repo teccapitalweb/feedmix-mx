@@ -2158,6 +2158,18 @@
       .aminograma-row {
         grid-template-columns: 40px 1.5fr 1fr 44px;
       }
+
+      /* Bloque 5 — Tabla de fórmula (.ing-table, 8 columnas editable): scroll
+         horizontal en móvil. overflow-x acotado con :has(.ing-table) para que
+         otra tabla que reuse .table-scroll NO herede scroll horizontal por
+         accidente. min-width mantiene la tabla legible y fuerza el scroll. */
+      .table-scroll:has(.ing-table) {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .ing-table {
+        min-width: 560px;
+      }
     }
   </style>
 
