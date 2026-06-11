@@ -816,19 +816,23 @@
 
         <div class="modal-section">
           <div class="modal-section-title">📦 Composición</div>
+          <div style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
           <table class="modal-table">
             <thead><tr><th>Ingrediente</th><th class="num">%</th><th class="num">kg/ton</th><th class="num">Precio</th></tr></thead>
             <tbody>${formulaRows}</tbody>
           </table>
+          </div>
         </div>
 
         ${perfilRows ? `
           <div class="modal-section">
             <div class="modal-section-title">🧬 Perfil nutricional</div>
+            <div style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
             <table class="modal-table">
               <thead><tr><th>Nutriente</th><th class="num">Resultado</th><th class="num">Requerido</th></tr></thead>
               <tbody>${perfilRows}</tbody>
             </table>
+            </div>
           </div>
         ` : ''}
 
