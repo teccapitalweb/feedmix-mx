@@ -403,6 +403,17 @@ window.fmAuthGuard = function(opts = {}) {
           console.warn("No se pudo cargar/crear perfil:", e);
           window.fmProfile = null;
         }
+        window.fmEliteBenefit = null;
+        if (!IS_DEMO && typeof user.getIdToken === "function") {
+          try {
+            const token = await user.getIdToken();
+            const base = window.FM_WEBHOOK_URL || "https://feedmix-webhook-production.up.railway.app";
+            const response = await fetch(base + "/elite-benefit", {
+              headers: { Authorization: "Bearer " + token }, signal: AbortSignal.timeout(10000)
+            });
+            if (response.ok) window.fmEliteBenefit = await response.json();
+          } catch { /* Sin respuesta no se concede la cortesía. El plan pagado sigue intacto. */ }
+        }
         // Calcular acceso centralizado
         window.fmAccess = window.fmComputeAccess(window.fmProfile);
       }
@@ -463,6 +474,8 @@ window.fmComputeAccess = function(profile) {
   }
 
   const subscriptionEnd = toDate(profile.subscriptionEnd);
+  const eliteBenefitUntil = toDate(window.fmEliteBenefit?.accessUntil);
+  const eliteActive = eliteBenefitUntil && eliteBenefitUntil > now;
 
   // ¿El usuario actual es admin? Misma verificación que fmIsAdmin(): email ∈ FM_ADMIN_EMAILS
   // (reusa la lista, no la duplica). Los admins tienen acceso premium automático,
@@ -480,7 +493,7 @@ window.fmComputeAccess = function(profile) {
 
   // Acceso efectivo = pagado O admin. Para usuarios NO admin es idéntico a isPaidActive:
   // su lógica de pago/canje no cambia en absoluto.
-  const access = isPaidActive || isAdmin;
+  const access = isPaidActive || eliteActive || isAdmin;
   const isExpired = !access; // Para mantener compatibilidad
 
   // Días restantes (solo aplica para suscripción pagada real)
@@ -489,6 +502,10 @@ window.fmComputeAccess = function(profile) {
   if (isPaidActive && subscriptionEnd) {
     daysLeft = Math.ceil((subscriptionEnd - now) / (1000 * 60 * 60 * 24));
     endDate = subscriptionEnd;
+  }
+  if (eliteActive && (!endDate || eliteBenefitUntil > endDate)) {
+    endDate = eliteBenefitUntil;
+    daysLeft = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
   }
 
   // Acceso: pagado o admin
@@ -506,6 +523,7 @@ window.fmComputeAccess = function(profile) {
   let statusLabel;
   if (isAdmin) statusLabel = "Admin";
   else if (isPaidActive) statusLabel = plan === "lifetime" ? "De por vida ✓" : "Activa";
+  else if (eliteActive) statusLabel = "Mes Élite Pecuario";
   else statusLabel = "Modo exploración";
 
   return {
@@ -841,7 +859,7 @@ window.fmShowUpgradeModal = function(opts = {}) {
         '<div style="border-top:1px dashed #E2E8F0;padding-top:18px;">' +
           '<div style="font-size:0.8125rem;font-weight:700;color:#3F4F2E;margin-bottom:8px;">🎟️ ¿Tienes un código de curso?</div>' +
           '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
-            '<input id="fmRedeemInput" type="text" placeholder="XXXXX-XXXXX" autocomplete="off" spellcheck="false" maxlength="16" style="flex:1;min-width:170px;padding:10px 12px;border:1px solid #CBD5E1;border-radius:8px;font-family:ui-monospace,Menlo,Consolas,monospace;text-transform:uppercase;font-size:0.95rem;letter-spacing:0.08em;" />' +
+            '<input id="fmRedeemInput" type="text" placeholder="Tu código o EP-…" autocomplete="off" spellcheck="false" maxlength="32" style="flex:1;min-width:170px;padding:10px 12px;border:1px solid #CBD5E1;border-radius:8px;font-family:ui-monospace,Menlo,Consolas,monospace;text-transform:uppercase;font-size:0.95rem;letter-spacing:0.08em;" />' +
             '<button id="fmRedeemBtn" type="button" style="background:#3F4F2E;color:white;border:none;padding:10px 20px;border-radius:8px;font-weight:700;font-size:0.875rem;cursor:pointer;">Canjear</button>' +
           '</div>' +
           '<div id="fmRedeemMsg" style="display:none;margin-top:8px;font-size:0.8125rem;padding:8px 12px;border-radius:8px;"></div>' +
